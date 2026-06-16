@@ -6,8 +6,9 @@ Sistem Penyetaraan Modul PAI — aplikasi web untuk mahasiswa S1 Ilmu Aktuaria /
 Mahasiswa mengajukan penyetaraan per modul berdasarkan eligibility otomatis (dihitung dari
 nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 
-**Stack:** Laravel 12 (PHP 8.2+) · Blade + Tailwind · Eloquent/SQLite (dev) · Mailable + queue
-(database driver) · maatwebsite/excel (import nilai, terpasang sejak Fase 2) · PHPUnit.
+**Stack:** Laravel 12 (PHP 8.2+) · Blade + Tailwind · Eloquent/MySQL (dev via XAMPP, db `webpai`)
+· Mailable + queue (database driver) · maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit
+(test suite tetap pakai SQLite in-memory via `phpunit.xml`, independen dari `.env`).
 
 ## Aturan Kerja
 - **Selalu rujuk `docs/spec.md`** sebagai sumber kebenaran domain. Jangan menebak aturan bisnis.
@@ -20,15 +21,21 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 - Kalau spec ambigu atau ada bagian "PERLU KONFIRMASI", tanya user, jangan asumsi sendiri.
   Contoh nyata: percentile awalnya diasumsikan 1 nilai global (`EQUIVALENCY_PERCENTILE`), user
   klarifikasi ternyata **per-modul** (kolom `pai_modules.percentile`, lihat bagian 2/4a spec)
-  — jangan ulang asumsi lama itu.
+  — jangan ulang asumsi lama itu. Decision tree 4c juga sudah dikonfirmasi user (lihat spec
+  bagian 4c): PKS Lama cuma valid fallback kalau matched courses mengandung kode kurikulum
+  lama; kalau semua kode baru, tetap `decision=none` walau lolos syarat PKS Lama matematis.
 - `pai_modules.code` tetap A10–A70 (dipakai UI/desain). `official_code` (CF1-CF4/TA1-TA3) cuma
   referensi nama resmi ASAI, bukan identifier utama.
+- Retake/duplikat `course_grades` (no_induk+course sama, >1 baris): pakai **NA tertinggi**
+  (dikonfirmasi user, lihat spec bagian 4).
+- Saat butuh urutan migration baru, hati-hati timestamp identik + urutan alfabetis bisa bikin
+  FK gagal di MySQL walau lolos di SQLite (sudah kejadian sekali, lihat git log).
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
 - [x] Fase 1 — Schema, model, seeder master (pai_modules, courses, module_course, skala nilai)
 - [x] Fase 2 — Import nilai (Excel/CSV) + hitung `course_thresholds` (percentile per modul)
-- [ ] Fase 3 — EligibilityService (INTI) + unit test
+- [x] Fase 3 — EligibilityService (INTI) + unit test
 - [ ] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
 - [ ] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
 - [ ] Fase 6 — Email (ApprovedModule, RejectedModule, queue)

@@ -71,7 +71,13 @@ Asumsi skala UB (NH → bobot):
 
 Sebuah modul **M** punya himpunan matkul komponen per kurikulum:
 `courses_baru(M)` dan `courses_lama(M)`. Mahasiswa harus **lulus SEMUA** matkul komponen
-modul (tidak boleh ada yang belum diambil / nilai E) agar bisa dievaluasi.
+modul (tidak boleh ada yang belum diambil / nilai E) agar bisa dievaluasi — lengkap lewat
+`courses_baru(M)` **atau** lewat `courses_lama(M)` (tidak perlu keduanya; matkul berkode sama
+yang dipakai di 2 kurikulum otomatis memenuhi keduanya sekaligus).
+
+**Retake/duplikat nilai (dikonfirmasi 2026-06-16):** kalau satu mahasiswa (no_induk) punya
+>1 baris `course_grades` untuk course yang sama, ambil baris dengan **NA tertinggi** (percobaan
+terbaik) sebagai nilai yang dipakai untuk evaluasi.
 
 ### 4a. PKS Baru (percentile) — DIUTAMAKAN
 - Untuk tiap matkul: `batas_bawah(course)` = `PERCENTILE.INC(semua NA matkul itu, P)`
@@ -88,7 +94,7 @@ modul (tidak boleh ada yang belum diambil / nilai E) agar bisa dievaluasi.
 - Contoh: A(4.0, 3sks) + B+(3.5, 3sks) = (12+10.5)/6 = 3.75 > 3.5 → eligible.
   B+ + B+ = 3.5 → **tidak** eligible.
 
-### 4c. Decision tree (prioritas) — PERLU KONFIRMASI
+### 4c. Decision tree (prioritas) — DIKONFIRMASI 2026-06-16
 ```
 evaluate(student, module):
   baru = eligibleBaru(student, module)
@@ -102,6 +108,14 @@ evaluate(student, module):
                                     -> decision = "none"   (wajib percentile, gagal)
   else:                            -> decision = "none"
 ```
+
+**Rasional yang dikonfirmasi:** PKS Lama cuma valid sebagai fallback buat mahasiswa yang
+matkul-nya memang berkode kurikulum lama. Kalau mahasiswa cuma punya matkul berkode kurikulum
+baru tapi rata-rata bobotnya kebetulan lolos ambang PKS Lama (>3.5), dia **tetap** `decision=none`
+— bukan celah buat mahasiswa kurikulum baru yang gagal percentile. "Matched courses" di sini =
+himpunan matkul (`courses_baru(M)` atau `courses_lama(M)`) yang lengkap dipenuhi mahasiswa
+(lihat bagian 4 di atas); `eligibleBaru`/`eligibleLama` dihitung dari himpunan itu, lewat
+percentile (4a) dan rata-rata bobot (4b) masing-masing.
 Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bool),
 `decision` (`baru|lama|none`), `price`, `component_grades` (buat ditampilkan ke admin).
 
