@@ -23,7 +23,14 @@ class StudentController extends Controller
             'submissions as rejected_count' => fn ($query) => $query->where('status', 'rejected'),
         ])->orderBy('nama')->paginate(15);
 
-        return view('admin.students.index', ['students' => $students]);
+        return view('admin.students.index', [
+            'students' => $students,
+            'metrics' => [
+                'totalStudents' => Student::count(),
+                'totalPending' => Submission::where('status', 'pending')->count(),
+                'totalApproved' => Submission::where('status', 'approved')->count(),
+            ],
+        ]);
     }
 
     /**
