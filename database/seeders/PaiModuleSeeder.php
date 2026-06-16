@@ -16,7 +16,11 @@ class PaiModuleSeeder extends Seeder
         foreach (ModuleCourseMap::all() as $code => $module) {
             PaiModule::updateOrCreate(
                 ['code' => $code],
-                ['name' => $module['name']],
+                [
+                    'name' => $module['name'],
+                    'official_code' => $module['official_code'],
+                    'percentile' => $module['percentile'],
+                ],
             );
         }
     }

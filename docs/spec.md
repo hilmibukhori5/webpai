@@ -23,19 +23,25 @@ PKS Lama/Baru **tidak** identik dengan Kurikulum Lama/Baru. Mereka dievaluasi in
 
 ## 2. Pemetaan Modul ↔ Matkul (per kurikulum)
 
-| Modul PAI | Kurikulum BARU (kode – sks) | Kurikulum LAMA (kode – sks) |
-|---|---|---|
-| **A10 — Matematika Keuangan** | Mat. Finansial I (MAA62043, 3) · Mat. Finansial II (MAA61041, 3) | Mat. Finansial I (MAA62009, 3) · Mat. Finansial II (MAA61015, 3) |
-| **A20 — Probabilita & Statistika** | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) |
-| **A30 — Ekonomi** | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61052, 3) | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61009, 3) |
-| **A40 — Akuntansi** | Akuntansi Aktuaria I (MAA62042, 3) · Akuntansi Aktuaria II (MAA61044, 3) | Akuntansi Aktuaria I (MAA62007, 2) · Akuntansi Aktuaria II (MAA61022, 2) |
-| **A50 — Metoda Statistika** | Peng. Runtun Waktu (MAA62045, 3) · Analisis Data Survival (MAA61016, 3) · Model Linear (MAA62047, 3) | Peng. Runtun Waktu (MAA62011, 3) · Analisis Data Survival (MAA61016, 3) · Ekonometrika (MAA62023, 2) · Model Linear (MAA62013, 3) |
-| **A60 — Matematika Aktuaria** | Mat. Aktuaria I (MAA62048, 3) · Mat. Aktuaria II (MAA61033, 3) | Mat. Aktuaria I (MAA62028, 3) · Mat. Aktuaria II (MAA61033, 3) |
-| **A70 — Pemodelan & Teori Risiko** | Pemodelan Risiko Aktuaria (MAA62044, 3) · Teori Risiko & Kredibilitas Aktuaria (MAA61051, 3) | Pemodelan Aktuaria (MAA62008, 4) · Teori Risiko Aktuaria (MAA61035, 2) |
+| Modul PAI | Kode resmi ASAI | Persentil | Kurikulum BARU (kode – sks) | Kurikulum LAMA (kode – sks) |
+|---|---|---|---|---|
+| **A10 — Matematika Keuangan** | CF1 | 80 | Mat. Finansial I (MAA62043, 3) · Mat. Finansial II (MAA61041, 3) | Mat. Finansial I (MAA62009, 3) · Mat. Finansial II (MAA61015, 3) |
+| **A20 — Probabilita & Statistika** | CF2 | 90 | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) |
+| **A30 — Ekonomi** | CF3 | 80 | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61052, 3) | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61009, 3) |
+| **A40 — Akuntansi** | CF4 | 80 | Akuntansi Aktuaria I (MAA62042, 3) · Akuntansi Aktuaria II (MAA61044, 3) | Akuntansi Aktuaria I (MAA62007, 2) · Akuntansi Aktuaria II (MAA61022, 2) |
+| **A50 — Metoda Statistika** | TA1 | 80 | Peng. Runtun Waktu (MAA62045, 3) · Analisis Data Survival (MAA61016, 3) · Model Linear (MAA62047, 3) | Peng. Runtun Waktu (MAA62011, 3) · Analisis Data Survival (MAA61016, 3) · Ekonometrika (MAA62023, 2) · Model Linear (MAA62013, 3) |
+| **A60 — Matematika Aktuaria** | TA3 | 80 | Mat. Aktuaria I (MAA62048, 3) · Mat. Aktuaria II (MAA61033, 3) | Mat. Aktuaria I (MAA62028, 3) · Mat. Aktuaria II (MAA61033, 3) |
+| **A70 — Pemodelan & Teori Risiko** | TA2 | 90 | Pemodelan Risiko Aktuaria (MAA62044, 3) · Teori Risiko & Kredibilitas Aktuaria (MAA61051, 3) | Pemodelan Aktuaria (MAA62008, 4) · Teori Risiko Aktuaria (MAA61035, 2) |
 
 **Catatan kode bersama:** beberapa kode muncul di dua kurikulum (mis. MAA62003, MAA61007,
 MAA62004, MAA61016, MAA61033). Artinya satu `course` bisa terhubung ke modul untuk
 **dua** curriculum sekaligus (dua baris di tabel pivot).
+
+**Catatan kode resmi & persentil (dikonfirmasi 2026-06-16):** `code` (A10–A70) tetap dipakai
+sebagai identifier internal di database & UI (chip warna di bagian 10 tidak berubah).
+`official_code` (CF1–CF4, TA1–TA3) cuma referensi tambahan ke penamaan resmi ASAI — disimpan
+di kolom `pai_modules.official_code`. **Persentil beda per modul** (bukan satu nilai global),
+disimpan di kolom `pai_modules.percentile`.
 
 > ⚠️ **CEK ULANG** seluruh kode & sks di atas dengan sumber resmimu sebelum di-seed.
 
@@ -69,7 +75,10 @@ modul (tidak boleh ada yang belum diambil / nilai E) agar bisa dievaluasi.
 
 ### 4a. PKS Baru (percentile) — DIUTAMAKAN
 - Untuk tiap matkul: `batas_bawah(course)` = `PERCENTILE.INC(semua NA matkul itu, P)`
-  di mana NA di-**pool dari semua semester/kelas**. `P` = config `EQUIVALENCY_PERCENTILE` (**isi nilainya!**).
+  di mana NA di-**pool dari semua semester/kelas**.
+- `P` **berbeda per modul** (bukan satu nilai global), disimpan di `pai_modules.percentile`.
+  Nilai yang dikonfirmasi (lihat bagian 2): CF1/CF3/CF4/TA1/TA3 = **80**, CF2/TA2 = **90**.
+  Semua matkul komponen modul M memakai `P` milik modul M itu sendiri.
 - Mahasiswa **eligible PKS Baru untuk M** jika `NA mahasiswa ≥ batas_bawah` di **semua** matkul komponen M.
 
 ### 4b. PKS Lama (> 3.5)
@@ -125,7 +134,7 @@ tampilkan skema & harga) → submit (status `pending`).
 ```
 users(id, name, email, password, role[admin|student])
 students(id, user_id, no_induk UNIQUE, nama, prodi)
-pai_modules(id, code UNIQUE, name)                      // A10..A70
+pai_modules(id, code UNIQUE, name, official_code, percentile)  // A10..A70; official_code = CF1-CF4/TA1-TA3; percentile = P per modul (bagian 2)
 courses(id, code UNIQUE, name, sks)
 module_course(id, pai_module_id, course_id, curriculum[lama|baru])  // pivot
 course_grades(id, course_id, semester, no_induk, nama, na, nh, grade_point)
@@ -170,11 +179,12 @@ Buat fitur import nilai (admin) dari Excel/CSV per matkul per semester.
 Kolom: No Induk, Nama, NA, NH. Tiap import wajib pilih course + label semester (mis. "Genap 2223").
 Simpan ke course_grades (isi grade_point dari NH via helper).
 Setelah import, recompute course_thresholds untuk course terkait:
-threshold_na = PERCENTILE.INC(semua NA course itu dari SEMUA semester, EQUIVALENCY_PERCENTILE).
-Taruh nilai percentile di config (.env EQUIVALENCY_PERCENTILE). Buat command artisan
-`php artisan thresholds:recompute` juga. Sertakan validasi & contoh file.
+threshold_na = PERCENTILE.INC(semua NA course itu dari SEMUA semester, P),
+di mana P diambil dari `pai_modules.percentile` milik modul tempat course itu jadi komponen
+(lihat bagian 2 & 4a — P beda per modul, bukan satu nilai global; tiap course hanya jadi
+komponen 1 modul, jadi P-nya tidak ambigu). Buat command artisan `php artisan thresholds:recompute`
+juga. Sertakan validasi & contoh file.
 ```
-> ⚠️ Sebelum jalanin fase ini, set dulu **berapa nilai percentile-nya** di `.env`.
 
 ### Fase 3 — Mesin eligibility (INTI, harus ada test)
 ```

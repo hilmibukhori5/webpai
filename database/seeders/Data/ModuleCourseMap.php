@@ -13,13 +13,15 @@ namespace Database\Seeders\Data;
 class ModuleCourseMap
 {
     /**
-     * @return array<string, array{name: string, baru: array<int, array{code: string, name: string, sks: int}>, lama: array<int, array{code: string, name: string, sks: int}>}>
+     * @return array<string, array{name: string, official_code: string, percentile: int, baru: array<int, array{code: string, name: string, sks: int}>, lama: array<int, array{code: string, name: string, sks: int}>}>
      */
     public static function all(): array
     {
         return [
             'A10' => [
                 'name' => 'Matematika Keuangan',
+                'official_code' => 'CF1',
+                'percentile' => 80,
                 'baru' => [
                     ['code' => 'MAA62043', 'name' => 'Matematika Finansial I', 'sks' => 3],
                     ['code' => 'MAA61041', 'name' => 'Matematika Finansial II', 'sks' => 3],
@@ -31,6 +33,8 @@ class ModuleCourseMap
             ],
             'A20' => [
                 'name' => 'Probabilita & Statistika',
+                'official_code' => 'CF2',
+                'percentile' => 90,
                 'baru' => [
                     ['code' => 'MAA62003', 'name' => 'Statistika Matematika I', 'sks' => 3],
                     ['code' => 'MAA61007', 'name' => 'Statistika Matematika II', 'sks' => 3],
@@ -42,6 +46,8 @@ class ModuleCourseMap
             ],
             'A30' => [
                 'name' => 'Ekonomi',
+                'official_code' => 'CF3',
+                'percentile' => 80,
                 'baru' => [
                     ['code' => 'MAA62004', 'name' => 'Pengantar Ekonomi Mikro', 'sks' => 3],
                     ['code' => 'MAA61052', 'name' => 'Pengantar Ekonomi Makro', 'sks' => 3],
@@ -53,6 +59,8 @@ class ModuleCourseMap
             ],
             'A40' => [
                 'name' => 'Akuntansi',
+                'official_code' => 'CF4',
+                'percentile' => 80,
                 'baru' => [
                     ['code' => 'MAA62042', 'name' => 'Akuntansi Aktuaria I', 'sks' => 3],
                     ['code' => 'MAA61044', 'name' => 'Akuntansi Aktuaria II', 'sks' => 3],
@@ -64,6 +72,8 @@ class ModuleCourseMap
             ],
             'A50' => [
                 'name' => 'Metoda Statistika',
+                'official_code' => 'TA1',
+                'percentile' => 80,
                 'baru' => [
                     ['code' => 'MAA62045', 'name' => 'Pengantar Runtun Waktu', 'sks' => 3],
                     ['code' => 'MAA61016', 'name' => 'Analisis Data Survival', 'sks' => 3],
@@ -78,6 +88,8 @@ class ModuleCourseMap
             ],
             'A60' => [
                 'name' => 'Matematika Aktuaria',
+                'official_code' => 'TA3',
+                'percentile' => 80,
                 'baru' => [
                     ['code' => 'MAA62048', 'name' => 'Matematika Aktuaria I', 'sks' => 3],
                     ['code' => 'MAA61033', 'name' => 'Matematika Aktuaria II', 'sks' => 3],
@@ -89,6 +101,8 @@ class ModuleCourseMap
             ],
             'A70' => [
                 'name' => 'Pemodelan & Teori Risiko',
+                'official_code' => 'TA2',
+                'percentile' => 90,
                 'baru' => [
                     ['code' => 'MAA62044', 'name' => 'Pemodelan Risiko Aktuaria', 'sks' => 3],
                     ['code' => 'MAA61051', 'name' => 'Teori Risiko & Kredibilitas Aktuaria', 'sks' => 3],

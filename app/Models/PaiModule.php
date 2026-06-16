@@ -9,7 +9,9 @@ class PaiModule extends Model
 {
     protected $fillable = [
         'code',
+        'official_code',
         'name',
+        'percentile',
     ];
 
     public function moduleCourses(): HasMany
