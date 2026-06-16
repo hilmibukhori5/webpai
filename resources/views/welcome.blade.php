@@ -42,7 +42,7 @@
         <section class="bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
             <div class="max-w-6xl mx-auto px-6 py-20 text-center space-y-6">
                 <span class="inline-block bg-white/10 text-indigo-50 text-xs font-medium px-3 py-1 rounded-full">
-                    Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika PSIA UB
+                    Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika, Departemen Matematika UB
                 </span>
                 <h1 class="font-heading text-3xl sm:text-4xl font-semibold leading-tight max-w-2xl mx-auto">
                     Setarakan matkul yang sudah kamu lulus ke Modul PAI ASAI
@@ -126,7 +126,7 @@
         </section>
 
         <footer class="max-w-6xl mx-auto px-6 py-8 text-center text-xs text-slate-500">
-            &copy; {{ date('Y') }} Penyetaraan Modul PAI &mdash; PSIA UB
+            &copy; {{ date('Y') }} Penyetaraan Modul PAI &mdash; Departemen Matematika UB
         </footer>
     </body>
 </html>

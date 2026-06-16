@@ -2,7 +2,7 @@
 
 ## Ringkasan Project
 Sistem Penyetaraan Modul PAI — aplikasi web untuk mahasiswa S1 Ilmu Aktuaria / S1 Matematika
-(PSIA UB) yang ingin menyetarakan matkul yang sudah lulus ke Modul PAI level ASAI (A10–A70).
+(Departemen Matematika UB) yang ingin menyetarakan matkul yang sudah lulus ke Modul PAI level ASAI (A10–A70).
 Mahasiswa mengajukan penyetaraan per modul berdasarkan eligibility otomatis (dihitung dari
 nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 

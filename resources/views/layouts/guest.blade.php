@@ -28,7 +28,7 @@
                         Setarakan matkul yang sudah kamu lulus ke Modul PAI ASAI
                     </h1>
                     <p class="text-indigo-100 text-sm leading-relaxed">
-                        Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika Departemen Matematika UB. Sistem ini
+                        Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika, Departemen Matematika UB. Sistem ini
                         otomatis mengecek eligibility kamu berdasarkan nilai yang sudah diinput
                         admin — kamu cuma perlu ajukan, lalu tunggu approval.
                     </p>
