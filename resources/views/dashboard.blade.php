@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-heading font-semibold text-xl text-slate-900 leading-tight">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
@@ -25,6 +25,12 @@
                     Profil mahasiswa (No Induk/Prodi) belum lengkap. Hubungi admin untuk melengkapi data.
                 </div>
             @else
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <x-metric-card label="Eligible" :value="$metrics['eligible']" />
+                    <x-metric-card label="Diajukan" :value="$metrics['diajukan']" />
+                    <x-metric-card label="Disetujui" :value="$metrics['disetujui']" />
+                </div>
+
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach ($cards as $card)
                         @php
@@ -32,68 +38,60 @@
                             $result = $card['result'];
                             $submission = $card['submission'];
 
-                            // Tentukan badge & state tombol.
+                            // Tentukan variant badge & state tombol.
                             if ($submission && $submission->status === 'pending') {
+                                $badgeVariant = 'pending';
                                 $badgeLabel = 'Menunggu review';
-                                $badgeClass = 'bg-amber-50 text-amber-700';
                                 $buttonLabel = 'Sudah diajukan';
-                                $buttonEnabled = false;
+                                $buttonHref = null;
                             } elseif ($submission && $submission->status === 'approved') {
+                                $badgeVariant = 'approved';
                                 $badgeLabel = 'Disetujui';
-                                $badgeClass = 'bg-emerald-50 text-emerald-700';
                                 $buttonLabel = 'Disetujui';
-                                $buttonEnabled = false;
+                                $buttonHref = null;
                             } elseif ($submission && $submission->status === 'rejected') {
+                                $badgeVariant = 'rejected';
                                 $badgeLabel = 'Ditolak';
-                                $badgeClass = 'bg-rose-50 text-rose-700';
                                 $buttonLabel = 'Ajukan ulang';
-                                $buttonEnabled = $result->decision !== 'none';
+                                $buttonHref = $result->decision !== 'none' ? route('submissions.create', $module->code) : null;
                             } elseif ($result->decision === 'baru') {
+                                $badgeVariant = 'eligible-baru';
                                 $badgeLabel = 'Eligible (PKS Baru)';
-                                $badgeClass = 'bg-emerald-50 text-emerald-700';
                                 $buttonLabel = 'Ajukan Penyetaraan';
-                                $buttonEnabled = true;
+                                $buttonHref = route('submissions.create', $module->code);
                             } elseif ($result->decision === 'lama') {
+                                $badgeVariant = 'eligible-lama';
                                 $badgeLabel = 'Eligible (PKS Lama)';
-                                $badgeClass = 'bg-blue-50 text-blue-700';
                                 $buttonLabel = 'Ajukan Penyetaraan';
-                                $buttonEnabled = true;
+                                $buttonHref = route('submissions.create', $module->code);
                             } else {
+                                $badgeVariant = 'belum-eligible';
                                 $badgeLabel = 'Belum Eligible';
-                                $badgeClass = 'bg-slate-100 text-slate-500';
                                 $buttonLabel = 'Ajukan Penyetaraan';
-                                $buttonEnabled = false;
+                                $buttonHref = null;
                             }
                         @endphp
 
-                        <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <span class="text-xs font-semibold text-slate-500">{{ $module->code }}</span>
-                                    <h3 class="font-semibold text-slate-900">{{ $module->name }}</h3>
-                                </div>
-                                <span class="text-xs font-medium px-2.5 py-1 rounded-full {{ $badgeClass }}">{{ $badgeLabel }}</span>
-                            </div>
+                        <x-module-card
+                            :code="$module->code"
+                            :name="$module->name"
+                            :color="$card['color']"
+                            :component-names="$card['componentNames']"
+                            :reason="$result->reason"
+                            :price="$result->price"
+                        >
+                            <x-slot name="badge">
+                                <x-status-badge :variant="$badgeVariant">{{ $badgeLabel }}</x-status-badge>
+                            </x-slot>
 
-                            <p class="text-sm text-slate-500">{{ $result->reason }}</p>
-
-                            @if ($result->price)
-                                <p class="text-sm font-medium text-slate-700">Rp{{ number_format($result->price, 0, ',', '.') }}</p>
-                            @endif
-
-                            <div>
-                                @if ($buttonEnabled)
-                                    <a href="{{ route('submissions.create', $module->code) }}"
-                                       class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-medium">
-                                        {{ $buttonLabel }}
-                                    </a>
+                            <x-slot name="footer">
+                                @if ($buttonHref)
+                                    <x-btn variant="primary" :href="$buttonHref">{{ $buttonLabel }}</x-btn>
                                 @else
-                                    <span class="inline-block bg-slate-100 text-slate-400 rounded-xl px-4 py-2 text-sm font-medium cursor-not-allowed">
-                                        {{ $buttonLabel }}
-                                    </span>
+                                    <x-btn variant="disabled">{{ $buttonLabel }}</x-btn>
                                 @endif
-                            </div>
-                        </div>
+                            </x-slot>
+                        </x-module-card>
                     @endforeach
                 </div>
             @endif

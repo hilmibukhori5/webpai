@@ -19,6 +19,7 @@ class StudentDashboardController extends Controller
             return view('dashboard', [
                 'student' => null,
                 'cards' => collect(),
+                'metrics' => ['eligible' => 0, 'diajukan' => 0, 'disetujui' => 0],
             ]);
         }
 
@@ -29,6 +30,8 @@ class StudentDashboardController extends Controller
         $cards = PaiModule::orderBy('code')->get()->map(function (PaiModule $module) use ($student, $existingSubmissions) {
             return [
                 'module' => $module,
+                'color' => 'bg-module-'.strtolower($module->code),
+                'componentNames' => $module->coursesForCurriculum('baru')->pluck('name')->implode(', '),
                 'result' => $this->eligibility->evaluate($student, $module),
                 'submission' => $existingSubmissions->get($module->id),
             ];
@@ -37,6 +40,11 @@ class StudentDashboardController extends Controller
         return view('dashboard', [
             'student' => $student,
             'cards' => $cards,
+            'metrics' => [
+                'eligible' => $cards->filter(fn (array $card) => $card['result']->decision !== 'none')->count(),
+                'diajukan' => $existingSubmissions->count(),
+                'disetujui' => $existingSubmissions->filter(fn (Submission $s) => $s->status === 'approved')->count(),
+            ],
         ]);
     }
 }

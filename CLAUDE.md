@@ -64,6 +64,24 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
 - [x] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
 - [x] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)
 
-Semua fase di bagian 8 spec sudah selesai. Pekerjaan lanjutan dari sini ada di luar urutan
-fase 0-7: polish Design System (bagian 10, belum diterapkan ke UI — masih plain Breeze
-styling) kalau diminta, atau perbaikan/fitur baru sesuai permintaan user berikutnya.
+Semua fase di bagian 8 spec sudah selesai.
+
+## Design System (bagian 10)
+Diterapkan ke **dashboard mahasiswa** (sesuai canned prompt section 10 — langkah 1-3):
+- `tailwind.config.js`: font Inter (body) + Plus Jakarta Sans (heading, class `font-heading`),
+  warna modul `module.a10`..`module.a70` (`bg-module-a10` dst).
+- Komponen reusable di `resources/views/components/`: `<x-status-badge variant="...">`,
+  `<x-module-card>`, `<x-metric-card>`, `<x-btn variant="primary|ghost|disabled">`.
+  `status-badge` extend ke variant submission (`pending`/`approved`/`rejected`) selain 3 state
+  eligibility asli di spec, biar bahasa warnanya konsisten di satu komponen.
+- `layouts/navigation.blade.php`/`app.blade.php` diselaraskan warnanya (gray-* -> slate-*) biar
+  nggak nyentrik sendiri dibanding dashboard yang baru.
+- **Belum dikerjakan** (di luar scope canned prompt ini, tawarkan sebagai follow-up):
+  admin UI (sidebar, drawer/modal detail — section 10 "Pola layout" nyebut ini tapi 3-step
+  prompt-nya cuma minta dashboard mahasiswa), icon package proper (Lucide/Tabler — sementara
+  inline SVG buat 2 ikon yang dipakai sekarang, check & lock), dark mode (opsional di spec).
+- Verifikasi visual: sandbox ini nggak ada chromium-cli/Playwright (gagal install, perlu
+  download browser binary) — diverifikasi via `npm run build` sukses + curl session login
+  cek class HTML yang ke-render (`bg-module-a10`, `font-heading`, `rounded-2xl`, dst.) + semua
+  test tetap hijau. Kalau perlu screenshot asli, jalankan `/run-skill-generator` dulu buat setup
+  browser automation di project ini.
