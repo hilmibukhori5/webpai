@@ -55,7 +55,12 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => '',
+            // env('DB_PREFIX') -- dipakai kalau hosting cuma kasih 1 database
+            // per domain (mis. Plesk subfolder deploy, lihat deploy/README.md):
+            // semua tabel project ini dapat prefix unik biar gak collision
+            // sama tabel Laravel lain yang share database yang sama. Default
+            // '' (kosong) -- tidak mempengaruhi dev lokal/.env yang sudah ada.
+            'prefix' => env('DB_PREFIX', ''),
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
@@ -75,7 +80,12 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => '',
+            // env('DB_PREFIX') -- dipakai kalau hosting cuma kasih 1 database
+            // per domain (mis. Plesk subfolder deploy, lihat deploy/README.md):
+            // semua tabel project ini dapat prefix unik biar gak collision
+            // sama tabel Laravel lain yang share database yang sama. Default
+            // '' (kosong) -- tidak mempengaruhi dev lokal/.env yang sudah ada.
+            'prefix' => env('DB_PREFIX', ''),
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,

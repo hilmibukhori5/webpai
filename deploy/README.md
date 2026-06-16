@@ -26,10 +26,26 @@ subdomain. Jadi kode Laravel #2 ditaruh di luar `public/` (aman, gak ke-serve
 langsung), dan cuma file depan (`index.php` + `.htaccess` + asset build) yang
 ditaruh di `public/pendaftaran-pai/` sebagai "pintu masuk" fisik.
 
-## 1. Buat database
+## 1. Database
 
-Di Plesk → Databases, buat database MySQL baru buat project ini. Catat
-host/nama database/username/password.
+**Kalau plan hosting izinkan bikin database baru**: di Plesk → Databases,
+buat database MySQL baru buat project ini. Catat host/nama database/
+username/password.
+
+**Kalau cuma boleh 1 database per domain** (sudah dipakai Laravel #1):
+pakai database yang sama, tapi **WAJIB set `DB_PREFIX`** di `.env` (lihat
+[`production.env.example`](plesk-subfolder/production.env.example)) supaya
+semua tabel project ini (termasuk tabel `migrations` bawaan Laravel) dapat
+prefix unik dan tidak collision sama tabel Laravel #1 yang sudah ada di
+database itu — sudah didukung di `config/database.php` (`'prefix' =>
+env('DB_PREFIX', '')`). Ambil host/nama database/username/password dari
+entri database yang sudah ada di Plesk → Databases (bukan dari file Laravel
+#1 — gak perlu sentuh kode/file punya Laravel #1 sama sekali).
+
+> Catatan: prefix cuma misahin tabel, bukan benar-benar mengisolasi data
+> kayak database terpisah (DB user yang sama otomatis bisa baca/tulis ke
+> tabel Laravel #1 juga kalau mau). Tetap aman secara teknis selama tidak
+> ada migration project ini yang sengaja menyentuh tabel tanpa prefix.
 
 ## 2. Setup repo di Plesk Git extension
 
