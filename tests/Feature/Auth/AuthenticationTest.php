@@ -44,6 +44,24 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('admin.students.index', absolute: false));
     }
 
+    public function test_admin_still_redirected_to_admin_area_even_if_dashboard_was_the_intended_url(): void
+    {
+        // Reproduksi bug nyata: admin sempat coba akses /dashboard (ke-bookmark
+        // atau dari history) sebelum login -> Laravel simpan itu sebagai
+        // "intended URL". Setelah login, harus tetap ke admin area, bukan
+        // kebawa balik ke /dashboard (yang role:student-only -> 403).
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $this->get('/dashboard'); // ini nge-set session('url.intended') = /dashboard
+
+        $response = $this->post('/login', [
+            'email' => $admin->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect(route('admin.students.index', absolute: false));
+    }
+
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();

@@ -28,11 +28,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Sengaja TIDAK pakai redirect()->intended(): area admin & student
+        // saling eksklusif (role:admin vs role:student), jadi "intended URL"
+        // dari sebelum login (mis. /dashboard yang ke-bookmark) bisa salah
+        // ngarahin admin ke halaman yang role-nya tidak boleh akses -> 403.
+        // Selalu pulang ke home sesuai role aktual.
+        $request->session()->forget('url.intended');
+
         $home = $request->user()->isAdmin()
             ? route('admin.students.index', absolute: false)
             : route('dashboard', absolute: false);
 
-        return redirect()->intended($home);
+        return redirect($home);
     }
 
     /**
