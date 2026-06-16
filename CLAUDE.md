@@ -36,6 +36,10 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
   bisa 403 walau di DB rolenya sudah benar. Selalu `->fresh()` user hasil factory sebelum
   `actingAs()` kalau tidak override role secara eksplisit (atau akses lewat relasi seperti
   `$student->user`, yang otomatis fresh-query).
+- Base `App\Http\Controllers\Controller` Laravel 12 itu kosong (tidak ada `AuthorizesRequests`
+  bawaan kayak versi lama) — sudah ditambah trait itu di Fase 5 supaya `$this->authorize()` jalan.
+  Login redirect (`AuthenticatedSessionController`) sudah role-aware (admin -> `admin.students.index`,
+  student -> `dashboard`) sejak Fase 5 — jangan balikin ke `route('dashboard')` polos.
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
@@ -43,6 +47,6 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 - [x] Fase 2 — Import nilai (Excel/CSV) + hitung `course_thresholds` (percentile per modul)
 - [x] Fase 3 — EligibilityService (INTI) + unit test
 - [x] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
-- [ ] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
+- [x] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
 - [ ] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
 - [ ] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)
