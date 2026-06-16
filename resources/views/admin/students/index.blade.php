@@ -61,8 +61,11 @@
                                     <td class="p-3">
                                         <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-xs font-medium">{{ $student->rejected_count }}</span>
                                     </td>
-                                    <td class="p-3 text-right">
+                                    <td class="p-3 text-right whitespace-nowrap">
                                         <a href="{{ route('admin.students.show', $student) }}" class="text-indigo-600 hover:text-indigo-800 font-medium">Detail</a>
+                                        @if ($student->approved_count > 0)
+                                            <a href="{{ route('admin.students.letter', $student) }}" class="text-indigo-600 hover:text-indigo-800 font-medium ms-3">Download Surat</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

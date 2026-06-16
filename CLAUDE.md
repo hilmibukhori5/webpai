@@ -65,6 +65,17 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   brand-link & nav-link admin salah arah ke `route('dashboard')` (role:student-only, bakal 403
   buat admin). Kalau nambah halaman admin baru, tambahkan link di sini juga (desktop + mobile
   responsive nav, ada 2 blok terpisah).
+- **Surat keterangan** (di luar 8 fase asli, ditambah belakangan atas permintaan user, format
+  resmi dari template UB yang dikasih user): `Admin\StudentLetterController` +
+  `App\Documents\EquivalencyLetterDocument` (pakai `phpoffice/phpword`) — download `.docx` per
+  MAHASISWA (`/admin/students/{student}/surat-keterangan`), nyakup SEMUA modul approved
+  mahasiswa itu dalam 1 surat (bukan per modul). Nomor surat & TTE sengaja dikosongkan (diisi
+  manual setelah download). Identitas penandatangan (nama/NIP/jabatan Ketua Departemen
+  Matematika) + kop surat ada di `config/letter.php` — update di situ kalau ganti pejabat,
+  jangan di code. Kolom "Nilai" tergantung skema modul: PKS Lama -> bobot/grade_point (0-4,
+  BUKAN huruf NH mentah — dikonfirmasi user dari baca ulang screenshot), PKS Baru -> NA (0-100).
+  "Rata-rata" per modul pakai rata-rata tertimbang SKS, formula sama dengan eligibility 4b.
+  Tombol "Download Surat" di list mahasiswa cuma muncul kalau `approved_count > 0`.
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
