@@ -45,7 +45,7 @@
                     <p class="font-medium text-slate-900">Soal skema PKS Baru &amp; PKS Lama</p>
                     <p>
                         <span class="font-medium text-emerald-700">PKS Baru</span> dicek dari percentile nilai
-                        (NA) kamu dibanding semua mahasiswa lain yang pernah ambil matkul itu — harga
+                        (NA) kamu dibanding semua mahasiswa lain yang pernah ambil matkul itu di semester tersebut — harga
                         Rp550.000/modul. <span class="font-medium text-blue-700">PKS Lama</span> dicek dari
                         rata-rata bobot nilai (NH) matkul kurikulum lama — harga Rp500.000/modul. Sistem
                         otomatis pilih skema yang paling menguntungkan buat kamu; kalau belum eligible di

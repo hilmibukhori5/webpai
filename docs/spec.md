@@ -7,7 +7,7 @@
 
 ## 1. Tujuan
 
-Mahasiswa S1 Ilmu Aktuaria / S1 Matematika (PSIA UB) yang lulus matkul tertentu bisa
+Mahasiswa S1 Ilmu Aktuaria / S1 Matematika (Departemen Matematika UB) yang lulus matkul tertentu bisa
 menyetarakan matkul tsb ke **Modul PAI level ASAI (A10–A70)**. Sistem otomatis menentukan
 apakah mahasiswa **eligible** per modul (berdasarkan nilai), mahasiswa mengajukan + setuju bayar,
 lalu admin menyetujui/menolak per modul dengan notifikasi email.
