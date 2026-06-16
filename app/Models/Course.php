@@ -28,4 +28,14 @@ class Course extends Model
     {
         return $this->hasOne(CourseThreshold::class);
     }
+
+    /**
+     * Modul PAI tempat course ini jadi komponen. Setiap course hanya jadi
+     * komponen 1 modul (lihat docs/spec.md bagian 2/4a) walau bisa muncul di
+     * 2 baris module_course (curriculum lama & baru) untuk modul yang sama.
+     */
+    public function paiModule(): ?PaiModule
+    {
+        return $this->moduleCourses()->with('paiModule')->first()?->paiModule;
+    }
 }
