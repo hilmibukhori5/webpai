@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\GradeImportController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\ProfileController;
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     Route::post('/submissions/{submission}/approve', [SubmissionReviewController::class, 'approve'])->name('submissions.approve');
     Route::post('/submissions/{submission}/reject', [SubmissionReviewController::class, 'reject'])->name('submissions.reject');
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export/{scheme}', [ReportController::class, 'export'])->name('reports.export')->whereIn('scheme', ['lama', 'baru']);
 });
 
 // Preview email tanpa kirim sungguhan (gantinya MailHog/Mailpit, karena

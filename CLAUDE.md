@@ -53,6 +53,18 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   acceptance test informal — kalau cabangnya berubah karena edit EligibilityService, seeder
   ini akan throw RuntimeException karena hasil eligibility-nya tidak sesuai harapan lagi).
   Kredensial demo & detail skenario ada di README.
+- **Laporan penyetaraan** (di luar 8 fase asli, ditambah belakangan atas permintaan user):
+  `Admin\ReportController` + `App\Exports\EquivalencyReportExport` — download .xlsx PER SKEMA
+  (`/admin/reports/export/{lama|baru}`), cuma submission **approved**, 1 baris = 1 submission
+  (bukan 1 per mahasiswa). PKS Lama nilai = NH, PKS Baru nilai = NA. Header 2-baris + grup
+  Kode/Nilai/Semester berulang dibangun manual via PhpSpreadsheet (`WithEvents`/`AfterSheet`,
+  bukan `FromArray`/`WithHeadings` biasa — terlalu kompleks buat itu). No Induk WAJIB
+  `setCellValueExplicit(..., DataType::TYPE_STRING)`, kalau tidak PhpSpreadsheet auto-detect
+  NIM yang semua-digit jadi angka (resiko corrupt di Excel asli).
+- Nav admin (`layouts/navigation.blade.php`) role-aware sejak fitur Laporan ditambah — sebelumnya
+  brand-link & nav-link admin salah arah ke `route('dashboard')` (role:student-only, bakal 403
+  buat admin). Kalau nambah halaman admin baru, tambahkan link di sini juga (desktop + mobile
+  responsive nav, ada 2 blok terpisah).
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
