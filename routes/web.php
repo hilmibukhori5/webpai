@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\SubmissionDocumentController;
 use App\Mail\ApprovedModule;
 use App\Mail\RejectedModule;
 use App\Models\PaiModule;
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
 
     Route::get('/modules/{paiModule:code}/ajukan', [SubmissionController::class, 'create'])->name('submissions.create');
     Route::post('/modules/{paiModule:code}/ajukan', [SubmissionController::class, 'store'])->name('submissions.store');
+
+    Route::get('/submissions/{submission}/dokumen', [SubmissionDocumentController::class, 'edit'])->name('submissions.documents.edit');
+    Route::post('/submissions/{submission}/dokumen', [SubmissionDocumentController::class, 'update'])->name('submissions.documents.update');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

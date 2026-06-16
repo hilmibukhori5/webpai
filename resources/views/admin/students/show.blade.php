@@ -86,6 +86,27 @@
                         </p>
                     @endif
 
+                    @if ($submission->status === 'approved')
+                        <div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                            <div class="text-sm text-slate-600 space-x-3">
+                                <span class="font-medium text-slate-700">Pembayaran:</span>
+                                @if ($submission->bukti_pembayaran_path)
+                                    <a href="{{ Storage::url($submission->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">Bukti bayar</a>
+                                @else
+                                    <span class="text-slate-400">Bukti bayar belum diupload</span>
+                                @endif
+                                @if ($submission->formulir_terisi_path)
+                                    <a href="{{ Storage::url($submission->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">Formulir terisi</a>
+                                @else
+                                    <span class="text-slate-400">Formulir belum diupload</span>
+                                @endif
+                            </div>
+                            <x-status-badge :variant="$submission->payment_status === 'paid' ? 'approved' : 'pending'">
+                                {{ $submission->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
+                            </x-status-badge>
+                        </div>
+                    @endif
+
                     @if ($submission->status === 'pending')
                         <div class="flex items-start gap-3 pt-2 border-t border-slate-100">
                             <form method="POST" action="{{ route('admin.submissions.approve', $submission) }}" class="pt-4">

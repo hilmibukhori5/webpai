@@ -30,4 +30,16 @@ class SubmissionPolicy
     {
         return $user->isAdmin();
     }
+
+    /**
+     * Upload bukti bayar & formulir terisi (di luar 8 fase asli, ditambah
+     * belakangan). Cuma mahasiswa pemilik submission itu sendiri, dan cuma
+     * kalau submission-nya sudah disetujui admin.
+     */
+    public function manageDocuments(User $user, Submission $submission): bool
+    {
+        return $user->isStudent()
+            && $user->student?->id === $submission->student_id
+            && $submission->status === 'approved';
+    }
 }

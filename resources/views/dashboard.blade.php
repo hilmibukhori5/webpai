@@ -66,11 +66,16 @@
                                 $badgeLabel = 'Menunggu review';
                                 $buttonLabel = 'Sudah diajukan';
                                 $buttonHref = null;
+                            } elseif ($submission && $submission->status === 'approved' && $submission->payment_status === 'paid') {
+                                $badgeVariant = 'approved';
+                                $badgeLabel = 'Lunas';
+                                $buttonLabel = 'Lunas';
+                                $buttonHref = null;
                             } elseif ($submission && $submission->status === 'approved') {
                                 $badgeVariant = 'approved';
                                 $badgeLabel = 'Disetujui';
-                                $buttonLabel = 'Disetujui';
-                                $buttonHref = null;
+                                $buttonLabel = 'Upload Bukti Bayar';
+                                $buttonHref = route('submissions.documents.edit', $submission);
                             } elseif ($submission && $submission->status === 'rejected') {
                                 $badgeVariant = 'rejected';
                                 $badgeLabel = 'Ditolak';

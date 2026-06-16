@@ -17,6 +17,9 @@ class Submission extends Model
         'rejection_reason',
         'reviewed_by',
         'reviewed_at',
+        'bukti_pembayaran_path',
+        'formulir_terisi_path',
+        'payment_status',
     ];
 
     protected function casts(): array
@@ -44,5 +47,18 @@ class Submission extends Model
     public function submissionCourses(): HasMany
     {
         return $this->hasMany(SubmissionCourse::class);
+    }
+
+    /**
+     * Cek kedua dokumen (bukti bayar + formulir terisi) sudah diupload, lalu
+     * set payment_status jadi "paid" kalau iya. Dipanggil setiap kali salah
+     * satu file diupload (lihat SubmissionDocumentController) -- otomatis,
+     * tanpa langkah verifikasi admin (dikonfirmasi user).
+     */
+    public function refreshPaymentStatus(): void
+    {
+        $isPaid = filled($this->bukti_pembayaran_path) && filled($this->formulir_terisi_path);
+
+        $this->update(['payment_status' => $isPaid ? 'paid' : 'unpaid']);
     }
 }

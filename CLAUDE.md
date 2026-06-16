@@ -76,6 +76,22 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   BUKAN huruf NH mentah — dikonfirmasi user dari baca ulang screenshot), PKS Baru -> NA (0-100).
   "Rata-rata" per modul pakai rata-rata tertimbang SKS, formula sama dengan eligibility 4b.
   Tombol "Download Surat" di list mahasiswa cuma muncul kalau `approved_count > 0`.
+- **Upload bukti bayar & formulir** (di luar 8 fase asli, ditambah belakangan atas permintaan
+  user): kolom baru di `submissions` — `bukti_pembayaran_path`, `formulir_terisi_path`,
+  `payment_status` (`unpaid|paid`, default `unpaid`). Email `ApprovedModule` sekarang juga
+  melampirkan **Formulir Permohonan Penyetaraan Ujian** (`App\Documents\EquivalencyFormDocument`,
+  PhpWord, MASIH DUMMY/placeholder — beda judul dikit tergantung `scheme`, belum format resmi
+  ASAI/UB) + tombol ke halaman upload. Mahasiswa upload lewat
+  `SubmissionDocumentController` (`GET/POST /submissions/{submission}/dokumen`, hanya pemilik
+  submission & status harus `approved` — lihat `SubmissionPolicy::manageDocuments`); begitu
+  **kedua** file ada, `Submission::refreshPaymentStatus()` otomatis set `payment_status=paid`
+  — **tanpa** langkah verifikasi admin (dikonfirmasi user, bisa berubah kalau nanti diminta
+  ada tombol konfirmasi admin). File disimpan di disk `public` (`storage/app/public/submissions/
+  {id}/...`, butuh `php artisan storage:link`). Tombol "Upload Bukti Bayar" muncul di kartu
+  modul dashboard mahasiswa untuk submission yang sudah approved tapi belum lunas (reuse badge
+  variant `approved`, cuma label berubah jadi "Lunas" kalau `payment_status=paid`). Admin lihat
+  status + link file yang diupload di `admin/students/show.blade.php`, read-only (tidak ada
+  tombol verifikasi karena otomatis).
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
