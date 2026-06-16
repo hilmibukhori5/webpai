@@ -1,19 +1,25 @@
 <?php
 
 /**
- * Script SEKALI PAKAI: jalankan migrate + bikin symlink storage, tanpa
- * butuh akses shell/SSH (cuma dibuka lewat browser). Taruh sementara di
+ * Script SEKALI PAKAI: bikin symlink storage, tanpa butuh akses shell/SSH
+ * (cuma dibuka lewat browser). Taruh sementara di
  * httpdocs/public/pendaftaran-pai/setup-once.php (sebelah index.php),
  * buka https://math.ub.ac.id/pendaftaran-pai/setup-once.php?token=...
  *
- * ⚠️ WAJIB DIHAPUS setelah sukses dipakai -- script ini otomatis coba
- * hapus dirinya sendiri begitu semua langkah sukses, tapi CEK LAGI manual
- * lewat File Manager kalau-kalau auto-delete-nya gagal (mis. permission).
+ * Database SUDAH ditangani lewat import pendaftaran-pai-database.sql ke
+ * phpMyAdmin (lihat deploy/README.md) -- script ini TIDAK menjalankan
+ * migrate lagi, cuma symlink.
  *
- * Ganti TOKEN di bawah sebelum upload kalau mau, atau biarkan -- yang
- * penting JANGAN dibagikan/expose ke orang lain selain kamu sendiri.
+ * ⚠️ WAJIB DIHAPUS setelah sukses dipakai -- script ini otomatis coba
+ * hapus dirinya sendiri begitu sukses, tapi CEK LAGI manual lewat File
+ * Manager kalau-kalau auto-delete-nya gagal (mis. permission).
+ *
+ * ⚠️ GANTI TOKEN DI BAWAH sebelum upload -- repo ini PUBLIK di GitHub,
+ * jangan pernah commit token asli ke git. Edit baris di bawah lewat
+ * editor teks Plesk File Manager SETELAH upload, isi string acak sendiri
+ * (boleh asal-asalan, yang penting cuma kamu yang tahu).
  */
-const TOKEN = 'f71257e208674002e82a456eb76a8916';
+const TOKEN = 'GANTI_DENGAN_STRING_ACAK_KAMU_SENDIRI';
 
 if (($_GET['token'] ?? '') !== TOKEN) {
     http_response_code(403);
@@ -24,55 +30,21 @@ header('Content-Type: text/plain; charset=utf-8');
 
 $appBase = __DIR__.'/../../pendaftaran-pai-app';
 
-echo "=== Setup pendaftaran-pai ===\n\n";
+echo "=== Setup pendaftaran-pai (symlink storage) ===\n\n";
 
 if (! is_dir($appBase)) {
     exit("GAGAL: folder app tidak ketemu di {$appBase}\n".
         "Pastikan kode Laravel sudah diupload+extract ke httpdocs/pendaftaran-pai-app/ dulu.\n");
 }
 
-if (! file_exists($appBase.'/vendor/autoload.php')) {
-    exit("GAGAL: vendor/autoload.php tidak ada di {$appBase}.\n".
-        "Jalankan Composer install dulu (Plesk -> Composer extension) sebelum buka script ini.\n");
-}
-
 $ok = true;
-
-// ---------- 1. Bootstrap Laravel ----------
-try {
-    require $appBase.'/vendor/autoload.php';
-    /** @var \Illuminate\Foundation\Application $app */
-    $app = require $appBase.'/bootstrap/app.php';
-    $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
-    $kernel->bootstrap();
-    echo "[OK] Laravel berhasil di-bootstrap.\n\n";
-} catch (\Throwable $e) {
-    echo '[GAGAL] Bootstrap Laravel error: '.$e->getMessage()."\n";
-    exit("\nCek lagi .env (terutama APP_KEY, DB_*) lalu coba refresh halaman ini.\n");
-}
-
-// ---------- 2. Migrate ----------
-echo "=== Menjalankan migrate --force ===\n";
-try {
-    $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-    echo \Illuminate\Support\Facades\Artisan::output();
-    if ($exitCode === 0) {
-        echo "[OK] Migrate sukses.\n\n";
-    } else {
-        echo "[GAGAL] Migrate exit code {$exitCode}.\n\n";
-        $ok = false;
-    }
-} catch (\Throwable $e) {
-    echo '[GAGAL] Migrate error: '.$e->getMessage()."\n\n";
-    $ok = false;
-}
-
-// ---------- 3. Symlink storage ----------
-echo "=== Membuat symlink storage ===\n";
 $target = $appBase.'/storage/app/public';
 $link = __DIR__.'/storage';
 
-if (file_exists($link) || is_link($link)) {
+if (! is_dir($target)) {
+    echo "[GAGAL] Folder target {$target} tidak ada. Cek lagi upload kode app-nya.\n\n";
+    $ok = false;
+} elseif (file_exists($link) || is_link($link)) {
     echo "[OK] Symlink/folder 'storage' sudah ada di {$link}, dilewati.\n\n";
 } elseif (! function_exists('symlink')) {
     echo "[GAGAL] Fungsi symlink() di-disable di server ini. Minta admin\n".
@@ -88,16 +60,14 @@ if (file_exists($link) || is_link($link)) {
     }
 }
 
-// ---------- 4. Self-delete kalau semua sukses ----------
 echo "=== Hasil akhir ===\n";
 if ($ok) {
-    echo "Semua langkah SUKSES.\n";
+    echo "SUKSES.\n";
     if (@unlink(__FILE__)) {
         echo "File ini sudah otomatis terhapus. Selesai!\n";
     } else {
         echo "PENTING: hapus file ini MANUAL lewat File Manager sekarang juga\n".
-            "(httpdocs/public/pendaftaran-pai/setup-once.php) -- auto-delete gagal\n".
-            "(kemungkinan permission).\n";
+            "(httpdocs/public/pendaftaran-pai/setup-once.php) -- auto-delete gagal.\n";
     }
 } else {
     echo "Ada langkah yang GAGAL (lihat di atas). File ini BELUM dihapus,\n".
