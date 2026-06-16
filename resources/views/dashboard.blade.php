@@ -25,10 +25,32 @@
                     Profil mahasiswa (No Induk/Prodi) belum lengkap. Hubungi admin untuk melengkapi data.
                 </div>
             @else
+                <div>
+                    <h3 class="font-heading text-lg font-semibold text-slate-900">Halo, {{ $student->nama }} 👋</h3>
+                    <p class="text-sm text-slate-500 mt-1 max-w-2xl">
+                        Ini status eligibility kamu di tiap modul A10&ndash;A70, dihitung otomatis dari
+                        nilai matkul yang sudah diinput admin (dicocokkan lewat No Induk
+                        <span class="font-medium text-slate-700">{{ $student->no_induk }}</span>).
+                        Kalau ada modul yang eligible, tombol "Ajukan Penyetaraan" bakal aktif.
+                    </p>
+                </div>
+
                 <div class="grid sm:grid-cols-3 gap-4">
-                    <x-metric-card label="Eligible" :value="$metrics['eligible']" />
-                    <x-metric-card label="Diajukan" :value="$metrics['diajukan']" />
-                    <x-metric-card label="Disetujui" :value="$metrics['disetujui']" />
+                    <x-metric-card label="Eligible" :value="$metrics['eligible']" hint="Modul yang lolos PKS Baru/Lama" />
+                    <x-metric-card label="Diajukan" :value="$metrics['diajukan']" hint="Total pengajuan yang pernah dikirim" />
+                    <x-metric-card label="Disetujui" :value="$metrics['disetujui']" hint="Pengajuan yang sudah di-approve admin" />
+                </div>
+
+                <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5 text-sm text-slate-700 space-y-1">
+                    <p class="font-medium text-slate-900">Soal skema PKS Baru &amp; PKS Lama</p>
+                    <p>
+                        <span class="font-medium text-emerald-700">PKS Baru</span> dicek dari percentile nilai
+                        (NA) kamu dibanding semua mahasiswa lain yang pernah ambil matkul itu — harga
+                        Rp550.000/modul. <span class="font-medium text-blue-700">PKS Lama</span> dicek dari
+                        rata-rata bobot nilai (NH) matkul kurikulum lama — harga Rp500.000/modul. Sistem
+                        otomatis pilih skema yang paling menguntungkan buat kamu; kalau belum eligible di
+                        keduanya, kartu modul bakal kasih tahu alasannya.
+                    </p>
                 </div>
 
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

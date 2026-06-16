@@ -8,11 +8,12 @@ use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubmissionController;
 use App\Mail\ApprovedModule;
 use App\Mail\RejectedModule;
+use App\Models\PaiModule;
 use App\Models\Submission;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', ['modules' => PaiModule::orderBy('code')->get()]);
 });
 
 Route::middleware('auth')->group(function () {
