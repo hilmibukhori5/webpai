@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RejectSubmissionRequest;
+use App\Mail\ApprovedModule;
+use App\Mail\RejectedModule;
 use App\Models\Submission;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class SubmissionReviewController extends Controller
 {
@@ -27,7 +30,7 @@ class SubmissionReviewController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        // TODO Fase 6: trigger Mailable ApprovedModule.
+        Mail::to($submission->student->user->email)->send(new ApprovedModule($submission));
 
         return back()->with('status', "Modul {$submission->paiModule->code} - {$submission->paiModule->name} telah disetujui.");
     }
@@ -50,7 +53,7 @@ class SubmissionReviewController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        // TODO Fase 6: trigger Mailable RejectedModule.
+        Mail::to($submission->student->user->email)->send(new RejectedModule($submission));
 
         return back()->with('status', "Modul {$submission->paiModule->code} - {$submission->paiModule->name} ditolak.");
     }

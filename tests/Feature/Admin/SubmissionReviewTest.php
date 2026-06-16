@@ -3,6 +3,8 @@
 namespace Tests\Feature\Admin;
 
 use App\Enums\UserRole;
+use App\Mail\ApprovedModule;
+use App\Mail\RejectedModule;
 use App\Models\Course;
 use App\Models\PaiModule;
 use App\Models\Student;
@@ -13,6 +15,7 @@ use Database\Seeders\CourseSeeder;
 use Database\Seeders\ModuleCourseSeeder;
 use Database\Seeders\PaiModuleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class SubmissionReviewTest extends TestCase
@@ -84,6 +87,8 @@ class SubmissionReviewTest extends TestCase
 
     public function test_admin_can_approve_pending_submission(): void
     {
+        Mail::fake();
+
         $admin = $this->makeAdmin();
         $student = Student::factory()->create();
         $submission = $this->makeSubmission($student);
@@ -95,10 +100,17 @@ class SubmissionReviewTest extends TestCase
         $this->assertSame('approved', $submission->status);
         $this->assertSame($admin->id, $submission->reviewed_by);
         $this->assertNotNull($submission->reviewed_at);
+
+        Mail::assertQueued(ApprovedModule::class, function (ApprovedModule $mail) use ($submission, $student) {
+            return $mail->submission->is($submission)
+                && $mail->hasTo($student->user->email);
+        });
     }
 
     public function test_admin_can_reject_pending_submission_with_reason(): void
     {
+        Mail::fake();
+
         $admin = $this->makeAdmin();
         $student = Student::factory()->create();
         $submission = $this->makeSubmission($student);
@@ -111,6 +123,25 @@ class SubmissionReviewTest extends TestCase
         $submission->refresh();
         $this->assertSame('rejected', $submission->status);
         $this->assertSame('Data nilai tidak sesuai.', $submission->rejection_reason);
+
+        Mail::assertQueued(RejectedModule::class, function (RejectedModule $mail) use ($submission, $student) {
+            return $mail->submission->is($submission)
+                && $mail->hasTo($student->user->email)
+                && $mail->submission->rejection_reason === 'Data nilai tidak sesuai.';
+        });
+    }
+
+    public function test_no_mail_sent_when_rejection_fails_validation(): void
+    {
+        Mail::fake();
+
+        $admin = $this->makeAdmin();
+        $student = Student::factory()->create();
+        $submission = $this->makeSubmission($student);
+
+        $this->actingAs($admin)->post(route('admin.submissions.reject', $submission), []);
+
+        Mail::assertNothingQueued();
     }
 
     public function test_reject_requires_reason(): void

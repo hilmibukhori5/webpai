@@ -7,8 +7,9 @@ Mahasiswa mengajukan penyetaraan per modul berdasarkan eligibility otomatis (dih
 nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 
 **Stack:** Laravel 12 (PHP 8.2+) · Blade + Tailwind · Eloquent/MySQL (dev via XAMPP, db `webpai`)
-· Mailable + queue (database driver) · maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit
-(test suite tetap pakai SQLite in-memory via `phpunit.xml`, independen dari `.env`).
+· Mailable + queue (database driver, SMTP asli ke Gmail sejak Fase 6 — bukan MailHog/Mailpit) ·
+maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap pakai SQLite in-memory
++ MAIL_MAILER=array via `phpunit.xml`, independen dari `.env`, tidak pernah kirim email asli).
 
 ## Aturan Kerja
 - **Selalu rujuk `docs/spec.md`** sebagai sumber kebenaran domain. Jangan menebak aturan bisnis.
@@ -40,6 +41,12 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
   bawaan kayak versi lama) — sudah ditambah trait itu di Fase 5 supaya `$this->authorize()` jalan.
   Login redirect (`AuthenticatedSessionController`) sudah role-aware (admin -> `admin.students.index`,
   student -> `dashboard`) sejak Fase 5 — jangan balikin ke `route('dashboard')` polos.
+- **Mail asli**, bukan MailHog/Mailpit: `.env` pakai `MAIL_MAILER=smtp` ke Gmail (kredensial app
+  password, JANGAN taruh di `.env.example` atau commit — `.env.example` cuma placeholder kosong).
+  Mailable (`ApprovedModule`/`RejectedModule`) implements `ShouldQueue` jadi otomatis masuk
+  `jobs` table, perlu `php artisan queue:work` (atau `queue:work --once` buat manual test) supaya
+  benar-benar terkirim. Preview tanpa kirim asli: `/dev/mail-preview/approved` dan `/rejected`
+  (local-only, ambil submission pertama dari DB).
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
@@ -48,5 +55,5 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 - [x] Fase 3 — EligibilityService (INTI) + unit test
 - [x] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
 - [x] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
-- [ ] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
+- [x] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
 - [ ] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)

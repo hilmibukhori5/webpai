@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\SubmissionReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubmissionController;
+use App\Mail\ApprovedModule;
+use App\Mail\RejectedModule;
+use App\Models\Submission;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,5 +38,28 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::post('/submissions/{submission}/approve', [SubmissionReviewController::class, 'approve'])->name('submissions.approve');
     Route::post('/submissions/{submission}/reject', [SubmissionReviewController::class, 'reject'])->name('submissions.reject');
 });
+
+// Preview email tanpa kirim sungguhan (gantinya MailHog/Mailpit, karena
+// MAIL_MAILER sekarang SMTP asli ke Gmail). Cuma aktif di local.
+if (app()->environment('local')) {
+    Route::get('/dev/mail-preview/approved', function () {
+        $submission = Submission::with(['student', 'paiModule'])->first();
+        abort_if(! $submission, 404, 'Belum ada submission buat preview. Buat dulu lewat seeder/dashboard.');
+
+        return new ApprovedModule($submission);
+    });
+
+    Route::get('/dev/mail-preview/rejected', function () {
+        $submission = Submission::with(['student', 'paiModule'])->whereNotNull('rejection_reason')->first()
+            ?? Submission::with(['student', 'paiModule'])->first();
+        abort_if(! $submission, 404, 'Belum ada submission buat preview. Buat dulu lewat seeder/dashboard.');
+
+        if (! $submission->rejection_reason) {
+            $submission->rejection_reason = 'Contoh alasan penolakan (preview).';
+        }
+
+        return new RejectedModule($submission);
+    });
+}
 
 require __DIR__.'/auth.php';
