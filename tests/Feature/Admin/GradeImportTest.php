@@ -86,6 +86,31 @@ class GradeImportTest extends TestCase
         $this->assertDatabaseHas('course_grades', ['no_induk' => '195020100001']);
     }
 
+    public function test_corrupt_file_returns_friendly_error_instead_of_500(): void
+    {
+        // mimes validation Laravel sudah cukup ketat soal magic bytes, jadi
+        // file "rusak" asli susah lolos sampai ke controller buat nguji
+        // try/catch-nya. Mock Excel::import() supaya melempar exception
+        // persis seperti kalau PhpSpreadsheet gagal parse file yang valid
+        // secara mimes tapi corrupt secara struktur internal.
+        \Maatwebsite\Excel\Facades\Excel::shouldReceive('import')
+            ->once()
+            ->andThrow(new \Exception('Simulated corrupt spreadsheet.'));
+
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $course = Course::where('code', 'MAA62043')->firstOrFail();
+
+        $response = $this->actingAs($admin)->post(route('admin.grades.import.store'), [
+            'course_id' => $course->id,
+            'semester' => 'Genap 2223',
+            'file' => $this->csvUploadedFile("No Induk,Nama,NA,NH\n195020100001,Andi,88.5,A\n"),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseCount('course_grades', 0);
+    }
+
     public function test_non_admin_cannot_access_import_form(): void
     {
         $student = User::factory()->create(['role' => UserRole::Student]);

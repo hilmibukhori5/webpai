@@ -10,6 +10,7 @@ use App\Services\ThresholdService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
+use Throwable;
 
 class GradeImportController extends Controller
 {
@@ -33,7 +34,13 @@ class GradeImportController extends Controller
 
         $import = new CourseGradesImport($course->id, $request->validated('semester'));
 
-        Excel::import($import, $request->file('file'));
+        try {
+            Excel::import($import, $request->file('file'));
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'Gagal membaca file. Pastikan formatnya sesuai contoh (xlsx/xls/csv) dan tidak corrupt.');
+        }
 
         $imported = $import->importedCount();
 

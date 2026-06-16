@@ -1,59 +1,123 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Penyetaraan Modul PAI
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web untuk mahasiswa S1 Ilmu Aktuaria / S1 Matematika (PSIA UB) yang ingin
+menyetarakan matkul yang sudah lulus ke Modul PAI level ASAI (A10–A70). Mahasiswa
+mengajukan penyetaraan per modul berdasarkan eligibility otomatis (dihitung dari nilai),
+lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 
-## About Laravel
+Aturan bisnis lengkap (skema PKS Lama/Baru, decision tree, harga, dll) ada di
+[`docs/spec.md`](docs/spec.md) — itu sumber kebenaran domain untuk project ini.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 12 (PHP 8.2+), Blade + Tailwind (Laravel Breeze)
+- MySQL/MariaDB (dev pakai XAMPP)
+- `maatwebsite/excel` untuk import nilai
+- Mail via SMTP (queue database driver)
+- PHPUnit (test pakai SQLite in-memory, terisolasi dari `.env`)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup
 
-## Learning Laravel
+1. **Clone & install dependency**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+   ```bash
+   composer install
+   npm install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Environment**
 
-## Laravel Sponsors
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   Edit `.env`:
+   - `DB_*` — sesuaikan dengan MySQL lokal kamu (default: `127.0.0.1:3306`, database `webpai`,
+     user `root` tanpa password — cocok untuk XAMPP default). Buat database-nya dulu kalau
+     belum ada:
+     ```bash
+     mysql -u root -e "CREATE DATABASE webpai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+     ```
+   - `MAIL_*` — isi kredensial SMTP (mis. Gmail dengan [App Password](https://myaccount.google.com/apppasswords),
+     **bukan** password akun biasa). Kalau tidak mau kirim email asli saat develop, set
+     `MAIL_MAILER=log` (email akan ditulis ke `storage/logs/laravel.log` saja).
 
-### Premium Partners
+3. **Migrate & seed master data** (modul PAI A10–A70, daftar matkul, pivot kurikulum)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## Contributing
+4. **(Opsional) Seed data demo** — 1 admin + 6 mahasiswa contoh yang masing-masing
+   mengaktifkan satu cabang decision tree (eligible baru, eligible lama, lolos lama tapi
+   kode baru, belum lengkap, tepat di batas 3.5, dan satu yang sudah ditolak admin):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```bash
+   php artisan db:seed --class=DemoSeeder
+   ```
 
-## Code of Conduct
+   **Kredensial demo** (password semua `password`):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   | Role | Email | Keterangan |
+   |---|---|---|
+   | Admin | `admin@pai.test` | dashboard admin |
+   | Student | `ahmad@pai.test` | A10 — eligible PKS Baru, sudah disetujui |
+   | Student | `siti@pai.test` | A30 — eligible PKS Lama, masih pending |
+   | Student | `budi@pai.test` | A40 — lolos PKS Lama tapi kode kurikulum baru → belum eligible |
+   | Student | `dewi@pai.test` | A60 — belum lengkap matkul komponennya |
+   | Student | `rudi@pai.test` | A20 — rata-rata bobot pas 3.5 → gagal |
+   | Student | `maya@pai.test` | A50 — eligible PKS Baru tapi ditolak admin (coba "ajukan ulang") |
 
-## Security Vulnerabilities
+5. **Build asset & jalankan**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   npm run build      # atau `npm run dev` untuk watch mode
+   php artisan serve
+   php artisan queue:work   # wajib jalan biar email ke-kirim (queue database driver)
+   ```
 
-## License
+## Cara import nilai
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Login sebagai admin → buka **Import Nilai** (`/admin/grades/import`).
+2. Pilih matkul + isi label semester (mis. `Genap 2223`).
+3. Upload file Excel/CSV dengan kolom: `No Induk, Nama, NA, NH`. Contoh file bisa didownload
+   langsung dari halaman import (`public/samples/course_grades_sample.csv`).
+4. Baris yang nilainya tidak valid (NA di luar 0–100, NH tidak dikenal) otomatis di-skip dan
+   dilaporkan — baris lain tetap masuk.
+5. Setelah import, `course_thresholds` untuk matkul itu otomatis di-recompute (percentile
+   diambil dari modul tempat matkul itu jadi komponen, bukan satu nilai global — lihat
+   `docs/spec.md` bagian 4a).
+6. Recompute manual (mis. setelah ubah data lewat cara lain) bisa lewat artisan:
+
+   ```bash
+   php artisan thresholds:recompute            # semua course
+   php artisan thresholds:recompute MAA62043    # 1 course by kode
+   ```
+
+## Preview email tanpa kirim asli
+
+Karena `.env` pakai SMTP asli (bukan MailHog/Mailpit), preview tampilan email tanpa benar-benar
+mengirim bisa lewat (local environment saja):
+
+- `/dev/mail-preview/approved`
+- `/dev/mail-preview/rejected`
+
+(ambil submission pertama yang ada di database — pastikan sudah ada data, mis. lewat `DemoSeeder`.)
+
+## Test
+
+```bash
+php artisan test
+```
+
+Test pakai koneksi SQLite in-memory + `MAIL_MAILER=array` (lihat `phpunit.xml`), jadi tidak
+pernah menyentuh database MySQL development atau mengirim email asli.
+
+## Struktur penting
+
+- `docs/spec.md` — spec domain (jangan diubah tanpa konfirmasi, terutama bagian 4 & 10).
+- `CLAUDE.md` — aturan kerja & checklist fase untuk pengembangan lanjutan via Claude Code.
+- `app/Services/EligibilityService.php` — mesin eligibility (inti sistem).
+- `app/Services/ThresholdService.php` — hitung `course_thresholds` (percentile).
+- `database/seeders/Data/ModuleCourseMap.php` — sumber kebenaran pemetaan modul ↔ matkul.

@@ -24,7 +24,7 @@ class ImportCourseGradesRequest extends FormRequest
         return [
             'course_id' => ['required', 'exists:courses,id'],
             'semester' => ['required', 'string', 'max:50'], // mis. "Genap 2223"
-            'file' => ['required', 'file', 'mimes:xlsx,xls,csv,txt'],
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv,txt', 'max:5120'], // maks 5MB
         ];
     }
 }

@@ -68,4 +68,19 @@ class RegistrationTest extends TestCase
         $response->assertSessionHasErrors('prodi');
         $this->assertGuest();
     }
+
+    public function test_no_induk_must_be_numeric(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'no_induk' => 'ABC123XYZ',
+            'prodi' => 'S1 Ilmu Aktuaria',
+        ]);
+
+        $response->assertSessionHasErrors('no_induk');
+        $this->assertGuest();
+    }
 }

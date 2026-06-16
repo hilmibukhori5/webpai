@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'no_induk' => ['required', 'string', 'max:50', 'unique:'.Student::class.',no_induk'],
+            'no_induk' => ['required', 'string', 'max:50', 'regex:/^[0-9]+$/', 'unique:'.Student::class.',no_induk'],
             'prodi' => ['required', Rule::in(self::PRODI_OPTIONS)],
         ]);
 

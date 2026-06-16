@@ -47,6 +47,12 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   `jobs` table, perlu `php artisan queue:work` (atau `queue:work --once` buat manual test) supaya
   benar-benar terkirim. Preview tanpa kirim asli: `/dev/mail-preview/approved` dan `/rejected`
   (local-only, ambil submission pertama dari DB).
+- `DemoSeeder` (Fase 7) **tidak** ikut `DatabaseSeeder` default — jalankan manual lewat
+  `php artisan db:seed --class=DemoSeeder` setelah master data ke-seed. Isinya 1 admin + 6
+  mahasiswa yang masing-masing mengaktifkan 1 cabang decision tree persis (dipakai sebagai
+  acceptance test informal — kalau cabangnya berubah karena edit EligibilityService, seeder
+  ini akan throw RuntimeException karena hasil eligibility-nya tidak sesuai harapan lagi).
+  Kredensial demo & detail skenario ada di README.
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
@@ -56,4 +62,8 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
 - [x] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
 - [x] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
 - [x] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
-- [ ] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)
+- [x] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)
+
+Semua fase di bagian 8 spec sudah selesai. Pekerjaan lanjutan dari sini ada di luar urutan
+fase 0-7: polish Design System (bagian 10, belum diterapkan ke UI — masih plain Breeze
+styling) kalau diminta, atau perbaikan/fitur baru sesuai permintaan user berikutnya.

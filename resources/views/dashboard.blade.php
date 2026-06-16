@@ -14,6 +14,12 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-700 rounded-lg p-4 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @if (! $student)
                 <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-4 text-sm">
                     Profil mahasiswa (No Induk/Prodi) belum lengkap. Hubungi admin untuk melengkapi data.
