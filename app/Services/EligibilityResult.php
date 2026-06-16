@@ -20,6 +20,7 @@ final class EligibilityResult
         public readonly ?int $price,
         public readonly array $componentGrades,
         public readonly string $reason,
+        public readonly ?string $decidingCurriculum = null, // curriculum (baru|lama) yang menentukan decision, buat snapshot submission_courses
     ) {}
 
     public static function notEligible(string $reason, array $componentGrades = []): self
@@ -32,5 +33,18 @@ final class EligibilityResult
             componentGrades: $componentGrades,
             reason: $reason,
         );
+    }
+
+    /**
+     * Rincian matkul komponen yang menentukan decision ini (buat snapshot
+     * submission_courses). Null kalau decision=none (tidak ada yang dipakai).
+     */
+    public function decidingComponents(): ?array
+    {
+        if ($this->decidingCurriculum === null) {
+            return null;
+        }
+
+        return $this->componentGrades[$this->decidingCurriculum]['courses'] ?? null;
     }
 }

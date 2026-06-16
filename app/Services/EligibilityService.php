@@ -38,11 +38,13 @@ class EligibilityService
         }
 
         $eligibleBaru = false;
+        $percentilePassingCurricula = [];
         $passingLamaCurricula = [];
 
         foreach ($matchedSets as $curriculum => $matched) {
             if ($this->passesPercentile($matched)) {
                 $eligibleBaru = true;
+                $percentilePassingCurricula[] = $curriculum;
             }
 
             if ($this->weightedAverage($matched) > 3.5) {
@@ -61,6 +63,7 @@ class EligibilityService
                 price: config('grading.prices.baru'),
                 componentGrades: $componentGrades,
                 reason: 'Lolos PKS Baru: NA mahasiswa ≥ batas bawah percentile di semua matkul komponen.',
+                decidingCurriculum: $percentilePassingCurricula[0],
             );
         }
 
@@ -73,6 +76,7 @@ class EligibilityService
                     price: config('grading.prices.lama'),
                     componentGrades: $componentGrades,
                     reason: 'Lolos PKS Lama: rata-rata bobot tertimbang SKS > 3.5, matkul berkode kurikulum lama.',
+                    decidingCurriculum: 'lama',
                 );
             }
 
@@ -218,6 +222,7 @@ class EligibilityService
                     $threshold = $item['course']->threshold;
 
                     return [
+                        'course_id' => $item['course']->id,
                         'course_code' => $item['course']->code,
                         'course_name' => $item['course']->name,
                         'sks' => $item['sks'],

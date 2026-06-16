@@ -2,20 +2,25 @@
 
 use App\Http\Controllers\Admin\GradeImportController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'role:student'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/modules/{paiModule:code}/ajukan', [SubmissionController::class, 'create'])->name('submissions.create');
+    Route::post('/modules/{paiModule:code}/ajukan', [SubmissionController::class, 'store'])->name('submissions.store');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

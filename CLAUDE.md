@@ -30,13 +30,19 @@ nilai), lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
   (dikonfirmasi user, lihat spec bagian 4).
 - Saat butuh urutan migration baru, hati-hati timestamp identik + urutan alfabetis bisa bikin
   FK gagal di MySQL walau lolos di SQLite (sudah kejadian sekali, lihat git log).
+- **Test gotcha:** `User::factory()->create()` TANPA override `role` menghasilkan object in-memory
+  dengan `role=null` (kolom itu cuma kena DB default saat INSERT, model-nya tidak di-refetch).
+  `actingAs()` memakai object in-memory itu apa adanya, jadi `role:student`/`role:admin` middleware
+  bisa 403 walau di DB rolenya sudah benar. Selalu `->fresh()` user hasil factory sebelum
+  `actingAs()` kalau tidak override role secara eksplisit (atau akses lewat relasi seperti
+  `$student->user`, yang otomatis fresh-query).
 
 ## Checklist Fase (lihat detail prompt tiap fase di `docs/spec.md` bagian 8)
 - [x] Fase 0 — Setup & konvensi (Breeze Blade, role admin/student, middleware)
 - [x] Fase 1 — Schema, model, seeder master (pai_modules, courses, module_course, skala nilai)
 - [x] Fase 2 — Import nilai (Excel/CSV) + hitung `course_thresholds` (percentile per modul)
 - [x] Fase 3 — EligibilityService (INTI) + unit test
-- [ ] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
+- [x] Fase 4 — Sisi mahasiswa (register/login, dashboard modul, ajukan penyetaraan)
 - [ ] Fase 5 — Sisi admin (dashboard per mahasiswa, detail, setujui/tolak per modul)
 - [ ] Fase 6 — Email (ApprovedModule, RejectedModule, queue)
 - [ ] Fase 7 — Polish & demo (seeder demo, validasi, README, test hijau semua)

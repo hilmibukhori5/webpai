@@ -16,6 +16,25 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- No Induk (NIM) -->
+        <div class="mt-4">
+            <x-input-label for="no_induk" value="No Induk (NIM)" />
+            <x-text-input id="no_induk" class="block mt-1 w-full" type="text" name="no_induk" :value="old('no_induk')" required autocomplete="off" />
+            <x-input-error :messages="$errors->get('no_induk')" class="mt-2" />
+        </div>
+
+        <!-- Prodi -->
+        <div class="mt-4">
+            <x-input-label for="prodi" value="Program Studi" />
+            <select id="prodi" name="prodi" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                <option value="">-- pilih prodi --</option>
+                @foreach ($prodiOptions as $option)
+                    <option value="{{ $option }}" @selected(old('prodi') === $option)>{{ $option }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('prodi')" class="mt-2" />
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
