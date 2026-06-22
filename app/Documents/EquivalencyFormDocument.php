@@ -2,25 +2,20 @@
 
 namespace App\Documents;
 
-use App\Models\Submission;
+use App\Models\Student;
+use Illuminate\Support\Collection;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
 
 /**
- * Formulir Permohonan Penyetaraan Ujian -- dilampirkan otomatis di email
- * ApprovedModule (di luar 8 fase asli spec, ditambah belakangan atas
- * permintaan user). Isinya MASIH DUMMY: layout & field dasar saja, belum
- * format resmi ASAI/UB -- tinggal ganti isi build() kalau template resmi
- * sudah ada, tanda tangan kosong dipakai keduanya.
- *
- * Formulir PKS Lama dan PKS Baru sengaja dibedakan (judul & catatan beda)
- * karena rincian yang perlu diisi mahasiswa berbeda per skema (lihat
- * docs/spec.md bagian 4).
+ * Formulir Permohonan Penyetaraan Ujian — dilampirkan di BulkDecisionMail.
+ * Satu formulir per mahasiswa, mencakup semua modul yang disetujui.
+ * Isi MASIH DUMMY: layout & field dasar saja, belum format resmi ASAI/UB.
  */
 class EquivalencyFormDocument
 {
-    public function build(Submission $submission): PhpWord
+    public function build(Student $student, Collection $approvedSubmissions): PhpWord
     {
         $phpWord = new PhpWord;
         $phpWord->setDefaultFontName('Times New Roman');
@@ -33,22 +28,18 @@ class EquivalencyFormDocument
             'marginRight' => 1200,
         ]);
 
-        $this->addTitle($section, $submission);
+        $this->addTitle($section);
         $this->addDummyNotice($section);
-        $this->addStudentFields($section, $submission);
+        $this->addStudentFields($section, $student);
+        $this->addModuleTable($section, $approvedSubmissions);
         $this->addSignatureBlock($section);
 
         return $phpWord;
     }
 
-    /**
-     * Generate langsung ke string biner (.docx), dipakai sebagai lampiran
-     * email (Mail\Attachment::fromData) -- IOFactory cuma bisa nulis ke
-     * path/stream, jadi lewat file temporer dulu lalu dihapus lagi.
-     */
-    public function toBinaryString(Submission $submission): string
+    public function toBinaryString(Student $student, Collection $approvedSubmissions): string
     {
-        $phpWord = $this->build($submission);
+        $phpWord = $this->build($student, $approvedSubmissions);
 
         $tempPath = tempnam(sys_get_temp_dir(), 'formulir').'.docx';
         IOFactory::createWriter($phpWord, 'Word2007')->save($tempPath);
@@ -59,12 +50,9 @@ class EquivalencyFormDocument
         return $binary;
     }
 
-    private function addTitle($section, Submission $submission): void
+    private function addTitle($section): void
     {
-        $schemeLabel = $submission->scheme === 'baru' ? 'PKS BARU' : 'PKS LAMA';
-
         $section->addText('FORMULIR PERMOHONAN PENYETARAAN UJIAN', ['bold' => true, 'size' => 14, 'underline' => 'single'], ['alignment' => Jc::CENTER]);
-        $section->addText("Skema {$schemeLabel}", ['bold' => true, 'size' => 12], ['alignment' => Jc::CENTER]);
         $section->addTextBreak(1);
     }
 
@@ -78,28 +66,50 @@ class EquivalencyFormDocument
         $section->addTextBreak(1);
     }
 
-    private function addStudentFields($section, Submission $submission): void
+    private function addStudentFields($section, Student $student): void
     {
-        $student = $submission->student;
-        $module = $submission->paiModule;
-
         $fields = [
             'Nama' => $student->nama,
             'No Induk (NIM)' => $student->no_induk,
             'Program Studi' => $student->prodi,
-            'Modul' => "{$module->code} - {$module->name}",
-            'Skema' => $submission->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama',
-            'Biaya Penyetaraan' => 'Rp'.number_format($submission->price, 0, ',', '.'),
         ];
 
         foreach ($fields as $label => $value) {
             $this->addLabelValueRow($section, $label, (string) $value);
         }
 
+        $section->addTextBreak(1);
+    }
+
+    private function addModuleTable($section, Collection $approvedSubmissions): void
+    {
+        $section->addText('Modul yang diajukan:', ['bold' => true]);
+        $section->addTextBreak(1);
+
+        $table = $section->addTable(['borderSize' => 6, 'borderColor' => 'CCCCCC', 'cellMarginTop' => 80, 'cellMarginBottom' => 80, 'cellMarginLeft' => 80, 'cellMarginRight' => 80]);
+        $table->addRow();
+        $table->addCell(1000)->addText('Kode', ['bold' => true]);
+        $table->addCell(3500)->addText('Nama Modul', ['bold' => true]);
+        $table->addCell(1500)->addText('Skema', ['bold' => true]);
+        $table->addCell(1500)->addText('Biaya (Rp)', ['bold' => true]);
+
+        foreach ($approvedSubmissions as $submission) {
+            $table->addRow();
+            $table->addCell(1000)->addText($submission->paiModule->code);
+            $table->addCell(3500)->addText($submission->paiModule->name);
+            $table->addCell(1500)->addText($submission->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama');
+            $table->addCell(1500)->addText(number_format($submission->price, 0, ',', '.'));
+        }
+
+        $table->addRow();
+        $table->addCell(6000, ['gridSpan' => 3])->addText('Total', ['bold' => true]);
+        $table->addCell(1500)->addText(number_format($approvedSubmissions->sum('price'), 0, ',', '.'), ['bold' => true]);
+
+        $section->addTextBreak(1);
         $this->addLabelValueRow($section, 'Tanggal Pengisian', '.................................');
         $section->addTextBreak(1);
 
-        $section->addText('Dengan ini saya mengajukan permohonan penyetaraan ujian untuk modul tersebut di atas sesuai skema yang berlaku.');
+        $section->addText('Dengan ini saya mengajukan permohonan penyetaraan ujian untuk modul-modul tersebut di atas sesuai skema yang berlaku.');
         $section->addTextBreak(2);
     }
 

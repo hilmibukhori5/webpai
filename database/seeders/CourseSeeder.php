@@ -18,11 +18,21 @@ class CourseSeeder extends Seeder
                 foreach ($module[$curriculum] as $course) {
                     // Beberapa code dipakai di kedua kurikulum (lihat catatan
                     // bagian 2 spec) — updateOrCreate by code supaya tidak dobel.
+                    $semesterType = str_starts_with($course['code'], 'MAA61') ? 'Ganjil' : 'Genap';
+
                     Course::updateOrCreate(
                         ['code' => $course['code']],
-                        ['name' => $course['name'], 'sks' => $course['sks']],
+                        ['name' => $course['name'], 'sks' => $course['sks'], 'semester_type' => $semesterType],
                     );
                 }
+            }
+
+            // Kursus eksklusif S1 Matematika (MAM6xxxx — default semester_type Genap).
+            foreach ($module['matematika'] ?? [] as $course) {
+                Course::updateOrCreate(
+                    ['code' => $course['code']],
+                    ['name' => $course['name'], 'sks' => $course['sks'], 'semester_type' => 'Genap'],
+                );
             }
         }
     }

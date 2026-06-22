@@ -44,11 +44,11 @@
                 <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5 text-sm text-slate-700 space-y-1">
                     <p class="font-medium text-slate-900">Soal skema PKS Baru &amp; PKS Lama</p>
                     <p>
+                        <span class="font-medium text-blue-700">PKS Lama</span> dicek dari
+                        rata-rata bobot nilai (NH) matkul kurikulum lama — harga Rp500.000/modul.
                         <span class="font-medium text-emerald-700">PKS Baru</span> dicek dari percentile nilai
-                        (NA) kamu dibanding semua mahasiswa lain yang pernah ambil matkul itu di semester tersebut — harga
-                        Rp550.000/modul. <span class="font-medium text-blue-700">PKS Lama</span> dicek dari
-                        rata-rata bobot nilai (NH) matkul kurikulum lama — harga Rp500.000/modul. Sistem
-                        otomatis pilih skema yang paling menguntungkan buat kamu; kalau belum eligible di
+                        (NA) dibanding semua mahasiswa lain — harga Rp550.000/modul. Kalau lolos keduanya,
+                        sistem otomatis pilih <strong>PKS Lama</strong> karena lebih murah; kalau belum eligible di
                         keduanya, kartu modul bakal kasih tahu alasannya.
                     </p>
                 </div>
@@ -60,13 +60,12 @@
                             $result = $card['result'];
                             $submission = $card['submission'];
 
-                            // Tentukan variant badge & state tombol.
                             if ($submission && $submission->status === 'pending') {
                                 $badgeVariant = 'pending';
                                 $badgeLabel = 'Menunggu review';
                                 $buttonLabel = 'Sudah diajukan';
                                 $buttonHref = null;
-                            } elseif ($submission && $submission->status === 'approved' && $submission->payment_status === 'paid') {
+                            } elseif ($submission && $submission->status === 'approved' && $student->payment_status === 'paid') {
                                 $badgeVariant = 'approved';
                                 $badgeLabel = 'Lunas';
                                 $buttonLabel = 'Lunas';
@@ -74,8 +73,8 @@
                             } elseif ($submission && $submission->status === 'approved') {
                                 $badgeVariant = 'approved';
                                 $badgeLabel = 'Disetujui';
-                                $buttonLabel = 'Upload Bukti Bayar';
-                                $buttonHref = route('submissions.documents.edit', $submission);
+                                $buttonLabel = 'Disetujui';
+                                $buttonHref = null;
                             } elseif ($submission && $submission->status === 'rejected') {
                                 $badgeVariant = 'rejected';
                                 $badgeLabel = 'Ditolak';
@@ -121,6 +120,31 @@
                         </x-module-card>
                     @endforeach
                 </div>
+
+                @php
+                    $hasApproved = $cards->contains(fn ($card) => $card['submission'] && $card['submission']->status === 'approved');
+                @endphp
+
+                @if ($hasApproved)
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between gap-4 flex-wrap">
+                            <div>
+                                <h4 class="font-heading font-semibold text-slate-900">Pembayaran</h4>
+                                <p class="text-sm text-slate-500 mt-1">
+                                    Upload bukti bayar & formulir terisi untuk semua modul yang disetujui dalam satu langkah.
+                                </p>
+                            </div>
+                            <x-status-badge :variant="$student->payment_status === 'paid' ? 'approved' : 'pending'">
+                                {{ $student->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
+                            </x-status-badge>
+                        </div>
+                        @if ($student->payment_status !== 'paid')
+                            <div class="mt-4">
+                                <x-btn variant="primary" :href="route('student.documents.edit')">Upload Bukti Bayar & Formulir</x-btn>
+                            </div>
+                        @endif
+                    </div>
+                @endif
             @endif
         </div>
     </div>

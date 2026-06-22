@@ -21,7 +21,7 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test@student.ub.ac.id',
             'password' => 'password',
             'password_confirmation' => 'password',
             'no_induk' => '195020100099',
@@ -37,13 +37,28 @@ class RegistrationTest extends TestCase
         ]);
     }
 
+    public function test_non_student_ub_email_is_rejected(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@gmail.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'no_induk' => '195020100099',
+            'prodi' => 'S1 Ilmu Aktuaria',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
+    }
+
     public function test_no_induk_must_be_unique(): void
     {
         Student::factory()->create(['no_induk' => '195020100099']);
 
         $response = $this->post('/register', [
             'name' => 'Test User 2',
-            'email' => 'test2@example.com',
+            'email' => 'test2@student.ub.ac.id',
             'password' => 'password',
             'password_confirmation' => 'password',
             'no_induk' => '195020100099',
@@ -58,7 +73,7 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test@student.ub.ac.id',
             'password' => 'password',
             'password_confirmation' => 'password',
             'no_induk' => '195020100099',
@@ -73,7 +88,7 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => 'test@student.ub.ac.id',
             'password' => 'password',
             'password_confirmation' => 'password',
             'no_induk' => 'ABC123XYZ',

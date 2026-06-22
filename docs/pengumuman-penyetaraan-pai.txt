@@ -1,0 +1,70 @@
+Bagi mahasiswa Program Studi Sarjana Ilmu Aktuaria dan Program Studi Sarjana Matematika yang akan mengajukan Penyetaraan Mata Ujian PAI, mohon mengikuti prosedur berikut.
+
+
+1. Pendaftaran dan pengajuan penyetaraan melalui sistem online
+
+Mahasiswa melakukan pendaftaran akun dan mengajukan penyetaraan melalui laman:
+https://math.ub.ac.id/pendaftaran-pai
+
+Langkah pengajuan:
+- Daftar akun menggunakan NIM dan email aktif.
+- Sistem akan otomatis menghitung kelayakan (eligibilitas) tiap modul berdasarkan nilai yang
+  telah diinput oleh departemen — tidak perlu menghitung manual.
+- Ajukan penyetaraan untuk modul yang dinyatakan eligible.
+
+Pendaftaran dibuka mulai tanggal 22 Juni 2026 dan paling lambat 1 Juli 2026.
+
+
+2. Validasi berkas oleh admin
+
+Admin departemen akan melakukan verifikasi dan menyetujui atau menolak pengajuan penyetaraan
+tiap modul. Notifikasi hasil review akan dikirimkan melalui email yang didaftarkan.
+
+
+3. Pembayaran dan upload berkas
+
+Mahasiswa yang pengajuannya disetujui dapat melakukan pembayaran dan upload berkas melalui
+sistem yang sama (tombol tersedia di dashboard setelah disetujui, atau melalui tautan di email
+notifikasi).
+
+Berkas yang di-upload:
+- Formulir Permohonan Penyetaraan Ujian PAI — dikirimkan secara otomatis melalui lampiran
+  email persetujuan — yang telah diisi lengkap dan ditandatangani.
+- Bukti pembayaran (nomor rekening penyetaraan dapat dilihat pada website resmi PAI).
+
+Status akan otomatis berubah menjadi Lunas setelah kedua berkas terupload.
+
+
+------------------------------------------------------------------------
+KETENTUAN KHUSUS
+------------------------------------------------------------------------
+
+- Nilai mata kuliah yang disetarakan adalah nilai yang diperoleh dari perkuliahan reguler.
+
+- Terdapat dua skema penyetaraan yang berlaku:
+
+    PKS Baru — nilai NA mahasiswa harus memenuhi ambang persentil yang ditetapkan per modul
+    (berbeda-beda untuk tiap modul A10–A70). Biaya: Rp550.000/modul.
+
+    PKS Lama — rata-rata terbobot nilai (berdasarkan SKS) lebih besar dari 3,5 (> 3,5),
+    berlaku bagi mahasiswa yang menempuh mata kuliah berkode kurikulum lama.
+    Biaya: Rp500.000/modul.
+
+    Sistem secara otomatis menentukan skema yang berlaku; mahasiswa tidak perlu memilih sendiri.
+
+- Pada kasus nilai mata kuliah hasil mengulang, sistem otomatis menggunakan nilai tertinggi
+  di antara semua percobaan.
+
+- Pastikan NIM yang diisikan saat mendaftar akun sama persis dengan yang tercatat di data
+  akademik — NIM digunakan sebagai kunci pencocokan data nilai.
+
+- Berkas yang tidak lengkap atau tidak sesuai ketentuan tidak akan diproses.
+
+
+------------------------------------------------------------------------
+CATATAN
+------------------------------------------------------------------------
+
+Daftar mata kuliah yang dapat diajukan untuk penyetaraan mengikuti ketentuan yang berlaku
+pada Perjanjian Kerja Sama (PKS) antara PAI dan FMIPA Universitas Brawijaya. Informasi
+terkait dapat dilihat pada website resmi PAI.

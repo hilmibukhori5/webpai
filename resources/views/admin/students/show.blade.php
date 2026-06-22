@@ -24,9 +24,62 @@
                 </div>
             @endif
 
+            {{-- Info mahasiswa --}}
             <div class="bg-white rounded-2xl border border-slate-200 p-6">
                 <p class="text-sm text-slate-500">No Induk: {{ $student->no_induk }} &middot; {{ $student->prodi }}</p>
                 <h3 class="font-heading text-lg font-semibold text-slate-900">{{ $student->nama }}</h3>
+            </div>
+
+            {{-- Panel keputusan & pembayaran --}}
+            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="space-y-1">
+                        <p class="text-sm font-medium text-slate-700">Kirim Keputusan ke Mahasiswa</p>
+                        @if ($student->decision_sent_at)
+                            <p class="text-xs text-slate-500">Terakhir dikirim: {{ $student->decision_sent_at->translatedFormat('d M Y, H:i') }}</p>
+                        @else
+                            <p class="text-xs text-slate-400">Belum pernah dikirim</p>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500 mb-1">Pembayaran</p>
+                            <x-status-badge :variant="$student->payment_status === 'paid' ? 'approved' : 'pending'">
+                                {{ $student->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
+                            </x-status-badge>
+                        </div>
+                        <form method="POST" action="{{ route('admin.students.send-decision', $student) }}">
+                            @csrf
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-medium transition-colors">
+                                Kirim Keputusan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                @if ($student->payment_status === 'paid')
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex gap-4 text-sm">
+                        @if ($student->bukti_pembayaran_path)
+                            <a href="{{ Storage::url($student->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">Lihat bukti bayar</a>
+                        @endif
+                        @if ($student->formulir_terisi_path)
+                            <a href="{{ Storage::url($student->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">Lihat formulir terisi</a>
+                        @endif
+                    </div>
+                @elseif ($student->bukti_pembayaran_path || $student->formulir_terisi_path)
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex gap-4 text-sm text-slate-500">
+                        @if ($student->bukti_pembayaran_path)
+                            <a href="{{ Storage::url($student->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">Lihat bukti bayar</a>
+                        @else
+                            <span>Bukti bayar belum diupload</span>
+                        @endif
+                        @if ($student->formulir_terisi_path)
+                            <a href="{{ Storage::url($student->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">Lihat formulir terisi</a>
+                        @else
+                            <span>Formulir belum diupload</span>
+                        @endif
+                    </div>
+                @endif
             </div>
 
             @forelse ($submissions as $submission)
@@ -84,27 +137,6 @@
                                 pada {{ $submission->reviewed_at->translatedFormat('d M Y, H:i') }}
                             @endif
                         </p>
-                    @endif
-
-                    @if ($submission->status === 'approved')
-                        <div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
-                            <div class="text-sm text-slate-600 space-x-3">
-                                <span class="font-medium text-slate-700">Pembayaran:</span>
-                                @if ($submission->bukti_pembayaran_path)
-                                    <a href="{{ Storage::url($submission->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">Bukti bayar</a>
-                                @else
-                                    <span class="text-slate-400">Bukti bayar belum diupload</span>
-                                @endif
-                                @if ($submission->formulir_terisi_path)
-                                    <a href="{{ Storage::url($submission->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">Formulir terisi</a>
-                                @else
-                                    <span class="text-slate-400">Formulir belum diupload</span>
-                                @endif
-                            </div>
-                            <x-status-badge :variant="$submission->payment_status === 'paid' ? 'approved' : 'pending'">
-                                {{ $submission->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
-                            </x-status-badge>
-                        </div>
                     @endif
 
                     @if ($submission->status === 'pending')

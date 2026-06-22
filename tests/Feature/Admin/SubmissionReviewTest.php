@@ -3,8 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Enums\UserRole;
-use App\Mail\ApprovedModule;
-use App\Mail\RejectedModule;
+use App\Mail\BulkDecisionMail;
 use App\Models\Course;
 use App\Models\PaiModule;
 use App\Models\Student;
@@ -101,10 +100,8 @@ class SubmissionReviewTest extends TestCase
         $this->assertSame($admin->id, $submission->reviewed_by);
         $this->assertNotNull($submission->reviewed_at);
 
-        Mail::assertQueued(ApprovedModule::class, function (ApprovedModule $mail) use ($submission, $student) {
-            return $mail->submission->is($submission)
-                && $mail->hasTo($student->user->email);
-        });
+        // Email tidak dikirim saat approve — hanya saat admin klik "Kirim Keputusan"
+        Mail::assertNothingQueued();
     }
 
     public function test_admin_can_reject_pending_submission_with_reason(): void
@@ -124,11 +121,45 @@ class SubmissionReviewTest extends TestCase
         $this->assertSame('rejected', $submission->status);
         $this->assertSame('Data nilai tidak sesuai.', $submission->rejection_reason);
 
-        Mail::assertQueued(RejectedModule::class, function (RejectedModule $mail) use ($submission, $student) {
-            return $mail->submission->is($submission)
-                && $mail->hasTo($student->user->email)
-                && $mail->submission->rejection_reason === 'Data nilai tidak sesuai.';
+        // Email tidak dikirim saat reject — hanya saat admin klik "Kirim Keputusan"
+        Mail::assertNothingQueued();
+    }
+
+    public function test_admin_can_send_bulk_decision_email(): void
+    {
+        Mail::fake();
+
+        $admin = $this->makeAdmin();
+        $student = Student::factory()->create();
+        $this->makeSubmission($student, 'A10', 'approved');
+        $this->makeSubmission($student, 'A20', 'rejected');
+
+        $response = $this->actingAs($admin)->post(route('admin.students.send-decision', $student));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('status');
+
+        Mail::assertQueued(BulkDecisionMail::class, function (BulkDecisionMail $mail) use ($student) {
+            return $mail->student->is($student)
+                && $mail->hasTo($student->user->email);
         });
+
+        $this->assertNotNull($student->fresh()->decision_sent_at);
+    }
+
+    public function test_send_decision_fails_if_all_still_pending(): void
+    {
+        Mail::fake();
+
+        $admin = $this->makeAdmin();
+        $student = Student::factory()->create();
+        $this->makeSubmission($student, 'A10', 'pending');
+
+        $response = $this->actingAs($admin)->post(route('admin.students.send-decision', $student));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        Mail::assertNothingQueued();
     }
 
     public function test_no_mail_sent_when_rejection_fails_validation(): void

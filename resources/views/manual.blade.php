@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Panduan Mahasiswa — Sistem Penyetaraan Modul PAI</title>
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+
+  :root{
+    --ink:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f8fafc;
+    --primary:#4f46e5; --primary2:#7c3aed;
+    --emerald:#059669; --emerald-bg:#ecfdf5; --emerald-bd:#a7f3d0;
+    --blue:#1d4ed8; --blue-bg:#eff6ff; --blue-bd:#bfdbfe;
+    --amber:#92400e; --amber-bg:#fffbeb; --amber-bd:#fde68a;
+    --rose:#9f1239; --rose-bg:#fff1f2; --rose-bd:#fecdd3;
+    --slate-bg:#f1f5f9;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif; font-weight:700; color:var(--ink); letter-spacing:-0.01em;}
+  .wrap{max-width:880px; margin:0 auto; padding:0 24px 80px;}
+
+  /* Topbar */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:#fff; border-bottom:1px solid var(--border);
+    padding:12px 24px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-brand{font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:15px; color:var(--ink); text-decoration:none;}
+  .topbar-actions{display:flex; align-items:center; gap:10px;}
+  .topbar-link{font-size:13.5px; color:var(--muted); text-decoration:none; padding:6px 12px; border-radius:8px; transition:background .15s;}
+  .topbar-link:hover{background:var(--slate-bg); color:var(--ink);}
+  .topbar-btn{font-size:13.5px; font-weight:600; color:#fff; background:var(--primary); text-decoration:none; padding:6px 16px; border-radius:10px; transition:background .15s;}
+  .topbar-btn:hover{background:#4338ca;}
+
+  /* Cover */
+  .cover{
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    color:#fff; padding:72px 24px 56px; text-align:center; margin-bottom:48px;
+  }
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:6px 16px; font-size:13px; margin-bottom:18px;}
+  .cover h1{color:#fff; font-size:34px; margin:0 0 12px; line-height:1.25;}
+  .cover p{color:rgba(255,255,255,.88); max-width:560px; margin:0 auto; font-size:15px;}
+  .cover .chips{margin-top:24px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;}
+  .chip{font-size:12px; font-weight:700; color:#fff; padding:4px 10px; border-radius:8px;}
+  .c-a10{background:#6366f1}.c-a20{background:#0ea5e9}.c-a30{background:#10b981}.c-a40{background:#f59e0b}
+  .c-a50{background:#f43f5e}.c-a60{background:#f97316}.c-a70{background:#65a30d}
+
+  /* Contact card */
+  .contact-card{
+    background:linear-gradient(135deg,#1e1b4b,#312e81);
+    border-radius:20px; padding:32px 36px; margin-bottom:40px;
+    display:flex; align-items:center; gap:24px; flex-wrap:wrap;
+    box-shadow:0 8px 32px rgba(79,70,229,.25);
+  }
+  .contact-icon{
+    flex:none; width:60px; height:60px; border-radius:16px;
+    background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center;
+  }
+  .contact-icon svg{width:32px; height:32px; color:#a5b4fc;}
+  .contact-body{flex:1; min-width:200px;}
+  .contact-label{font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#a5b4fc; margin-bottom:6px;}
+  .contact-name{font-family:'Plus Jakarta Sans',sans-serif; font-size:22px; font-weight:700; color:#fff; margin:0 0 4px;}
+  .contact-phone{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:20px; font-weight:700; color:#a5b4fc;
+    text-decoration:none; transition:color .15s;
+  }
+  .contact-phone:hover{color:#fff;}
+  .contact-desc{font-size:13px; color:rgba(255,255,255,.6); margin-top:8px;}
+  .contact-wa{
+    flex:none; display:inline-flex; align-items:center; gap:8px;
+    background:#25d366; color:#fff; font-weight:700; font-size:14px;
+    padding:10px 20px; border-radius:12px; text-decoration:none; transition:background .15s;
+  }
+  .contact-wa:hover{background:#22c55e;}
+
+  /* TOC */
+  .toc{background:#fff; border:1px solid var(--border); border-radius:16px; padding:24px 28px; margin-bottom:40px;}
+  .toc h2{margin-top:0; font-size:18px;}
+  .toc ol{margin:0; padding-left:22px; columns:1;}
+  .toc li{margin-bottom:6px; font-size:14.5px;}
+  .toc a{color:var(--primary); text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+
+  section{margin-bottom:56px;}
+  section > h2{
+    font-size:24px; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  section > h2 .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:9px; background:var(--primary); color:#fff;
+    font-size:15px; flex:none;
+  }
+  h3{font-size:18.5px; margin-top:32px;}
+  h4{font-size:16px; margin-top:22px;}
+  p{color:#334155;}
+  ul,ol{color:#334155;}
+
+  figure{margin:18px 0 28px;}
+  figure img{
+    width:100%; display:block; border:1px solid var(--border); border-radius:12px;
+    box-shadow:0 4px 16px rgba(15,23,42,.08);
+  }
+  figure.crop img{max-width:480px; margin:0 auto; display:block;}
+  figcaption{text-align:center; font-size:13px; color:var(--muted); margin-top:8px;}
+  .shot-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .shot-row figure{flex:1; min-width:260px;}
+
+  mark.baru{background:var(--emerald-bg); color:var(--emerald); border:1px solid var(--emerald-bd); padding:1px 6px; border-radius:6px; font-weight:600;}
+  mark.lama{background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-bd); padding:1px 6px; border-radius:6px; font-weight:600;}
+  mark.warn{background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bd); padding:1px 6px; border-radius:6px; font-weight:600;}
+  mark.none{background:var(--rose-bg); color:var(--rose); border:1px solid var(--rose-bd); padding:1px 6px; border-radius:6px; font-weight:600;}
+  mark.key{background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; padding:1px 6px; border-radius:6px; font-weight:600;}
+
+  .callout{border-radius:14px; padding:16px 20px; margin:18px 0; font-size:14.5px; border:1px solid;}
+  .callout.tip{background:#eef2ff; border-color:#c7d2fe; color:#312e81;}
+  .callout.warn{background:var(--amber-bg); border-color:var(--amber-bd); color:#78350f;}
+  .callout.step{background:#fff; border-color:var(--border);}
+  .callout strong{color:inherit;}
+
+  .step{display:flex; gap:14px; align-items:flex-start; margin:18px 0;}
+  .step .dot{flex:none; width:30px; height:30px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;}
+  .step .body{flex:1;}
+  .step .body h4{margin:0 0 6px;}
+
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  th,td{border:1px solid var(--border); padding:8px 10px; text-align:left;}
+  th{background:var(--slate-bg); font-weight:600;}
+  td code, p code, li code{background:#f1f5f9; border:1px solid var(--border); padding:1px 6px; border-radius:6px; font-size:13px;}
+
+  .formula{
+    background:#0f172a; color:#e2e8f0; border-radius:12px; padding:16px 20px; font-family:Menlo,Consolas,monospace;
+    font-size:14px; overflow-x:auto; margin:14px 0;
+  }
+  .formula .res{color:#34d399;}
+
+  .example{background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; margin:18px 0;}
+  .example-head{
+    display:flex; align-items:center; gap:8px; background:var(--slate-bg); padding:12px 18px;
+    font-weight:700; font-size:14.5px; border-bottom:1px solid var(--border);
+  }
+  .example-head .pill{font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px; background:#e2e8f0; color:#475569;}
+  .example table{margin:0; font-size:13.5px;}
+  .example table th{background:#fff; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.03em; border-top:none;}
+  .example table td:first-child, .example table th:first-child{border-left:none;}
+  .example table td:last-child, .example table th:last-child{border-right:none;}
+  .example table tr:first-child th{border-top:none;}
+  .example-row-pass td{color:#065f46;}
+  .example-status{font-weight:700; font-size:13px;}
+  .example-status.pass{color:var(--emerald);}
+  .example-status.fail{color:var(--rose);}
+  .example-calc{padding:14px 18px; border-top:1px solid var(--border); font-size:13.5px; color:#334155;}
+  .example-result{
+    display:flex; align-items:center; gap:8px; justify-content:space-between; flex-wrap:wrap;
+    padding:12px 18px; border-top:1px solid var(--border); background:#fafafa; font-size:14px;
+  }
+
+  .badges-demo{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0;}
+  .b{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:4px 12px; border-radius:999px;}
+  .b-baru{background:var(--emerald-bg); color:var(--emerald); border:1px solid var(--emerald-bd);}
+  .b-lama{background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-bd);}
+  .b-none{background:var(--slate-bg); color:#64748b; border:1px solid var(--border);}
+  .b-pending{background:#fffbeb; color:#92400e; border:1px solid #fde68a;}
+  .b-approved{background:var(--emerald-bg); color:var(--emerald); border:1px solid var(--emerald-bd);}
+  .b-rejected{background:var(--rose-bg); color:var(--rose); border:1px solid var(--rose-bd);}
+
+  .prio{border:1px solid var(--border); border-radius:14px; margin:14px 0; overflow:hidden; background:#fff;}
+  .prio-head{display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--slate-bg); border-bottom:1px solid var(--border);}
+  .prio-head .dot{flex:none; width:28px; height:28px; border-radius:50%; background:#475569; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;}
+  .prio-head .q{font-weight:600; font-size:14.5px;}
+  .prio-body{padding:4px 18px 14px;}
+  .outcome{display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--border); font-size:14px;}
+  .outcome:first-child{border-top:none;}
+  .outcome .tag{flex:none; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; text-transform:uppercase; letter-spacing:.02em;}
+  .tag-yes{background:var(--emerald-bg); color:var(--emerald);}
+  .tag-no{background:var(--rose-bg); color:var(--rose);}
+  .outcome .txt{flex:1; color:#334155;}
+  .outcome .arrow-r{color:#94a3b8;}
+  .outcome .result{flex:none;}
+  .outcome .next{flex:none; font-size:13px; color:var(--muted); font-style:italic;}
+
+  .priceTag{display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:14px; padding:4px 12px; border-radius:8px;}
+  .price-baru{background:var(--emerald-bg); color:var(--emerald);}
+  .price-lama{background:var(--blue-bg); color:var(--blue);}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:720px){.grid2{grid-template-columns:1fr;}}
+
+  .footer-note{font-size:13px; color:var(--muted); text-align:center; margin-top:60px; padding-top:20px; border-top:1px solid var(--border);}
+
+  @media (max-width:640px){
+    .contact-card{padding:24px 20px;}
+    .contact-name{font-size:18px;}
+    .contact-phone{font-size:16px;}
+    .topbar{padding:10px 16px;}
+  }
+
+  @media print{
+    .topbar{display:none;}
+    .cover{ -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .contact-card{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    section{page-break-inside:avoid;}
+    figure img{box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Sticky topbar -->
+<nav class="topbar">
+  <a href="{{ route('welcome') }}" class="topbar-brand">Penyetaraan Modul PAI</a>
+  <div class="topbar-actions">
+    <a href="{{ route('welcome') }}" class="topbar-link">&larr; Beranda</a>
+    @auth
+      <a href="{{ Auth::user()->isAdmin() ? route('admin.students.index') : route('dashboard') }}" class="topbar-btn">Dashboard</a>
+    @else
+      <a href="{{ route('login') }}" class="topbar-link">Masuk</a>
+      <a href="{{ route('register') }}" class="topbar-btn">Daftar</a>
+    @endauth
+  </div>
+</nav>
+
+<div class="cover">
+  <span class="badge">Buku Panduan Mahasiswa</span>
+  <h1>Sistem Penyetaraan Modul PAI</h1>
+  <p>Panduan lengkap step-by-step: daftar, masuk, memahami dashboard &amp; eligibility,
+  perhitungan skema PKS Baru/PKS Lama, mengajukan penyetaraan, sampai proses verifikasi
+  oleh admin — untuk mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika, Departemen Matematika UB.</p>
+  <div class="chips">
+    <span class="chip c-a10">A10</span><span class="chip c-a20">A20</span><span class="chip c-a30">A30</span>
+    <span class="chip c-a40">A40</span><span class="chip c-a50">A50</span><span class="chip c-a60">A60</span>
+    <span class="chip c-a70">A70</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Contact Admin -->
+  <div class="contact-card">
+    <div class="contact-icon">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+      </svg>
+    </div>
+    <div class="contact-body">
+      <div class="contact-label">Hubungi Admin Sistem</div>
+      <div class="contact-name">Departemen Matematika UB</div>
+      <a href="mailto:math@ub.ac.id" class="contact-phone">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+        math@ub.ac.id
+      </a>
+      <div class="contact-desc">Ada pertanyaan soal sistem atau kendala saat mendaftar? Hubungi langsung.</div>
+    </div>
+    <a href="mailto:math@ub.ac.id" class="contact-wa">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+      </svg>
+      Kirim Email
+    </a>
+  </div>
+
+  <div class="toc">
+    <h2>Daftar Isi</h2>
+    <ol>
+      <li><a href="#pendahuluan">Pendahuluan</a></li>
+      <li><a href="#daftar">Langkah 1 — Mendaftar (Register)</a></li>
+      <li><a href="#login">Langkah 2 — Masuk (Login)</a></li>
+      <li><a href="#dashboard">Langkah 3 — Memahami Dashboard</a></li>
+      <li><a href="#perhitungan">Memahami Perhitungan Eligibility (PKS Baru vs PKS Lama)</a></li>
+      <li><a href="#ajukan">Langkah 4 — Mengajukan Penyetaraan</a></li>
+      <li><a href="#status">Langkah 5 — Memantau Status Pengajuan</a></li>
+      <li><a href="#verifikasi">Langkah 6 — Proses Verifikasi oleh Admin</a></li>
+      <li><a href="#bayar">Langkah 7 — Upload Bukti Bayar &amp; Formulir</a></li>
+      <li><a href="#setelah">Setelah Disetujui / Ditolak</a></li>
+      <li><a href="#ringkasan">Ringkasan &amp; Hal Penting</a></li>
+    </ol>
+  </div>
+
+  <section id="pendahuluan">
+    <h2><span class="num">1</span>Pendahuluan</h2>
+    <p>
+      Sistem ini dipakai mahasiswa <strong>S1 Ilmu Aktuaria</strong> dan <strong>S1 Matematika</strong>
+      (Departemen Matematika UB) untuk <strong>menyetarakan matkul yang sudah lulus</strong> ke
+      Modul PAI level ASAI. <strong>Modul yang bisa disetarakan berbeda per Program Studi</strong>:
+      mahasiswa S1 Ilmu Aktuaria bisa mengajukan ke tujuh modul (<mark class="key">A10–A70</mark>),
+      sedangkan mahasiswa S1 Matematika hanya bisa mengajukan ke satu modul (<mark class="key">A20</mark>).
+      Sistem otomatis menghitung apakah Anda <strong>eligible</strong> (lolos syarat) untuk tiap modul
+      berdasarkan nilai yang sudah diinput admin, lalu Anda mengajukan, dan admin yang akan menyetujui
+      atau menolak setiap pengajuan satu per satu per modul.
+    </p>
+    <table>
+      <thead><tr><th>Modul</th><th>Nama</th><th>Kode resmi ASAI</th><th>Persentil (PKS Baru)</th><th>Prodi</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip c-a10" style="padding:2px 8px;">A10</span></td><td>Matematika Keuangan</td><td>CF1</td><td>80</td><td>S1 Ilmu Aktuaria</td></tr>
+        <tr><td><span class="chip c-a20" style="padding:2px 8px;">A20</span></td><td>Probabilita &amp; Statistika</td><td>CF2</td><td>90</td><td>S1 Ilmu Aktuaria &amp; S1 Matematika *</td></tr>
+        <tr><td><span class="chip c-a30" style="padding:2px 8px;">A30</span></td><td>Ekonomi</td><td>CF3</td><td>80</td><td>S1 Ilmu Aktuaria</td></tr>
+        <tr><td><span class="chip c-a40" style="padding:2px 8px;">A40</span></td><td>Akuntansi</td><td>CF4</td><td>80</td><td>S1 Ilmu Aktuaria</td></tr>
+        <tr><td><span class="chip c-a50" style="padding:2px 8px;">A50</span></td><td>Metoda Statistika</td><td>TA1</td><td>80</td><td>S1 Ilmu Aktuaria</td></tr>
+        <tr><td><span class="chip c-a60" style="padding:2px 8px;">A60</span></td><td>Matematika Aktuaria</td><td>TA3</td><td>80</td><td>S1 Ilmu Aktuaria</td></tr>
+        <tr><td><span class="chip c-a70" style="padding:2px 8px;">A70</span></td><td>Pemodelan &amp; Teori Risiko</td><td>TA2</td><td>90</td><td>S1 Ilmu Aktuaria</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.85em;color:#64748b;margin-top:4px">
+      * Matkul komponen A20 berbeda per prodi: S1 Ilmu Aktuaria memakai
+      <strong>Statistika Matematika I (MAA62003)</strong> + <strong>Statistika Matematika II (MAA61007)</strong>,
+      sedangkan S1 Matematika memakai <strong>Pengantar Peluang+ (MAM60601, 3&nbsp;SKS)</strong>
+      + <strong>Pengantar Statistika Matematika+ (MAM60602, 4&nbsp;SKS)</strong>.
+      Dashboard otomatis menampilkan komponen yang sesuai prodi Anda.
+    </p>
+    <div class="callout tip">
+      <strong>Penting dipahami dari awal:</strong> ada <u>dua dimensi berbeda</u> yang sering
+      tertukar. <mark class="key">Kurikulum (Baru/Lama)</mark> menentukan <em>kode matkul mana</em>
+      yang dipakai. Sedangkan
+      <mark class="baru">PKS Baru</mark>/<mark class="lama">PKS Lama</mark> adalah <em>skema aturan
+      kelulusan penyetaraan</em> — dua hal ini dievaluasi terpisah, dijelaskan lengkap di
+      <a href="#perhitungan">bagian 5</a>.
+    </div>
+  </section>
+
+  <section id="daftar">
+    <h2><span class="num">2</span>Langkah 1 — Mendaftar (Register)</h2>
+    <p>Kalau belum punya akun, mulai dari halaman utama lalu klik <strong>Daftar di sini</strong>,
+    atau langsung buka halaman <strong>Register</strong>.</p>
+
+    <figure>
+      <img src="{{ asset('manual-screenshots/01-welcome.png') }}" alt="Halaman utama">
+      <figcaption>Halaman utama sistem — ringkasan singkat &amp; tombol masuk/daftar.</figcaption>
+    </figure>
+
+    <div class="step">
+      <div class="dot">1</div>
+      <div class="body">
+        <h4>Buka form pendaftaran</h4>
+        <p>Isi <strong>Name</strong> (nama lengkap), <strong>Email</strong> aktif, dan
+        <strong>Password</strong> + konfirmasinya.</p>
+        <figure><img src="{{ asset('manual-screenshots/02-register-empty.png') }}" alt="Form register kosong"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">2</div>
+      <div class="body">
+        <h4>Isi <span class="key" style="background:none;">No Induk (NIM)</span> dengan benar</h4>
+        <p>
+          Field ini <mark class="warn">paling krusial</mark> di seluruh sistem: No Induk
+          dipakai untuk <strong>mencocokkan Anda ke data nilai matkul</strong> yang sudah diimport
+          admin sebelumnya. Kalau NIM salah ketik atau beda dari yang dipakai admin saat
+          mengimport nilai, dashboard Anda nanti akan menganggap Anda <mark class="none">belum
+          eligible</mark> untuk semua modul — bukan karena nilai Anda kurang, tapi karena sistem
+          tidak menemukan data nilai atas NIM itu. Pilih juga <strong>Program Studi</strong>
+          (S1 Ilmu Aktuaria / S1 Matematika).
+        </p>
+        <figure><img src="{{ asset('manual-screenshots/03-register-filled-before-submit.png') }}" alt="Form register terisi"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">3</div>
+      <div class="body">
+        <h4>Validasi otomatis sebelum akun dibuat</h4>
+        <p>
+          Sistem menolak No Induk yang <strong>sudah terdaftar</strong> sebelumnya (satu NIM =
+          satu akun), email yang sudah dipakai, atau password yang tidak memenuhi syarat
+          keamanan minimum. Contoh di bawah: mendaftar dengan NIM yang sudah dipakai mahasiswa
+          lain akan menampilkan pesan error tepat di bawah field-nya, dan akun <strong>tidak</strong>
+          dibuat sampai semua isian valid.
+        </p>
+        <figure>
+          <img src="{{ asset('manual-screenshots/04-register-error-duplicate-nim.png') }}" alt="Error validasi NIM sudah dipakai">
+          <figcaption>Pesan "The no induk has already been taken" — perbaiki NIM lalu submit ulang.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">4</div>
+      <div class="body">
+        <h4>Submit &amp; otomatis masuk</h4>
+        <p>Setelah semua field valid, klik <strong>Register</strong>. Anda akan
+        <strong>otomatis ter-login</strong> dan langsung diarahkan ke Dashboard — tidak perlu
+        verifikasi email tambahan.</p>
+        <figure><img src="{{ asset('manual-screenshots/05-register-filled-correct.png') }}" alt="Form register terisi benar"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="login">
+    <h2><span class="num">3</span>Langkah 2 — Masuk (Login)</h2>
+    <p>Kalau sudah punya akun, masuk lewat halaman <strong>Login</strong> menggunakan email
+    &amp; password yang dipakai saat daftar. Halaman ini juga yang dipakai admin untuk masuk
+    (sistem akan otomatis mengarahkan ke dashboard mahasiswa atau dashboard admin sesuai peran
+    akun Anda).</p>
+    <div class="shot-row">
+      <figure><img src="{{ asset('manual-screenshots/12-login-empty.png') }}" alt="Halaman login kosong"></figure>
+      <figure><img src="{{ asset('manual-screenshots/13-login-filled-ahmad.png') }}" alt="Halaman login terisi"></figure>
+    </div>
+    <div class="callout tip">Lupa password? Klik <strong>Forgot your password?</strong> di
+    halaman ini untuk minta link reset lewat email.</div>
+  </section>
+
+  <section id="dashboard">
+    <h2><span class="num">4</span>Langkah 3 — Memahami Dashboard</h2>
+    <p>Dashboard adalah halaman utama mahasiswa: di sini Anda lihat status eligibility
+    <strong>modul yang tersedia untuk prodi Anda</strong> — tujuh kartu (A10–A70) untuk S1 Ilmu Aktuaria,
+    atau satu kartu (A20) untuk S1 Matematika — semuanya <strong>otomatis dihitung dari nilai</strong>
+    yang sudah diinput admin.</p>
+
+    <figure>
+      <img src="{{ asset('manual-screenshots/06-dashboard-citra-after-register.png') }}" alt="Dashboard mahasiswa">
+      <figcaption>Tampilan dashboard setelah daftar — sapaan nama, 3 metric card, kotak penjelasan
+      skema, dan grid kartu modul (jumlah kartu sesuai prodi).</figcaption>
+    </figure>
+
+    <h3>3 metric card di atas</h3>
+    <ul>
+      <li><strong>Eligible</strong> — jumlah modul yang lolos PKS Baru maupun PKS Lama.</li>
+      <li><strong>Diajukan</strong> — total pengajuan yang pernah Anda kirim (semua status).</li>
+      <li><strong>Disetujui</strong> — pengajuan yang sudah di-approve admin.</li>
+    </ul>
+
+    <h3>Anatomi satu kartu modul</h3>
+    <p>Tiap kartu modul punya bagian yang sama, hanya isinya yang berubah sesuai hasil
+    perhitungan eligibility Anda:</p>
+    <div class="shot-row">
+      <figure class="crop"><img src="{{ asset('manual-screenshots/07-card-eligible-baru.png') }}" alt="Kartu modul eligible PKS Baru"><figcaption>Eligible <mark class="baru">PKS Baru</mark> — tombol aktif</figcaption></figure>
+      <figure class="crop"><img src="{{ asset('manual-screenshots/17-card-eligible-lama.png') }}" alt="Kartu modul eligible PKS Lama"><figcaption>Eligible <mark class="lama">PKS Lama</mark> — tombol aktif</figcaption></figure>
+      <figure class="crop"><img src="{{ asset('manual-screenshots/08-card-belum-eligible.png') }}" alt="Kartu modul belum eligible"><figcaption><mark class="none">Belum eligible</mark> — tombol terkunci</figcaption></figure>
+    </div>
+    <p>Tiap kartu menampilkan: <strong>chip kode modul berwarna</strong> (kiri atas, warnanya
+    khas per modul A10–A70), <strong>badge status</strong> (kanan atas), <strong>nama modul</strong>
+    + daftar matkul komponennya, <strong>kalimat alasan singkat</strong> dari sistem, <strong>harga</strong>
+    skema, dan <strong>tombol aksi</strong> di kanan bawah.</p>
+
+    <h3>3 kemungkinan badge status eligibility</h3>
+    <div class="badges-demo">
+      <span class="b b-baru">&#10003; Eligible (PKS Baru)</span>
+      <span class="b b-lama">&#10003; Eligible (PKS Lama)</span>
+      <span class="b b-none">&#128274; Belum Eligible</span>
+    </div>
+    <p>Begitu Anda sudah mengajukan, badge berganti jadi status pengajuan:</p>
+    <div class="badges-demo">
+      <span class="b b-pending">Menunggu review</span>
+      <span class="b b-approved">Disetujui</span>
+      <span class="b b-rejected">Ditolak</span>
+    </div>
+
+    <div class="callout tip">
+      Dashboard juga menampilkan kotak ringkasan biru-muda <strong>"Soal skema PKS Baru &amp; PKS
+      Lama"</strong> persis di atas grid kartu modul — ringkasan singkat dari penjelasan lengkap
+      di <a href="#perhitungan">bagian berikut</a>. Sistem <strong>otomatis memilih skema yang
+      paling menguntungkan</strong> — kalau Anda lolos keduanya, sistem memilih
+      <strong>PKS Lama</strong> karena lebih murah; Anda tidak perlu memilih sendiri.
+    </div>
+  </section>
+
+  <section id="perhitungan">
+    <h2><span class="num">5</span>Memahami Perhitungan Eligibility</h2>
+    <p>Ini bagian paling penting untuk dipahami: <strong>bagaimana sebenarnya sistem memutuskan</strong>
+    Anda eligible atau tidak, lewat skema apa, dan kenapa.</p>
+
+    <h3>5.1 Syarat dasar: matkul komponen harus LENGKAP</h3>
+    <p>
+      Setiap modul punya beberapa <strong>matkul komponen</strong> (lihat tabel di bagian 1).
+      Sebelum skema apapun dihitung, Anda harus <strong>sudah lulus SEMUA matkul komponen</strong>
+      modul itu — tidak boleh ada yang belum diambil atau nilainya <mark class="none">E</mark>.
+      Anda hanya perlu lengkap lewat <em>salah satu</em> jalur, lewat susunan matkul
+      <strong>Kurikulum Baru</strong> ATAU <strong>Kurikulum Lama</strong> (tidak harus keduanya).
+    </p>
+    <div class="callout warn">
+      <strong>Soal nilai ganda (retake):</strong> kalau Anda pernah mengulang satu matkul
+      (ada &gt;1 baris nilai untuk matkul yang sama), sistem otomatis memakai
+      <strong>NA tertinggi</strong> di antara semua percobaan — Anda tidak perlu khawatir
+      nilai lama yang lebih jelek ikut dihitung.
+    </div>
+
+    <h3 id="decision">5.2 <mark class="baru">PKS Baru</mark> — berbasis persentil nilai (NA), diutamakan</h3>
+    <p>
+      <strong>Syarat awal:</strong> semua nilai yang dipakai untuk evaluasi harus dari
+      <strong>TA&nbsp;24/25 atau lebih baru</strong>. Jika ada satu pun nilai dari TA&nbsp;23/24
+      atau lebih lama, PKS Baru tidak berlaku — lihat <a href="#prio">5.4 Prioritas keputusan</a>.
+    </p>
+    <p>
+      Untuk setiap matkul komponen, sistem menghitung <strong>batas bawah</strong> dari
+      kumpulan nilai NA semua mahasiswa yang pernah mengambil matkul itu (di semua semester),
+      menggunakan rumus statistik <code>PERCENTILE.INC</code>:
+    </p>
+    <div class="formula">batas_bawah(matkul) = PERCENTILE.INC( semua NA mahasiswa lain di matkul itu, P )</div>
+    <p>
+      <code>P</code> ini <strong>berbeda-beda per modul</strong> (lihat kolom Persentil di tabel
+      bagian 1) — bukan satu angka yang sama untuk semua modul. Anda dinyatakan
+      <strong>eligible PKS Baru</strong> untuk modul M kalau nilai NA Anda
+      <strong>&#8805; batas bawah itu, di SEMUA matkul komponen M sekaligus</strong> (bukan rata-rata —
+      tiap matkul punya batasnya sendiri dan harus lolos semua).
+    </p>
+    <div class="example">
+      <div class="example-head">Contoh nyata <span class="pill">Modul A10 — Matematika Keuangan</span></div>
+      <table>
+        <thead>
+          <tr><th>Matkul</th><th>Batas bawah (persentil)</th><th>NA mahasiswa</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Matematika Finansial I</td><td>91,0</td><td>95</td><td class="example-status pass">&#10003; lolos</td></tr>
+          <tr><td>Matematika Finansial II</td><td>91,0</td><td>97</td><td class="example-status pass">&#10003; lolos</td></tr>
+        </tbody>
+      </table>
+      <div class="example-result">
+        <span>NA mahasiswa &#8805; batas bawah di <strong>kedua</strong> matkul</span>
+        <mark class="baru">Eligible PKS Baru</mark>
+      </div>
+    </div>
+    <p style="margin-top:-6px">Angka yang sama persis tampil di kolom "NA" pada tabel rincian
+    halaman pengajuan:</p>
+    <figure><img src="{{ asset('manual-screenshots/09-submission-form-baru.png') }}" alt="Contoh rincian PKS Baru"></figure>
+
+    <h3>5.3 <mark class="lama">PKS Lama</mark> — berbasis rata-rata bobot nilai huruf (NH)</h3>
+    <p>Nilai huruf (NH) tiap matkul dikonversi ke bobot menurut skala UB:</p>
+    <table>
+      <thead><tr><th>NH</th><th>A</th><th>B+</th><th>B</th><th>C+</th><th>C</th><th>D+</th><th>D</th><th>E</th></tr></thead>
+      <tbody><tr><th>Bobot</th><td>4.0</td><td>3.5</td><td>3.0</td><td>2.5</td><td>2.0</td><td>1.5</td><td>1.0</td><td>0.0</td></tr></tbody>
+    </table>
+    <p>Lalu dihitung <strong>rata-rata bobot tertimbang SKS</strong> dari semua matkul komponen modul:</p>
+    <div class="formula">rata-rata = &Sigma;(bobot<sub>i</sub> &times; sks<sub>i</sub>) / &Sigma;(sks<sub>i</sub>)</div>
+    <p>Anda <strong>eligible PKS Lama</strong> kalau hasilnya <strong>lebih besar dari 3.5</strong>
+    (harus <em>strictly greater</em> — pas <mark class="warn">3.5 sendiri dianggap GAGAL</mark>,
+    bukan lolos).</p>
+    <div class="example">
+      <div class="example-head">Contoh nyata <span class="pill">Modul A30 — Ekonomi</span></div>
+      <table>
+        <thead>
+          <tr><th>Matkul</th><th>NH</th><th>Bobot</th><th>SKS</th><th>Bobot &times; SKS</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Pengantar Ekonomi Mikro</td><td>A</td><td>4.0</td><td>3</td><td>12.0</td></tr>
+          <tr><td>Pengantar Ekonomi Makro</td><td>B+</td><td>3.5</td><td>3</td><td>10.5</td></tr>
+        </tbody>
+      </table>
+      <div class="example-calc">
+        Rata-rata = (12.0 + 10.5) / (3 + 3) = 22.5 / 6 = <strong>3,75</strong>
+      </div>
+      <div class="example-result">
+        <span>3,75 &gt; 3,5</span>
+        <mark class="lama">Eligible PKS Lama</mark>
+      </div>
+    </div>
+    <p style="margin-top:-6px">Angka yang sama persis tampil di kolom "NH" pada tabel rincian
+    halaman pengajuan:</p>
+    <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Contoh rincian PKS Lama"></figure>
+
+    <div class="example">
+      <div class="example-head">Sebagai pembanding <span class="pill">tepat di batas 3,5</span></div>
+      <table>
+        <thead>
+          <tr><th>Matkul</th><th>NH</th><th>Bobot</th><th>SKS</th><th>Bobot &times; SKS</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Matkul 1</td><td>B+</td><td>3.5</td><td>3</td><td>10.5</td></tr>
+          <tr><td>Matkul 2</td><td>B+</td><td>3.5</td><td>3</td><td>10.5</td></tr>
+        </tbody>
+      </table>
+      <div class="example-calc">
+        Rata-rata = (10.5 + 10.5) / (3 + 3) = 21 / 6 = <strong>3,5</strong>
+      </div>
+      <div class="example-result">
+        <span>3,5 bukan &gt; 3,5 — syaratnya harus <em>lebih besar</em>, bukan sama dengan</span>
+        <mark class="none">Tidak eligible</mark>
+      </div>
+    </div>
+
+    <h3 id="prio">5.4 Prioritas keputusan (decision tree)</h3>
+    <p>Sistem mengevaluasi eligibilitas dalam <strong>urutan tetap</strong>, langkah demi langkah
+    dari atas ke bawah. <mark class="lama">PKS Lama diutamakan</mark> karena lebih murah —
+    jika Anda lolos keduanya, sistem memilih PKS Lama. Begitu satu langkah menghasilkan keputusan,
+    proses <strong>berhenti</strong> — tidak lanjut ke langkah berikutnya.</p>
+
+    <div class="callout warn" style="margin-bottom:20px">
+      <strong>&#9888; Aturan penting: Nilai dari TA 23/24 atau lebih lama</strong><br>
+      Sebelum langkah 1 di bawah, sistem mengecek <strong>tahun akademik</strong> dari setiap
+      nilai yang digunakan untuk evaluasi. Jika <strong>ada satu pun nilai dari TA&nbsp;23/24
+      atau lebih lama</strong> (termasuk 22/23, 21/22, dst.) maka:
+      <ul style="margin:8px 0 0 18px; padding:0">
+        <li>PKS Lama berlaku langsung kalau rata-rata bobot lolos — <strong>kode kurikulum tidak dicek</strong>.</li>
+        <li><strong>Langkah 2 (PKS Baru) dilewati otomatis</strong> — PKS Baru tidak berlaku untuk Anda.</li>
+      </ul>
+      <span style="display:block; margin-top:8px; color:var(--muted); font-size:13px">
+        Contoh: Matkul A nilai Anda dari TA&nbsp;23/24, Matkul B dari TA&nbsp;24/25 — cukup satu
+        nilai lama untuk mengaktifkan aturan ini.
+      </span>
+    </div>
+
+    <div class="prio">
+      <div class="prio-head">
+        <span class="dot">1</span>
+        <span class="q">
+          Lolos syarat PKS Lama PENUH?
+          <span style="color:var(--muted); font-weight:400;">(rata-rata bobot tertimbang SKS &gt; 3,5 DAN ada nilai ≤ TA 23/24 atau ada kode kurikulum lama)</span>
+        </span>
+      </div>
+      <div class="prio-body">
+        <div class="outcome">
+          <span class="tag tag-yes">Ya</span>
+          <span class="txt">Keputusan ditetapkan di sini, proses selesai — dipilih karena lebih murah.</span>
+          <span class="result"><mark class="lama">PKS Lama</mark></span>
+          <span class="result priceTag price-lama">Rp500.000</span>
+        </div>
+        <div class="outcome">
+          <span class="tag tag-no">Tidak</span>
+          <span class="txt">Belum ditolak — lanjut ke langkah 2.</span>
+          <span class="next">&#8595; lanjut ke langkah 2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prio">
+      <div class="prio-head">
+        <span class="dot">2</span>
+        <span class="q">
+          Lolos syarat PKS Baru?
+          <span style="color:var(--muted); font-weight:400;">(NA &#8805; batas persentil di semua matkul komponen)</span>
+          <span style="display:block; font-size:12px; color:var(--amber); font-weight:500; margin-top:2px">
+            &#9888; Langkah ini dilewati jika ada nilai dari TA 23/24 atau lebih lama
+          </span>
+        </span>
+      </div>
+      <div class="prio-body">
+        <div class="outcome">
+          <span class="tag tag-yes">Ya</span>
+          <span class="txt">Keputusan ditetapkan di sini, proses selesai.</span>
+          <span class="result"><mark class="baru">PKS Baru</mark></span>
+          <span class="result priceTag price-baru">Rp550.000</span>
+        </div>
+        <div class="outcome">
+          <span class="tag tag-no">Tidak</span>
+          <span class="txt">Tidak lolos kedua skema, proses selesai.</span>
+          <span class="result"><mark class="none">Belum eligible</mark></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Kenapa ada mahasiswa yang "lolos syarat PKS Lama tapi tetap belum eligible"?</strong>
+      Untuk mahasiswa dengan <em>semua</em> nilai dari TA&nbsp;24/25 ke atas: PKS Lama sengaja
+      hanya berlaku bagi yang memang mengambil matkul berkode <strong>kurikulum lama</strong>.
+      Kalau matkul yang Anda ambil semuanya berkode kurikulum baru, kebetulan rata-rata bobotnya
+      lolos &gt;3,5 pun tetap <mark class="none">tidak dianggap eligible</mark> lewat PKS Lama
+      — ini mencegah mahasiswa kurikulum baru menggunakan PKS Lama sebagai "jalan pintas"
+      menghindari syarat persentil PKS Baru.
+      <br><br>
+      Namun, aturan ini <strong>tidak berlaku</strong> jika ada nilai dari TA&nbsp;23/24 atau
+      lebih lama — mahasiswa era tersebut langsung mendapat PKS Lama jika rata-rata bobot lolos,
+      tanpa perlu mengecek kode kurikulum.
+    </div>
+
+    <h3>5.5 Harga per skema</h3>
+    <p>
+      <span class="priceTag price-lama">PKS Lama — Rp500.000 / modul</span>
+      &nbsp;&nbsp;
+      <span class="priceTag price-baru">PKS Baru — Rp550.000 / modul</span>
+    </p>
+    <p>Harga ini sudah otomatis muncul di form pengajuan sesuai skema yang berlaku untuk Anda —
+    Anda tidak perlu menghitung sendiri.</p>
+  </section>
+
+  <section id="ajukan">
+    <h2><span class="num">6</span>Langkah 4 — Mengajukan Penyetaraan</h2>
+    <p>Begitu sebuah kartu modul menunjukkan badge <mark class="baru">Eligible (PKS Baru)</mark>
+    atau <mark class="lama">Eligible (PKS Lama)</mark>, tombol <strong>"Ajukan Penyetaraan"</strong>
+    di kartu itu akan aktif.</p>
+
+    <div class="step">
+      <div class="dot">1</div>
+      <div class="body">
+        <h4>Klik "Ajukan Penyetaraan"</h4>
+        <p>Anda akan dibawa ke halaman form persetujuan, lengkap dengan rincian yang
+        menentukan keputusan skema Anda — supaya Anda tahu pasti alasan di balik nilainya,
+        bukan cuma diberi tahu hasilnya.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">2</div>
+      <div class="body">
+        <h4>Periksa skema, harga, dan rincian nilai</h4>
+        <p>Halaman ini menampilkan: nama &amp; kode modul, <strong>skema</strong> yang berlaku
+        (PKS Baru/Lama), <strong>harga</strong>, kalimat <strong>alasan</strong> dari sistem, dan
+        <strong>tabel rincian matkul komponen</strong> (kode, nama, SKS, NA, NH) yang dipakai
+        sebagai dasar keputusan. Contoh skema PKS Baru (kiri) dan PKS Lama (kanan):</p>
+        <div class="shot-row">
+          <figure><img src="{{ asset('manual-screenshots/09-submission-form-baru.png') }}" alt="Form pengajuan skema PKS Baru"></figure>
+          <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Form pengajuan skema PKS Lama"></figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">3</div>
+      <div class="body">
+        <h4>Centang dua persetujuan wajib</h4>
+        <p>Anda harus mencentang <strong>kedua</strong> checkbox sebelum bisa mengirim:</p>
+        <ul>
+          <li>"Saya bersedia mengajukan penyetaraan modul ini sesuai skema &amp; rincian nilai di atas."</li>
+          <li>"Saya bersedia membayar biaya penyetaraan sebesar Rp&hellip;."</li>
+        </ul>
+        <figure><img src="{{ asset('manual-screenshots/10-submission-form-baru-checked.png') }}" alt="Checkbox sudah dicentang"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">4</div>
+      <div class="body">
+        <h4>Klik "Kirim Pengajuan"</h4>
+        <p>Pengajuan langsung berstatus <span class="b b-pending">Menunggu review</span> dan
+        Anda dikembalikan ke dashboard dengan pesan konfirmasi hijau di atas. Kartu modul yang
+        diajukan otomatis berubah: badge jadi "Menunggu review" dan tombol berubah jadi
+        "Sudah diajukan" (terkunci, tidak bisa diajukan dobel selama masih pending/disetujui).</p>
+        <figure><img src="{{ asset('manual-screenshots/11-dashboard-citra-after-submit.png') }}" alt="Dashboard setelah submit"></figure>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      Sistem <strong>mencegah pengajuan ganda</strong>: kalau satu modul sudah berstatus
+      <em>pending</em> atau <em>approved</em>, Anda tidak bisa mengajukan ulang modul itu sampai
+      statusnya berubah (misalnya ditolak admin). Server juga <strong>menghitung ulang
+      eligibility Anda</strong> saat menerima pengajuan — jadi keputusan akhir selalu berdasarkan
+      data nilai terbaru, bukan sekadar tampilan di browser.
+    </div>
+  </section>
+
+  <section id="status">
+    <h2><span class="num">7</span>Langkah 5 — Memantau Status Pengajuan</h2>
+    <p>Setelah mengajukan, Anda bisa kembali ke dashboard kapan saja untuk memantau status
+    tiap modul lewat badge di kartunya:</p>
+    <div class="badges-demo">
+      <span class="b b-pending">Menunggu review</span> — admin belum memutuskan.
+    </div>
+    <div class="badges-demo">
+      <span class="b b-approved">Disetujui</span> — penyetaraan resmi diterima.
+    </div>
+    <div class="badges-demo">
+      <span class="b b-rejected">Ditolak</span> — ada alasan dari admin, tombol berubah jadi
+      "Ajukan ulang" kalau Anda masih eligible.
+    </div>
+    <p>Login sebagai mahasiswa lain yang sudah pernah disetujui akan terlihat seperti ini —
+    perhatikan badge hijau "Disetujui" dan tombol yang sudah terkunci:</p>
+    <figure class="crop"><img src="{{ asset('manual-screenshots/15-card-approved.png') }}" alt="Kartu modul yang sudah disetujui"></figure>
+  </section>
+
+  <section id="verifikasi">
+    <h2><span class="num">8</span>Langkah 6 — Proses Verifikasi oleh Admin</h2>
+    <p>Setelah Anda mengirim pengajuan, prosesnya berpindah ke sisi admin. Berikut yang
+    terjadi di balik layar (berguna supaya Anda tahu apa yang sedang ditunggu):</p>
+
+    <div class="step">
+      <div class="dot">1</div>
+      <div class="body">
+        <h4>Admin melihat daftar mahasiswa</h4>
+        <p>Admin masuk lewat halaman login yang sama, lalu melihat dashboard
+        <strong>per mahasiswa</strong> (bukan per modul) berisi rekap jumlah pengajuan yang
+        disetujui/pending/ditolak untuk tiap mahasiswa.</p>
+        <figure><img src="{{ asset('manual-screenshots/20-admin-students-index.png') }}" alt="Dashboard admin daftar mahasiswa"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">2</div>
+      <div class="body">
+        <h4>Admin membuka Detail</h4>
+        <p>Klik "Detail" pada nama mahasiswa menampilkan setiap modul yang diajukan, lengkap
+        dengan <strong>rincian nilai komponen yang sama persis</strong> seperti yang Anda lihat
+        saat mengajukan (jadi tidak ada informasi tersembunyi) — skema, harga, dan tabel matkul.</p>
+        <figure><img src="{{ asset('manual-screenshots/21-admin-detail-doni-pending.png') }}" alt="Detail mahasiswa - pengajuan pending"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">3</div>
+      <div class="body">
+        <h4>Admin menyetujui ...</h4>
+        <p>Klik tombol <strong>"Setujui"</strong> langsung mengubah status modul itu jadi
+        <span class="b b-approved">Disetujui</span>, mencatat admin &amp; waktu reviewnya, dan
+        memicu email notifikasi otomatis.</p>
+        <figure><img src="{{ asset('manual-screenshots/22-admin-detail-doni-approved.png') }}" alt="Detail mahasiswa - sudah disetujui"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">4</div>
+      <div class="body">
+        <h4>... atau menolak dengan alasan wajib</h4>
+        <p>Kalau ada masalah (misalnya bukti bayar belum diterima, data tidak cocok, dll), admin
+        mengisi <strong>alasan penolakan</strong> di kotak teks (wajib diisi, tidak bisa
+        dikosongkan) lalu klik <strong>"Tolak"</strong>.</p>
+        <div class="shot-row">
+          <figure><img src="{{ asset('manual-screenshots/23-admin-detail-citra-pending.png') }}" alt="Detail mahasiswa pending sebelum ditolak"></figure>
+          <figure><img src="{{ asset('manual-screenshots/24-admin-detail-citra-reject-form-filled.png') }}" alt="Mengisi alasan penolakan"></figure>
+        </div>
+        <figure><img src="{{ asset('manual-screenshots/25-admin-detail-citra-rejected.png') }}" alt="Setelah ditolak, alasan tampil"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">5</div>
+      <div class="body">
+        <h4>Email notifikasi otomatis</h4>
+        <p>Begitu admin menekan Setujui atau Tolak, sistem mengirim email ke alamat yang Anda
+        daftarkan. Kalau <strong>disetujui</strong>, email itu juga melampirkan
+        <mark class="key">Formulir Permohonan Penyetaraan Ujian</mark> (file <code>.docx</code>)
+        dan tombol langsung ke halaman upload — lihat <a href="#bayar">langkah berikutnya</a>.
+        Berikut contoh isi email untuk masing-masing hasil:</p>
+        <div class="shot-row">
+          <figure><img src="{{ asset('manual-screenshots/26-email-approved.png') }}" alt="Contoh email disetujui"><figcaption>Email saat modul disetujui — ada lampiran formulir + tombol upload</figcaption></figure>
+          <figure><img src="{{ asset('manual-screenshots/27-email-rejected.png') }}" alt="Contoh email ditolak"><figcaption>Email saat modul ditolak, lengkap dengan alasannya</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bayar">
+    <h2><span class="num">9</span>Langkah 7 — Upload Bukti Bayar &amp; Formulir</h2>
+    <p>Begitu modul Anda <strong>disetujui</strong>, masih ada satu langkah terakhir sebelum
+    benar-benar selesai: upload <strong>bukti pembayaran</strong> dan <strong>formulir
+    permohonan penyetaraan ujian</strong> yang sudah diisi &amp; ditandatangani (formulirnya ada di
+    lampiran email persetujuan — lihat langkah sebelumnya).</p>
+
+    <div class="step">
+      <div class="dot">1</div>
+      <div class="body">
+        <h4>Kartu modul yang disetujui kini punya tombol "Upload Bukti Bayar"</h4>
+        <p>Selama belum lunas, badge kartu modul masih "Disetujui" tapi tombolnya aktif untuk
+        upload (bukan tombol mati seperti modul yang sudah lunas).</p>
+        <figure class="crop"><img src="{{ asset('manual-screenshots/29-card-approved-unpaid.png') }}" alt="Kartu modul disetujui, belum bayar"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">2</div>
+      <div class="body">
+        <h4>Buka halaman upload</h4>
+        <p>Klik tombol itu (atau tombol di email) untuk membuka halaman upload. Ada 2 slot file
+        terpisah — boleh diisi satu-satu atau sekaligus, dan boleh diganti lagi kapan saja kalau
+        salah upload.</p>
+        <figure><img src="{{ asset('manual-screenshots/30-upload-page-empty.png') }}" alt="Halaman upload, kedua slot masih kosong"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">3</div>
+      <div class="body">
+        <h4>Upload satu per satu — status masih "Belum Bayar" sampai lengkap</h4>
+        <p>Contoh: upload bukti pembayaran dulu. Slot itu langsung menampilkan link "lihat file",
+        tapi badge status di kanan atas <strong>masih "Belum Bayar"</strong> selama formulirnya
+        belum diupload juga.</p>
+        <figure><img src="{{ asset('manual-screenshots/31-upload-page-after-bukti-bayar.png') }}" alt="Setelah upload bukti pembayaran, formulir belum"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">4</div>
+      <div class="body">
+        <h4>Upload formulir terisi &#8594; otomatis jadi "Lunas"</h4>
+        <p>Begitu file kedua (formulir) ikut diupload, sistem otomatis mengubah status jadi
+        <mark class="baru">Lunas</mark> — <strong>tanpa</strong> perlu menunggu admin
+        mengonfirmasi apapun lagi.</p>
+        <figure><img src="{{ asset('manual-screenshots/32-upload-page-lunas.png') }}" alt="Kedua file lengkap, status jadi Lunas"></figure>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="dot">5</div>
+      <div class="body">
+        <h4>Kartu modul di dashboard ikut berubah</h4>
+        <p>Balik ke dashboard, badge kartu modul itu sekarang "Lunas" dan tombolnya terkunci —
+        proses penyetaraan modul ini sudah benar-benar selesai.</p>
+        <figure class="crop"><img src="{{ asset('manual-screenshots/34-card-lunas.png') }}" alt="Kartu modul setelah lunas"></figure>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      Admin juga bisa melihat status pembayaran ini beserta link ke 2 file yang Anda upload, di
+      halaman detail mahasiswa miliknya — jadi tidak perlu kirim file itu manual lewat jalur
+      lain.
+      <figure style="margin-top:14px"><img src="{{ asset('manual-screenshots/35-admin-detail-rina-lunas.png') }}" alt="Admin melihat status pembayaran & link file"></figure>
+    </div>
+  </section>
+
+  <section id="setelah">
+    <h2><span class="num">10</span>Setelah Disetujui / Ditolak</h2>
+    <div class="grid2">
+      <div class="callout step">
+        <strong>Kalau disetujui &#9989;</strong>
+        <p style="margin-bottom:0;">Status di dashboard Anda berubah jadi
+        <span class="b b-approved">Disetujui</span>, lalu lanjut upload bukti bayar &amp;
+        formulir (langkah 7 di atas) supaya statusnya jadi <strong>Lunas</strong> — itu langkah
+        terakhirnya.</p>
+      </div>
+      <div class="callout step">
+        <strong>Kalau ditolak &#10060;</strong>
+        <p>Baca alasan penolakan yang ditulis admin (tampil di dashboard &amp; email). Kalau
+        Anda masih dinyatakan eligible, tombol di kartu modul berubah jadi
+        <strong>"Ajukan ulang"</strong> — klik untuk membuka kembali form pengajuan dan
+        mengirim ulang setelah masalahnya selesai.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ringkasan">
+    <h2><span class="num">11</span>Ringkasan &amp; Hal Penting</h2>
+    <ul>
+      <li>Pastikan <strong>No Induk (NIM)</strong> yang diisi saat register sama persis dengan
+      yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
+      <li><mark class="lama">PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
+      hanya berlaku apabila matkul yang Anda penuhi berkode <strong>kurikulum lama</strong> (atau ada nilai
+      dari TA 23/24 ke bawah). Harga <strong>Rp500.000</strong>/modul —
+      <strong>diutamakan</strong> karena lebih murah.</li>
+      <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
+      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat PKS Lama penuh. Harga
+      <strong>Rp550.000</strong>/modul.</li>
+      <li>Satu modul = satu pengajuan dengan status sendiri (<span class="b b-pending">pending</span>
+      / <span class="b b-approved">approved</span> / <span class="b b-rejected">rejected</span>);
+      tidak bisa mengajukan dobel saat masih pending/approved.</li>
+      <li>Semua keputusan dihitung ulang otomatis di server berdasarkan nilai terbaru — sistem
+      tidak pernah menerima eligibility dari sisi tampilan begitu saja.</li>
+      <li>Modul yang <strong>disetujui</strong> belum benar-benar selesai sampai Anda upload
+      <strong>bukti pembayaran</strong> + <strong>formulir terisi</strong> (lihat
+      <a href="#bayar">langkah 7</a>) — status otomatis berubah jadi <mark class="baru">Lunas</mark>
+      begitu kedua file itu ada, tanpa perlu menunggu admin verifikasi lagi.</li>
+    </ul>
+  </section>
+
+  <!-- Contact repeat at bottom -->
+  <div class="contact-card">
+    <div class="contact-icon">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+      </svg>
+    </div>
+    <div class="contact-body">
+      <div class="contact-label">Masih ada pertanyaan? Hubungi Admin</div>
+      <div class="contact-name">Departemen Matematika UB</div>
+      <a href="mailto:math@ub.ac.id" class="contact-phone">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+        math@ub.ac.id
+      </a>
+      <div class="contact-desc">Pertanyaan soal eligibility, kendala sistem, atau proses penyetaraan.</div>
+    </div>
+    <a href="mailto:math@ub.ac.id" class="contact-wa">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+      </svg>
+      Kirim Email
+    </a>
+  </div>
+
+  <p class="footer-note">
+    Buku panduan ini dibuat dari tangkapan layar Sistem Penyetaraan Modul PAI — Departemen
+    Matematika, Universitas Brawijaya.
+  </p>
+
+</div>
+</body>
+</html>

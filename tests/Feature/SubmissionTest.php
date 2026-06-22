@@ -32,7 +32,7 @@ class SubmissionTest extends TestCase
 
         CourseGrade::create([
             'course_id' => $course->id,
-            'semester' => 'Genap 2223',
+            'semester' => 'Genap 2425', // TA 24/25+ agar PKS Baru tidak diblokir aturan tahun lama
             'no_induk' => $student->no_induk,
             'nama' => $student->nama,
             'na' => $na,

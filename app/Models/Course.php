@@ -12,6 +12,7 @@ class Course extends Model
         'code',
         'name',
         'sks',
+        'semester_type',
     ];
 
     public function moduleCourses(): HasMany

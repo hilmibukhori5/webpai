@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class, 'ends_with:@student.ub.ac.id'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'no_induk' => ['required', 'string', 'max:50', 'regex:/^[0-9]+$/', 'unique:'.Student::class.',no_induk'],
             'prodi' => ['required', Rule::in(self::PRODI_OPTIONS)],

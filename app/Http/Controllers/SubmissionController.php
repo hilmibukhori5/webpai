@@ -27,6 +27,10 @@ class SubmissionController extends Controller
             return redirect()->route('dashboard')->with('error', 'Profil mahasiswa belum lengkap.');
         }
 
+        if (! $paiModule->moduleCourses()->where('prodi', $student->prodi)->exists()) {
+            return redirect()->route('dashboard')->with('error', 'Modul ini tidak tersedia untuk program studi kamu.');
+        }
+
         $result = $this->eligibility->evaluate($student, $paiModule);
 
         if ($result->decision === 'none') {
@@ -62,6 +66,10 @@ class SubmissionController extends Controller
 
         if (! $student) {
             return redirect()->route('dashboard')->with('error', 'Profil mahasiswa belum lengkap.');
+        }
+
+        if (! $paiModule->moduleCourses()->where('prodi', $student->prodi)->exists()) {
+            return redirect()->route('dashboard')->with('error', 'Modul ini tidak tersedia untuk program studi kamu.');
         }
 
         // Re-evaluasi di server, jangan percaya state dari form/client.

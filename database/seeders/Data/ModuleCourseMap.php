@@ -43,6 +43,11 @@ class ModuleCourseMap
                     ['code' => 'MAA62003', 'name' => 'Statistika Matematika I', 'sks' => 3],
                     ['code' => 'MAA61007', 'name' => 'Statistika Matematika II', 'sks' => 3],
                 ],
+                // Kursus eksklusif S1 Matematika — satu kurikulum (diseed sebagai 'baru').
+                'matematika' => [
+                    ['code' => 'MAM60601', 'name' => 'Pengantar Peluang+', 'sks' => 3],
+                    ['code' => 'MAM60602', 'name' => 'Pengantar Statistika Matematika+', 'sks' => 4],
+                ],
             ],
             'A30' => [
                 'name' => 'Ekonomi',

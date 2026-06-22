@@ -12,21 +12,26 @@ use Illuminate\Support\Collection;
  * Mesin eligibility penyetaraan modul PAI. Ikuti PERSIS docs/spec.md bagian 4.
  *
  * Alur evaluate():
- * 1. Untuk tiap curriculum (baru, lama), cek apakah mahasiswa LENGKAP
- *    (punya nilai non-E untuk semua matkul komponen modul itu di curriculum
- *    tersebut). Curriculum yang tidak lengkap dilewati ("matched set").
- * 2. Kalau tidak ada satupun curriculum yang lengkap -> decision=none,
- *    alasan "belum lengkap".
- * 3. eligible_baru = true kalau ADA matched set yang lolos percentile (4a).
+ * 0. Cek tahun akademik dari nilai terbaik tiap matkul yang matched. Jika ADA
+ *    satu pun dari tahun ≤ TA 23/24 (kode tahun "2324" atau lebih kecil),
+ *    set forceOldScheme=true → PKS Baru dilewati, PKS Lama berlaku tanpa
+ *    cek kode kurikulum (dikonfirmasi 2026-06-21).
+ * 1. Untuk tiap curriculum (baru, lama), cek apakah mahasiswa LENGKAP.
+ * 2. Kalau tidak ada satupun curriculum yang lengkap → decision=none.
+ * 3. eligible_baru = true kalau ADA matched set yang lolos percentile (4a),
+ *    HANYA jika forceOldScheme=false.
  *    eligible_lama = true kalau ADA matched set yang lolos rata-rata bobot
  *    tertimbang SKS > 3.5 (4b).
- * 4. Decision tree (4c): baru diutamakan. Kalau cuma lama yang lolos, cek
- *    apakah matched set yang melolos-kan itu mengandung curriculum "lama"
- *    -> decision=lama. Kalau semua matched set yang lolos cuma curriculum
- *    "baru" -> decision=none (PKS Lama bukan celah buat kurikulum baru).
+ * 4. Decision tree (4c): lama DIUTAMAKAN (lebih murah, Rp500.000 vs Rp550.000).
+ *    - eligible_lama PENUH (forceOldScheme=true ATAU ada kode 'lama') → decision=lama
+ *    - eligible_baru → decision=baru
+ *    - eligible_lama tapi semua kode baru + nilai baru → decision=none
  */
 class EligibilityService
 {
+    /** Kode tahun akhir yang masih masuk skema lama, inklusif. "2324" = TA 23/24. */
+    private const OLD_YEAR_CUTOFF = 2324;
+
     public function evaluate(Student $student, PaiModule $module): EligibilityResult
     {
         $matchedSets = $this->resolveMatchedSets($student, $module);
@@ -37,12 +42,16 @@ class EligibilityService
             );
         }
 
+        // Step 0: cek apakah ada nilai dari TA 23/24 atau sebelumnya.
+        $forceOldScheme = $this->matchedSetsHaveOldYearGrade($matchedSets);
+
         $eligibleBaru = false;
         $percentilePassingCurricula = [];
         $passingLamaCurricula = [];
 
         foreach ($matchedSets as $curriculum => $matched) {
-            if ($this->passesPercentile($matched)) {
+            // PKS Baru hanya dievaluasi kalau semua nilai dari TA 24/25 ke atas.
+            if (! $forceOldScheme && $this->passesPercentile($matched)) {
                 $eligibleBaru = true;
                 $percentilePassingCurricula[] = $curriculum;
             }
@@ -54,6 +63,26 @@ class EligibilityService
 
         $eligibleLama = ! empty($passingLamaCurricula);
         $componentGrades = $this->buildComponentGrades($matchedSets);
+
+        // PKS Lama diutamakan karena lebih murah (Rp500.000 vs Rp550.000).
+        // "Lama penuh" = lolos 4b DAN (nilai dari TA ≤ 23/24 ATAU ada kode kurikulum lama).
+        if ($eligibleLama && ($forceOldScheme || in_array('lama', $passingLamaCurricula, true))) {
+            $decidingCurriculum = in_array('lama', $passingLamaCurricula, true)
+                ? 'lama'
+                : $passingLamaCurricula[0];
+
+            return new EligibilityResult(
+                eligibleBaru: $eligibleBaru,
+                eligibleLama: true,
+                decision: 'lama',
+                price: config('grading.prices.lama'),
+                componentGrades: $componentGrades,
+                reason: $forceOldScheme
+                    ? 'Lolos PKS Lama: ada nilai dari TA 23/24 atau sebelumnya, sehingga otomatis menggunakan skema PKS Lama (rata-rata bobot tertimbang SKS > 3,5).'
+                    : 'Lolos PKS Lama: rata-rata bobot tertimbang SKS > 3,5, matkul berkode kurikulum lama.',
+                decidingCurriculum: $decidingCurriculum,
+            );
+        }
 
         if ($eligibleBaru) {
             return new EligibilityResult(
@@ -68,18 +97,7 @@ class EligibilityService
         }
 
         if ($eligibleLama) {
-            if (in_array('lama', $passingLamaCurricula, true)) {
-                return new EligibilityResult(
-                    eligibleBaru: false,
-                    eligibleLama: true,
-                    decision: 'lama',
-                    price: config('grading.prices.lama'),
-                    componentGrades: $componentGrades,
-                    reason: 'Lolos PKS Lama: rata-rata bobot tertimbang SKS > 3.5, matkul berkode kurikulum lama.',
-                    decidingCurriculum: 'lama',
-                );
-            }
-
+            // Lolos 4b secara matematis tapi semua kode baru + nilai baru → wajib PKS Baru
             return new EligibilityResult(
                 eligibleBaru: false,
                 eligibleLama: true,
@@ -96,8 +114,42 @@ class EligibilityService
             decision: 'none',
             price: null,
             componentGrades: $componentGrades,
-            reason: 'Belum eligible PKS Baru maupun PKS Lama.',
+            reason: $forceOldScheme
+                ? 'Belum eligible PKS Lama: nilai dari TA 23/24 atau sebelumnya wajib menggunakan skema PKS Lama, tetapi rata-rata bobot tertimbang SKS tidak memenuhi syarat (harus > 3,5).'
+                : 'Belum eligible PKS Baru maupun PKS Lama.',
         );
+    }
+
+    /**
+     * Cek apakah ada nilai (best grade) yang semester-nya dari TA 23/24 atau lebih lama.
+     * Format semester: "Genap 2324", "Ganjil 2223", dst. — 4 digit di akhir = kode tahun.
+     *
+     * @param  Collection<string, array<int, array{course: Course, grade: CourseGrade, sks: int}>>  $matchedSets
+     */
+    private function matchedSetsHaveOldYearGrade(Collection $matchedSets): bool
+    {
+        foreach ($matchedSets as $matched) {
+            foreach ($matched as $item) {
+                if ($this->extractYearCode($item['grade']->semester) <= self::OLD_YEAR_CUTOFF) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Ekstrak kode tahun 4-digit dari string semester, mis. "Genap 2324" → 2324.
+     * Return 9999 kalau format tidak dikenal (safe default = dianggap tahun baru).
+     */
+    private function extractYearCode(string $semester): int
+    {
+        if (preg_match('/(\d{4})$/', $semester, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return 9999;
     }
 
     /**
@@ -112,6 +164,7 @@ class EligibilityService
         foreach (['baru', 'lama'] as $curriculum) {
             $moduleCourses = $module->moduleCourses()
                 ->where('curriculum', $curriculum)
+                ->where('prodi', $student->prodi)
                 ->with(['course.threshold'])
                 ->get();
 
@@ -177,7 +230,7 @@ class EligibilityService
             $threshold = $item['course']->threshold;
 
             if (! $threshold) {
-                return false; // belum ada course_thresholds (belum di-recompute)
+                return false;
             }
 
             if ((float) $item['grade']->na < (float) $threshold->threshold_na) {

@@ -31,6 +31,21 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <!-- Footer -->
+            <footer class="border-t border-slate-200 bg-white mt-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                             alt="FSTeM UB" class="h-7 w-auto opacity-60">
+                        <div class="text-xs text-slate-500 leading-tight">
+                            <div class="font-medium text-slate-600">Departemen Matematika — FSTeM UB</div>
+                            <div>Sistem Penyetaraan Modul PAI</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400">&copy; {{ date('Y') }} Universitas Brawijaya</p>
+                </div>
+            </footer>
         </div>
     </body>
 </html>

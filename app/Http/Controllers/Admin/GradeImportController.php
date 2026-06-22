@@ -6,36 +6,95 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ImportCourseGradesRequest;
 use App\Imports\CourseGradesImport;
 use App\Models\Course;
+use App\Models\CourseGrade;
+use App\Models\GradeUploadStatus;
+use App\Models\PaiModule;
+use App\Models\Submission;
 use App\Services\ThresholdService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
 class GradeImportController extends Controller
 {
-    /**
-     * Tampilkan form import nilai.
-     */
     public function create(): View
     {
-        $courses = Course::orderBy('code')->get();
+        $this->authorize('viewAny', Submission::class);
 
-        return view('admin.grades.import', ['courses' => $courses]);
+        $years = $this->academicYears();
+
+        $modules = PaiModule::orderBy('code')
+            ->with('moduleCourses.course')
+            ->get()
+            ->map(function ($module) {
+                // Kursus dikelompokkan per prodi agar A20 menampilkan Aktuaria & Matematika terpisah.
+                $module->coursesByProdi = $module->moduleCourses
+                    ->groupBy('prodi')
+                    ->map(fn ($mcs) => $mcs->pluck('course')->unique('id')->sortBy('code')->values());
+
+                $module->hasMultipleProdi = $module->coursesByProdi->count() > 1;
+
+                return $module;
+            });
+
+        // [course_id => [period => count]]
+        $uploadCounts = CourseGrade::selectRaw('course_id, semester, COUNT(*) as cnt')
+            ->groupBy('course_id', 'semester')
+            ->get()
+            ->groupBy('course_id')
+            ->map(fn ($rows) => $rows->keyBy('semester')->map(fn ($r) => $r->cnt));
+
+        // [course_id => [period => GradeUploadStatus]]
+        $skipStatuses = GradeUploadStatus::all()
+            ->groupBy('course_id')
+            ->map(fn ($rows) => $rows->keyBy('period'));
+
+        $matrix = $modules->map(function ($module) use ($years, $uploadCounts, $skipStatuses) {
+            $rows = collect();
+
+            foreach ($module->coursesByProdi as $prodi => $courses) {
+                foreach ($courses as $course) {
+                    $cells = collect($years)->mapWithKeys(function ($year) use ($course, $uploadCounts, $skipStatuses) {
+                        $period = "{$course->semester_type} {$year}";
+                        $count = $uploadCounts->get($course->id, collect())->get($period, 0);
+                        $skip = $skipStatuses->get($course->id, collect())->get($period);
+
+                        $status = $count > 0 ? 'uploaded' : ($skip ? 'skipped' : 'empty');
+
+                        return [$year => compact('status', 'count', 'skip')];
+                    });
+
+                    $rows->push(compact('course', 'cells', 'prodi'));
+                }
+            }
+
+            return ['module' => $module, 'rows' => $rows, 'hasMultipleProdi' => $module->hasMultipleProdi];
+        });
+
+        return view('admin.grades.import', compact('matrix', 'years'));
     }
 
-    /**
-     * Proses upload file, simpan ke course_grades, lalu recompute
-     * course_thresholds untuk course terkait.
-     */
     public function store(ImportCourseGradesRequest $request): RedirectResponse
     {
         $course = Course::findOrFail($request->validated('course_id'));
+        $year = $request->validated('year');
+        $period = "{$course->semester_type} {$year}";
 
-        $import = new CourseGradesImport($course->id, $request->validated('semester'));
+        $import = new CourseGradesImport($course->id, $period);
 
         try {
-            Excel::import($import, $request->file('file'));
+            DB::transaction(function () use ($course, $period, $import, $request) {
+                // Replace semantics: hapus data lama sebelum import baru
+                CourseGrade::where('course_id', $course->id)->where('semester', $period)->delete();
+
+                // Upload berarti tidak "dilewati" lagi
+                GradeUploadStatus::where('course_id', $course->id)->where('period', $period)->delete();
+
+                Excel::import($import, $request->file('file'));
+            });
         } catch (Throwable $e) {
             report($e);
 
@@ -48,14 +107,54 @@ class GradeImportController extends Controller
 
         if ($import->failures()->isNotEmpty()) {
             $messages = $import->failures()->map(
-                fn ($failure) => "Baris {$failure->row()}: ".implode(', ', $failure->errors())
+                fn ($f) => "Baris {$f->row()}: ".implode(', ', $f->errors())
             )->all();
 
             return back()
-                ->with('status', "{$imported} baris berhasil diimport untuk {$course->code} - {$course->name}.")
+                ->with('status', "{$imported} baris berhasil diimport untuk {$course->code} — {$period}.")
                 ->with('importErrors', $messages);
         }
 
-        return back()->with('status', "{$imported} baris berhasil diimport untuk {$course->code} - {$course->name}.");
+        return back()->with('status', "{$imported} baris berhasil diimport untuk {$course->code} — {$period}.");
+    }
+
+    public function skip(Request $request): RedirectResponse
+    {
+        $this->authorize('viewAny', Submission::class);
+
+        $validated = $request->validate([
+            'course_id' => ['required', 'exists:courses,id'],
+            'period' => ['required', 'string', 'max:20'],
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        GradeUploadStatus::updateOrCreate(
+            ['course_id' => $validated['course_id'], 'period' => $validated['period']],
+            ['note' => $validated['note'] ?? null],
+        );
+
+        return back()->with('status', "Periode {$validated['period']} ditandai dilewati.");
+    }
+
+    public function unskip(GradeUploadStatus $gradeUploadStatus): RedirectResponse
+    {
+        $this->authorize('viewAny', Submission::class);
+
+        $gradeUploadStatus->delete();
+
+        return back()->with('status', 'Status dilewati dihapus.');
+    }
+
+    /** Tahun akademik yang ditampilkan di matrix, dari 2021/22 sampai tahun sekarang+1. */
+    private function academicYears(): array
+    {
+        $currentYear = now()->month >= 8 ? now()->year : now()->year - 1;
+        $years = [];
+
+        for ($y = 2021; $y <= $currentYear + 1; $y++) {
+            $years[] = substr((string) $y, 2).substr((string) ($y + 1), 2);
+        }
+
+        return $years;
     }
 }

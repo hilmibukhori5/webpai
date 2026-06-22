@@ -205,9 +205,9 @@
       Sistem ini dipakai mahasiswa <strong>S1 Ilmu Aktuaria</strong> dan <strong>S1 Matematika</strong>
       (Departemen Matematika UB) untuk <strong>menyetarakan matkul yang sudah lulus</strong> ke
       tujuh Modul PAI level ASAI (<mark class="key">A10–A70</mark>). Sistem otomatis menghitung
-      apakah kamu <strong>eligible</strong> (lolos syarat) untuk tiap modul berdasarkan nilai yang
-      sudah diinput admin, lalu kamu mengajukan, dan admin yang akan menyetujui atau menolak
-      pengajuanmu satu per satu per modul.
+      apakah mahasiswa <strong>eligible</strong> (lolos syarat) untuk tiap modul berdasarkan nilai yang
+      sudah diinput admin, lalu mahasiswa mengajukan, dan admin yang akan menyetujui atau menolak
+      setiap pengajuan satu per satu per modul.
     </p>
     <table>
       <thead><tr><th>Modul</th><th>Nama</th><th>Kode resmi ASAI</th><th>Persentil (PKS Baru)</th></tr></thead>
@@ -221,14 +221,12 @@
         <tr><td><span class="chip c-a70" style="padding:2px 8px;">A70</span></td><td>Pemodelan &amp; Teori Risiko</td><td>TA2</td><td>90</td></tr>
       </tbody>
     </table>
-    <div class="callout tip">
-      <strong>Penting dipahami dari awal:</strong> ada <u>dua dimensi berbeda</u> yang sering
-      tertukar. <mark class="key">Kurikulum (Baru/Lama)</mark> menentukan <em>kode matkul mana</em>
-      yang dipakai (kode matkul kamu berubah tergantung kapan kamu masuk kuliah). Sedangkan
+    <!-- <div class="callout tip">
+      <strong>Penting dipahami dari awal:</strong> ada dua skema aturan kelulusan, Tahun 2026 merupakan masa transisi PKS Lama ke PKS Baru maka tahun ini akan terdapat dua skema penyetaraan yang berlaku. 
       <mark class="baru">PKS Baru</mark>/<mark class="lama">PKS Lama</mark> adalah <em>skema aturan
       kelulusan penyetaraan</em> — dua hal ini dievaluasi terpisah, dijelaskan lengkap di
       <a href="#perhitungan">bagian 5</a>.
-    </div>
+    </div> -->
   </section>
 
   <section id="daftar">
@@ -257,10 +255,10 @@
         <h4>Isi <span class="key" style="background:none;">No Induk (NIM)</span> dengan benar</h4>
         <p>
           Field ini <mark class="warn">paling krusial</mark> di seluruh sistem: No Induk
-          dipakai untuk <strong>mencocokkan kamu ke data nilai matkul</strong> yang sudah diimport
-          admin sebelumnya. Kalau NIM salah ketik atau beda dari yang dipakai admin saat
-          mengimport nilai, dashboard kamu nanti akan menganggap kamu <mark class="none">belum
-          eligible</mark> untuk semua modul — bukan karena nilaimu kurang, tapi karena sistem
+          dipakai untuk <strong>mencocokkan data Anda ke data nilai matkul</strong> yang sudah diimport
+          admin sebelumnya. Apabila NIM salah ketik atau berbeda dari yang dipakai admin saat
+          mengimport nilai, dashboard akan menganggap Anda <mark class="none">belum
+          eligible</mark> untuk semua modul — bukan karena nilai Anda kurang, tapi karena sistem
           tidak menemukan data nilai atas NIM itu. Pilih juga <strong>Program Studi</strong>
           (S1 Ilmu Aktuaria / S1 Matematika).
         </p>
@@ -290,7 +288,7 @@
       <div class="dot">4</div>
       <div class="body">
         <h4>Submit &amp; otomatis masuk</h4>
-        <p>Setelah semua field valid, klik <strong>Register</strong>. Kamu akan
+        <p>Setelah semua field valid, klik <strong>Register</strong>. Anda akan
         <strong>otomatis ter-login</strong> dan langsung diarahkan ke Dashboard — tidak perlu
         verifikasi email tambahan.</p>
         <figure><img src="screenshots/05-register-filled-correct.png" alt="Form register terisi benar"></figure>
@@ -303,7 +301,7 @@
     <p>Kalau sudah punya akun, masuk lewat halaman <strong>Login</strong> menggunakan email
     &amp; password yang dipakai saat daftar. Halaman ini juga yang dipakai admin untuk masuk
     (sistem akan otomatis mengarahkan ke dashboard mahasiswa atau dashboard admin sesuai peran
-    akun kamu).</p>
+    akun Anda).</p>
     <div class="shot-row">
       <figure><img src="screenshots/12-login-empty.png" alt="Halaman login kosong"></figure>
       <figure><img src="screenshots/13-login-filled-ahmad.png" alt="Halaman login terisi"></figure>
@@ -314,7 +312,7 @@
 
   <section id="dashboard">
     <h2><span class="num">4</span>Langkah 3 — Memahami Dashboard</h2>
-    <p>Dashboard adalah halaman utama mahasiswa: di sini kamu lihat status eligibility tiap
+    <p>Dashboard adalah halaman utama mahasiswa: di sini Anda dapat melihat status eligibility tiap
     modul A10–A70, secara <strong>otomatis dihitung dari nilai</strong> yang sudah diinput admin.</p>
 
     <figure>
@@ -326,13 +324,13 @@
     <h3>3 metric card di atas</h3>
     <ul>
       <li><strong>Eligible</strong> — jumlah modul yang lolos PKS Baru maupun PKS Lama.</li>
-      <li><strong>Diajukan</strong> — total pengajuan yang pernah kamu kirim (semua status).</li>
+      <li><strong>Diajukan</strong> — total pengajuan yang pernah Anda kirimkan (semua status).</li>
       <li><strong>Disetujui</strong> — pengajuan yang sudah di-approve admin.</li>
     </ul>
 
     <h3>Anatomi satu kartu modul</h3>
     <p>Tiap kartu modul punya bagian yang sama, hanya isinya yang berubah sesuai hasil
-    perhitungan eligibility kamu:</p>
+    perhitungan eligibility Anda:</p>
     <div class="shot-row">
       <figure class="crop"><img src="screenshots/07-card-eligible-baru.png" alt="Kartu modul eligible PKS Baru"><figcaption>Eligible <mark class="baru">PKS Baru</mark> — tombol aktif</figcaption></figure>
       <figure class="crop"><img src="screenshots/17-card-eligible-lama.png" alt="Kartu modul eligible PKS Lama"><figcaption>Eligible <mark class="lama">PKS Lama</mark> — tombol aktif</figcaption></figure>
@@ -349,7 +347,7 @@
       <span class="b b-lama">✓ Eligible (PKS Lama)</span>
       <span class="b b-none">🔒 Belum Eligible</span>
     </div>
-    <p>Begitu kamu sudah mengajukan, badge berganti jadi status pengajuan:</p>
+    <p>Setelah pengajuan dikirimkan, badge berganti jadi status pengajuan:</p>
     <div class="badges-demo">
       <span class="b b-pending">Menunggu review</span>
       <span class="b b-approved">Disetujui</span>
@@ -360,27 +358,26 @@
       Dashboard juga menampilkan kotak ringkasan biru-muda <strong>"Soal skema PKS Baru &amp; PKS
       Lama"</strong> persis di atas grid kartu modul — ringkasan singkat dari penjelasan lengkap
       di <a href="#perhitungan">bagian berikut</a>. Sistem <strong>otomatis memilih skema yang
-      paling menguntungkan</strong> buat kamu; kamu tidak perlu memilih sendiri.
+      paling menguntungkan</strong> bagi Anda; Anda tidak perlu memilih sendiri.
     </div>
   </section>
 
   <section id="perhitungan">
     <h2><span class="num">5</span>Memahami Perhitungan Eligibility</h2>
     <p>Ini bagian paling penting untuk dipahami: <strong>bagaimana sebenarnya sistem memutuskan</strong>
-    kamu eligible atau tidak, lewat skema apa, dan kenapa.</p>
+    apakah Anda eligible atau tidak, lewat skema apa, dan kenapa.</p>
 
     <h3>5.1 Syarat dasar: matkul komponen harus LENGKAP</h3>
     <p>
       Setiap modul punya beberapa <strong>matkul komponen</strong> (lihat tabel di bagian 1).
-      Sebelum skema apapun dihitung, kamu harus <strong>sudah lulus SEMUA matkul komponen</strong>
+      Sebelum skema apapun dihitung, Anda harus <strong>sudah lulus SEMUA matkul komponen</strong>
       modul itu — tidak boleh ada yang belum diambil atau nilainya <mark class="none">E</mark>.
-      Kamu hanya perlu lengkap lewat <em>salah satu</em> jalur, lewat susunan matkul
-      <strong>Kurikulum Baru</strong> ATAU <strong>Kurikulum Lama</strong> (tidak harus keduanya).
+
     </p>
     <div class="callout warn">
-      <strong>Soal nilai ganda (retake):</strong> kalau kamu pernah mengulang satu matkul
+      <strong>Soal nilai ganda (retake):</strong> apabila Anda pernah mengulang satu matkul
       (ada &gt;1 baris nilai untuk matkul yang sama), sistem otomatis memakai
-      <strong>NA tertinggi</strong> di antara semua percobaanmu — kamu tidak perlu khawatir
+      <strong>NA tertinggi</strong> di antara semua percobaan — Anda tidak perlu khawatir
       nilai lama yang lebih jelek ikut dihitung.
     </div>
 
@@ -393,8 +390,8 @@
     <div class="formula">batas_bawah(matkul) = PERCENTILE.INC( semua NA mahasiswa lain di matkul itu, P )</div>
     <p>
       <code>P</code> ini <strong>berbeda-beda per modul</strong> (lihat kolom Persentil di tabel
-      bagian 1) — bukan satu angka yang sama untuk semua modul. Kamu dinyatakan
-      <strong>eligible PKS Baru</strong> untuk modul M kalau nilai NA kamu
+      bagian 1) — bukan satu angka yang sama untuk semua modul. Anda dinyatakan
+      <strong>eligible PKS Baru</strong> untuk modul M apabila nilai NA Anda
       <strong>≥ batas bawah itu, di SEMUA matkul komponen M sekaligus</strong> (bukan rata-rata —
       tiap matkul punya batasnya sendiri dan harus lolos semua).
     </p>
@@ -426,7 +423,7 @@
     </table>
     <p>Lalu dihitung <strong>rata-rata bobot tertimbang SKS</strong> dari semua matkul komponen modul:</p>
     <div class="formula">rata-rata = Σ(bobot<sub>i</sub> × sks<sub>i</sub>) / Σ(sks<sub>i</sub>)</div>
-    <p>Kamu <strong>eligible PKS Lama</strong> kalau hasilnya <strong>lebih besar dari 3.5</strong>
+    <p>Anda <strong>eligible PKS Lama</strong> apabila hasilnya <strong>lebih besar dari 3.5</strong>
     (harus <em>strictly greater</em> — pas <mark class="warn">3.5 sendiri dianggap GAGAL</mark>,
     bukan lolos).</p>
     <div class="example">
@@ -473,7 +470,7 @@
     </div>
 
     <h3>5.4 Prioritas keputusan (decision tree)</h3>
-    <p>Kalau kamu lolos <em>kedua</em> skema, atau lolos salah satunya saja, sistem mengecek
+    <p>Apabila Anda lolos <em>kedua</em> skema, atau lolos salah satunya saja, sistem mengecek
     dengan <strong>urutan tetap</strong> berikut, langkah demi langkah dari atas ke bawah.
     Begitu satu langkah sudah menghasilkan keputusan, proses <strong>berhenti di situ</strong>
     — tidak lanjut ke langkah berikutnya.</p>
@@ -530,10 +527,10 @@
     <div class="callout warn">
       <strong>Kenapa ada cabang "lolos PKS Lama tapi tetap belum eligible"?</strong>
       PKS Lama sengaja hanya berlaku sebagai jalur alternatif untuk mahasiswa yang
-      <strong>memang mengambil matkul berkode kurikulum lama</strong>. Kalau matkul yang kamu
+      <strong>memang mengambil matkul berkode kurikulum lama</strong>. Apabila matkul yang Anda
       ambil semuanya berkode kurikulum baru, kebetulan rata-rata bobotnya lolos &gt;3.5 pun
       tetap <mark class="none">tidak dianggap eligible</mark> lewat PKS Lama — supaya bukan jadi
-      "jalan pintas" buat mahasiswa kurikulum baru yang gagal di syarat persentil PKS Baru.
+      "jalan pintas" bagi mahasiswa kurikulum baru yang gagal di syarat persentil PKS Baru.
       Mahasiswa kurikulum baru tetap wajib lolos lewat persentil (PKS Baru).
     </div>
 
@@ -543,8 +540,8 @@
       &nbsp;&nbsp;
       <span class="priceTag price-lama">PKS Lama — Rp500.000 / modul</span>
     </p>
-    <p>Harga ini sudah otomatis muncul di form pengajuan sesuai skema yang berlaku untukmu —
-    kamu tidak perlu menghitung sendiri.</p>
+    <p>Harga ini sudah otomatis muncul di form pengajuan sesuai skema yang berlaku untuk Anda —
+    Anda tidak perlu menghitung sendiri.</p>
   </section>
 
   <section id="ajukan">
@@ -557,9 +554,9 @@
       <div class="dot">1</div>
       <div class="body">
         <h4>Klik "Ajukan Penyetaraan"</h4>
-        <p>Kamu akan dibawa ke halaman form persetujuan, lengkap dengan rincian yang
-        menentukan keputusan skema kamu — supaya kamu tahu pasti alasan di balik nilainya,
-        bukan cuma diberi tahu hasilnya.</p>
+        <p>Anda akan dibawa ke halaman form persetujuan, lengkap dengan rincian yang
+        menentukan keputusan skema Anda — supaya Anda mengetahui alasan di balik nilainya,
+        bukan sekadar diberi tahu hasilnya.</p>
       </div>
     </div>
 
@@ -582,7 +579,7 @@
       <div class="dot">3</div>
       <div class="body">
         <h4>Centang dua persetujuan wajib</h4>
-        <p>Kamu harus mencentang <strong>kedua</strong> checkbox sebelum bisa mengirim:</p>
+        <p>Anda harus mencentang <strong>kedua</strong> checkbox sebelum bisa mengirim:</p>
         <ul>
           <li>"Saya bersedia mengajukan penyetaraan modul ini sesuai skema &amp; rincian nilai di atas."</li>
           <li>"Saya bersedia membayar biaya penyetaraan sebesar Rp&hellip;."</li>
@@ -596,7 +593,7 @@
       <div class="body">
         <h4>Klik "Kirim Pengajuan"</h4>
         <p>Pengajuan langsung berstatus <span class="b b-pending">Menunggu review</span> dan
-        kamu dikembalikan ke dashboard dengan pesan konfirmasi hijau di atas. Kartu modul yang
+        Anda dikembalikan ke dashboard dengan pesan konfirmasi hijau di atas. Kartu modul yang
         diajukan otomatis berubah: badge jadi "Menunggu review" dan tombol berubah jadi
         "Sudah diajukan" (terkunci, tidak bisa diajukan dobel selama masih pending/disetujui).</p>
         <figure><img src="screenshots/11-dashboard-citra-after-submit.png" alt="Dashboard setelah submit"></figure>
@@ -604,17 +601,17 @@
     </div>
 
     <div class="callout warn">
-      Sistem <strong>mencegah pengajuan ganda</strong>: kalau satu modul sudah berstatus
-      <em>pending</em> atau <em>approved</em>, kamu tidak bisa mengajukan ulang modul itu sampai
+      Sistem <strong>mencegah pengajuan ganda</strong>: apabila satu modul sudah berstatus
+      <em>pending</em> atau <em>approved</em>, Anda tidak bisa mengajukan ulang modul itu sampai
       statusnya berubah (misalnya ditolak admin). Server juga <strong>menghitung ulang
-      eligibility kamu</strong> saat menerima pengajuan — jadi keputusan akhir selalu berdasarkan
+      eligibility Anda</strong> saat menerima pengajuan — jadi keputusan akhir selalu berdasarkan
       data nilai terbaru, bukan sekadar tampilan di browser.
     </div>
   </section>
 
   <section id="status">
     <h2><span class="num">7</span>Langkah 5 — Memantau Status Pengajuan</h2>
-    <p>Setelah mengajukan, kamu bisa kembali ke dashboard kapan saja untuk memantau status
+    <p>Setelah mengajukan, Anda bisa kembali ke dashboard kapan saja untuk memantau status
     tiap modul lewat badge di kartunya:</p>
     <div class="badges-demo">
       <span class="b b-pending">Menunggu review</span> — admin belum memutuskan.
@@ -624,7 +621,7 @@
     </div>
     <div class="badges-demo">
       <span class="b b-rejected">Ditolak</span> — ada alasan dari admin, tombol berubah jadi
-      "Ajukan ulang" kalau kamu masih eligible.
+      "Ajukan ulang" apabila Anda masih eligible.
     </div>
     <p>Login sebagai mahasiswa lain yang sudah pernah disetujui akan terlihat seperti ini —
     perhatikan badge hijau "Disetujui" dan tombol yang sudah terkunci:</p>
@@ -633,8 +630,8 @@
 
   <section id="verifikasi">
     <h2><span class="num">8</span>Langkah 6 — Proses Verifikasi oleh Admin</h2>
-    <p>Setelah kamu mengirim pengajuan, prosesnya berpindah ke sisi admin. Berikut yang
-    terjadi di balik layar (berguna supaya kamu tahu apa yang sedang ditunggu):</p>
+    <p>Setelah Anda mengirim pengajuan, prosesnya berpindah ke sisi admin. Berikut yang
+    terjadi di balik layar (berguna supaya Anda mengetahui apa yang sedang ditunggu):</p>
 
     <div class="step">
       <div class="dot">1</div>
@@ -652,7 +649,7 @@
       <div class="body">
         <h4>Admin membuka Detail</h4>
         <p>Klik "Detail" pada nama mahasiswa menampilkan setiap modul yang diajukan, lengkap
-        dengan <strong>rincian nilai komponen yang sama persis</strong> seperti yang kamu lihat
+        dengan <strong>rincian nilai komponen yang sama persis</strong> seperti yang Anda lihat
         saat mengajukan (jadi tidak ada informasi tersembunyi) — skema, harga, dan tabel matkul.</p>
         <figure><img src="screenshots/21-admin-detail-doni-pending.png" alt="Detail mahasiswa - pengajuan pending"></figure>
       </div>
@@ -688,7 +685,7 @@
       <div class="dot">5</div>
       <div class="body">
         <h4>Email notifikasi otomatis</h4>
-        <p>Begitu admin menekan Setujui atau Tolak, sistem mengirim email ke alamat yang kamu
+        <p>Begitu admin menekan Setujui atau Tolak, sistem mengirim email ke alamat yang Anda
         daftarkan. Kalau <strong>disetujui</strong>, email itu juga melampirkan
         <mark class="key">Formulir Permohonan Penyetaraan Ujian</mark> (file <code>.docx</code>)
         dan tombol langsung ke halaman upload — lihat <a href="#bayar">langkah berikutnya</a>.
@@ -703,7 +700,7 @@
 
   <section id="bayar">
     <h2><span class="num">9</span>Langkah 7 — Upload Bukti Bayar &amp; Formulir</h2>
-    <p>Begitu modul kamu <strong>disetujui</strong>, masih ada satu langkah terakhir sebelum
+    <p>Begitu modul Anda <strong>disetujui</strong>, masih ada satu langkah terakhir sebelum
     benar-benar selesai: upload <strong>bukti pembayaran</strong> dan <strong>formulir
     permohonan penyetaraan ujian</strong> yang sudah diisi & ditandatangani (formulirnya ada di
     lampiran email persetujuan — lihat langkah sebelumnya).</p>
@@ -762,8 +759,8 @@
     </div>
 
     <div class="callout tip">
-      Admin juga bisa melihat status pembayaran ini beserta link ke 2 file yang kamu upload, di
-      halaman detail mahasiswa miliknya — jadi tidak perlu kirim file itu manual lewat jalur
+      Admin juga bisa melihat status pembayaran ini beserta tautan ke 2 file yang Anda unggah, di
+      halaman detail mahasiswa — jadi tidak perlu mengirim file tersebut secara manual lewat jalur
       lain.
       <figure style="margin-top:14px"><img src="screenshots/35-admin-detail-rina-lunas.png" alt="Admin melihat status pembayaran & link file"></figure>
     </div>
@@ -774,15 +771,15 @@
     <div class="grid2">
       <div class="callout step">
         <strong>Kalau disetujui ✅</strong>
-        <p style="margin-bottom:0;">Status di dashboard kamu berubah jadi
+        <p style="margin-bottom:0;">Status di dashboard Anda berubah jadi
         <span class="b b-approved">Disetujui</span>, lalu lanjut upload bukti bayar &amp;
         formulir (langkah 7 di atas) supaya statusnya jadi <strong>Lunas</strong> — itu langkah
         terakhirnya.</p>
       </div>
       <div class="callout step">
         <strong>Kalau ditolak ❌</strong>
-        <p>Baca alasan penolakan yang ditulis admin (tampil di dashboard &amp; email). Kalau
-        kamu masih dinyatakan eligible, tombol di kartu modul berubah jadi
+        <p>Baca alasan penolakan yang ditulis admin (tampil di dashboard &amp; email). Apabila
+        Anda masih dinyatakan eligible, tombol di kartu modul berubah jadi
         <strong>"Ajukan ulang"</strong> — klik untuk membuka kembali form pengajuan dan
         mengirim ulang setelah masalahnya selesai.</p>
       </div>
@@ -793,19 +790,19 @@
     <h2><span class="num">11</span>Ringkasan &amp; Hal Penting</h2>
     <ul>
       <li>Pastikan <strong>No Induk (NIM)</strong> yang diisi saat register sama persis dengan
-      yang dipakai admin saat mengimport nilaimu — ini kunci semua perhitungan eligibility.</li>
+      yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
       <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
-      (beda ambang tiap modul) — <strong>diutamakan</strong> kalau kamu lolos. Harga
+      (beda ambang tiap modul) — <strong>diutamakan</strong> apabila Anda lolos. Harga
       <strong>Rp550.000</strong>/modul.</li>
       <li><mark class="lama">PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
-      hanya berlaku kalau matkul yang kamu penuhi memang berkode <strong>kurikulum lama</strong>.
+      hanya berlaku apabila matkul yang Anda penuhi memang berkode <strong>kurikulum lama</strong>.
       Harga <strong>Rp500.000</strong>/modul.</li>
       <li>Satu modul = satu pengajuan dengan status sendiri (<span class="b b-pending">pending</span>
       / <span class="b b-approved">approved</span> / <span class="b b-rejected">rejected</span>);
       tidak bisa mengajukan dobel saat masih pending/approved.</li>
       <li>Semua keputusan dihitung ulang otomatis di server berdasarkan nilai terbaru — sistem
       tidak pernah menerima eligibility dari sisi tampilan begitu saja.</li>
-      <li>Modul yang <strong>disetujui</strong> belum benar-benar selesai sampai kamu upload
+      <li>Modul yang <strong>disetujui</strong> belum benar-benar selesai sampai Anda mengunggah
       <strong>bukti pembayaran</strong> + <strong>formulir terisi</strong> (lihat
       <a href="#bayar">langkah 7</a>) — status otomatis berubah jadi <mark class="baru">Lunas</mark>
       begitu kedua file itu ada, tanpa perlu menunggu admin verifikasi lagi.</li>

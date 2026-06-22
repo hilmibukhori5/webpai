@@ -79,7 +79,7 @@ yang dipakai di 2 kurikulum otomatis memenuhi keduanya sekaligus).
 >1 baris `course_grades` untuk course yang sama, ambil baris dengan **NA tertinggi** (percobaan
 terbaik) sebagai nilai yang dipakai untuk evaluasi.
 
-### 4a. PKS Baru (percentile) — DIUTAMAKAN
+### 4a. PKS Baru (percentile)
 - Untuk tiap matkul: `batas_bawah(course)` = `PERCENTILE.INC(semua NA matkul itu, P)`
   di mana NA di-**pool dari semua semester/kelas**.
 - `P` **berbeda per modul** (bukan satu nilai global), disimpan di `pai_modules.percentile`.
@@ -94,28 +94,51 @@ terbaik) sebagai nilai yang dipakai untuk evaluasi.
 - Contoh: A(4.0, 3sks) + B+(3.5, 3sks) = (12+10.5)/6 = 3.75 > 3.5 → eligible.
   B+ + B+ = 3.5 → **tidak** eligible.
 
-### 4c. Decision tree (prioritas) — DIKONFIRMASI 2026-06-16
+### 4c. Decision tree (prioritas) — DIPERBARUI 2026-06-21
+
+**Step 0 (pre-check tahun) — DIKONFIRMASI 2026-06-21:**
+Sebelum evaluasi PKS, cek tahun akademik dari setiap `bestGrade` yang dipakai evaluasi
+(field `course_grades.semester`, format "Genap 2324" / "Ganjil 2223", dst.). Ekstrak
+4-digit kode tahun di akhir. Jika **ADA SATU PUN** kode tahun ≤ 2324 (artinya TA 23/24
+atau lebih lama) → set `forceOldScheme = true`.
+
+Efek `forceOldScheme`:
+- PKS Baru (4a / percentile) **tidak dievaluasi** — dilewati.
+- PKS Lama (4b / weighted average) tetap dievaluasi.
+- Cek kode kurikulum di step `lama`-branch **diabaikan** (kode baru pun dapat `decision=lama`).
+
+Rasional: mahasiswa yang mengambil matkul di TA 23/24 atau lebih lama diperlakukan
+sepenuhnya sebagai era kurikulum lama — skema mereka PKS Lama tanpa syarat kode.
+
 ```
+// Step 0
+forceOldScheme = any(yearCode(bestGrade.semester) <= 2324 for all matched courses)
+
 evaluate(student, module):
-  baru = eligibleBaru(student, module)
-  lama = eligibleLama(student, module)
+  baru = forceOldScheme ? false : eligibleBaru(student, module)   // 4a dilewati jika old
+  lama = eligibleLama(student, module)                             // 4b selalu dihitung
 
-  if baru:                         -> decision = "baru"   (Rp550.000)
-  elif lama:
-       if punya >=1 kode matkul kurikulum LAMA among matched courses:
-                                    -> decision = "lama"   (Rp500.000)
-       else (semua kode kurikulum BARU):
-                                    -> decision = "none"   (wajib percentile, gagal)
-  else:                            -> decision = "none"
+  // PKS Lama DIUTAMAKAN — lebih murah (Rp500.000 vs Rp550.000)
+  if lama AND (forceOldScheme OR >=1 kode matkul LAMA):
+                                         -> decision = "lama"   (Rp500.000)
+  elif baru:                             -> decision = "baru"   (Rp550.000)
+  elif lama (semua kode BARU, new year): -> decision = "none"   // wajib PKS Baru tapi gagal
+  else:                                  -> decision = "none"
 ```
 
-**Rasional yang dikonfirmasi:** PKS Lama cuma valid sebagai fallback buat mahasiswa yang
-matkul-nya memang berkode kurikulum lama. Kalau mahasiswa cuma punya matkul berkode kurikulum
-baru tapi rata-rata bobotnya kebetulan lolos ambang PKS Lama (>3.5), dia **tetap** `decision=none`
-— bukan celah buat mahasiswa kurikulum baru yang gagal percentile. "Matched courses" di sini =
-himpunan matkul (`courses_baru(M)` atau `courses_lama(M)`) yang lengkap dipenuhi mahasiswa
-(lihat bagian 4 di atas); `eligibleBaru`/`eligibleLama` dihitung dari himpunan itu, lewat
-percentile (4a) dan rata-rata bobot (4b) masing-masing.
+**Contoh:**
+- Nilai TA 24/25, kode lama, lolos 4b DAN lolos percentile → **decision=lama** (lama
+  diutamakan karena lebih murah, meski PKS Baru juga lolos).
+- Matkul 1 nilai TA 23/24, Matkul 2 nilai TA 24/25 → `forceOldScheme=true` → PKS Baru
+  diblokir walau NA lolos percentile → decision=lama kalau 4b lolos.
+- Semua nilai TA 24/25+, kode baru → `forceOldScheme=false` → evaluasi PKS Lama dulu
+  (tapi butuh kode lama — tidak ada → skip), lalu PKS Baru.
+
+**Catatan kode kurikulum (berlaku HANYA saat forceOldScheme=false):** PKS Lama cuma valid
+bagi mahasiswa yang matkul-nya berkode kurikulum lama. Kalau mahasiswa punya matkul kode
+baru + nilai baru (≥TA 24/25) + lolos 4b, tetap `decision=none` — bukan celah bagi
+mahasiswa kurikulum baru yang gagal percentile PKS Baru.
+
 Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bool),
 `decision` (`baru|lama|none`), `price`, `component_grades` (buat ditampilkan ke admin).
 

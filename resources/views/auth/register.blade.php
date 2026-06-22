@@ -20,7 +20,8 @@
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="nim@student.ub.ac.id" />
+            <p class="text-xs text-slate-500 mt-1">Harus menggunakan email UB (@student.ub.ac.id).</p>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 

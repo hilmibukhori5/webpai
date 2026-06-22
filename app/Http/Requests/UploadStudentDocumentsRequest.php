@@ -5,16 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class UploadSubmissionDocumentsRequest extends FormRequest
+class UploadStudentDocumentsRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('manageDocuments', $this->route('submission')) ?? false;
+        $student = $this->user()?->student;
+
+        return $student && $student->submissions()->where('status', 'approved')->exists();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -23,10 +23,6 @@ class UploadSubmissionDocumentsRequest extends FormRequest
         ];
     }
 
-    /**
-     * Minimal salah satu file harus diisi tiap submit (form punya 2 slot
-     * upload terpisah, tapi request kosong dua-duanya tidak masuk akal).
-     */
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {

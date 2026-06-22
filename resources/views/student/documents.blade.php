@@ -14,30 +14,43 @@
                 </div>
             @endif
 
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
-                <div class="flex items-start justify-between gap-2">
-                    <div>
-                        <span class="text-xs font-semibold text-slate-500">{{ $submission->paiModule->code }}</span>
-                        <h3 class="text-lg font-semibold text-slate-900">{{ $submission->paiModule->name }}</h3>
-                        <p class="text-sm text-slate-500 mt-1">
-                            Skema {{ $submission->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama' }} &middot;
-                            Rp{{ number_format($submission->price, 0, ',', '.') }}
-                        </p>
-                    </div>
-                    <x-status-badge :variant="$submission->payment_status === 'paid' ? 'approved' : 'pending'">
-                        {{ $submission->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
+            @php
+                $approvedSubmissions = $student->submissions()->with('paiModule')->where('status', 'approved')->get();
+            @endphp
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-heading font-semibold text-slate-900">Modul yang Disetujui</h3>
+                    <x-status-badge :variant="$student->payment_status === 'paid' ? 'approved' : 'pending'">
+                        {{ $student->payment_status === 'paid' ? 'Lunas' : 'Belum Bayar' }}
                     </x-status-badge>
                 </div>
+                <ul class="divide-y divide-slate-100 text-sm">
+                    @foreach ($approvedSubmissions as $s)
+                        <li class="flex items-center justify-between py-2">
+                            <span class="text-slate-700">
+                                <span class="font-medium">{{ $s->paiModule->code }}</span> — {{ $s->paiModule->name }}
+                                <span class="text-slate-400 ml-1">({{ $s->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama' }})</span>
+                            </span>
+                            <span class="text-slate-700 font-medium">Rp{{ number_format($s->price, 0, ',', '.') }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="border-t border-slate-200 pt-3 flex justify-between text-sm font-semibold text-slate-900">
+                    <span>Total</span>
+                    <span>Rp{{ number_format($approvedSubmissions->sum('price'), 0, ',', '.') }}</span>
+                </div>
+            </div>
 
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
                 <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-600">
                     Upload <strong>bukti pembayaran</strong> dan <strong>formulir permohonan penyetaraan
                     ujian</strong> yang sudah diisi & ditandatangani (file formulirnya dilampirkan di
-                    email persetujuanmu). Status otomatis jadi <strong>Lunas</strong> begitu kedua file
-                    ini ada — boleh diupload satu-satu atau sekaligus, dan bisa diganti lagi kapan saja
-                    kalau salah upload.
+                    email keputusan dari admin). Status otomatis jadi <strong>Lunas</strong> begitu kedua file
+                    ini ada — boleh diupload satu-satu atau sekaligus, dan bisa diganti lagi kapan saja.
                 </div>
 
-                <form method="POST" action="{{ route('submissions.documents.update', $submission) }}" enctype="multipart/form-data" class="space-y-6">
+                <form method="POST" action="{{ route('student.documents.update') }}" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <div>
@@ -45,8 +58,8 @@
                         <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept=".pdf,.jpg,.jpeg,.png"
                             class="mt-1 block w-full text-sm text-slate-600 border border-slate-300 rounded-xl shadow-sm">
                         <p class="text-xs text-slate-500 mt-1">
-                            @if ($submission->bukti_pembayaran_path)
-                                Sudah ada: <a href="{{ Storage::url($submission->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">lihat file</a> (upload ulang untuk mengganti).
+                            @if ($student->bukti_pembayaran_path)
+                                Sudah ada: <a href="{{ Storage::url($student->bukti_pembayaran_path) }}" target="_blank" class="text-indigo-600 underline">lihat file</a> (upload ulang untuk mengganti).
                             @else
                                 Belum diupload.
                             @endif
@@ -59,8 +72,8 @@
                         <input type="file" id="formulir_terisi" name="formulir_terisi" accept=".pdf,.doc,.docx"
                             class="mt-1 block w-full text-sm text-slate-600 border border-slate-300 rounded-xl shadow-sm">
                         <p class="text-xs text-slate-500 mt-1">
-                            @if ($submission->formulir_terisi_path)
-                                Sudah ada: <a href="{{ Storage::url($submission->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">lihat file</a> (upload ulang untuk mengganti).
+                            @if ($student->formulir_terisi_path)
+                                Sudah ada: <a href="{{ Storage::url($student->formulir_terisi_path) }}" target="_blank" class="text-indigo-600 underline">lihat file</a> (upload ulang untuk mengganti).
                             @else
                                 Belum diupload.
                             @endif

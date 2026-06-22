@@ -13,6 +13,7 @@ class ModuleCourse extends Model
         'pai_module_id',
         'course_id',
         'curriculum',
+        'prodi',
     ];
 
     public function paiModule(): BelongsTo

@@ -26,8 +26,21 @@ class ModuleCourseSeeder extends Seeder
                         'pai_module_id' => $paiModule->id,
                         'course_id' => $course->id,
                         'curriculum' => $curriculum,
+                        'prodi' => 'S1 Ilmu Aktuaria',
                     ]);
                 }
+            }
+
+            // Entry eksklusif S1 Matematika untuk modul yang punya kursus Matematika.
+            foreach ($module['matematika'] ?? [] as $courseData) {
+                $course = Course::where('code', $courseData['code'])->firstOrFail();
+
+                ModuleCourse::updateOrCreate([
+                    'pai_module_id' => $paiModule->id,
+                    'course_id' => $course->id,
+                    'curriculum' => 'baru',
+                    'prodi' => 'S1 Matematika',
+                ]);
             }
         }
     }

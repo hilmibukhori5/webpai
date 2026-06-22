@@ -27,11 +27,11 @@ class StudentDashboardController extends Controller
             ->get()
             ->keyBy('pai_module_id');
 
-        $cards = PaiModule::orderBy('code')->get()->map(function (PaiModule $module) use ($student, $existingSubmissions) {
+        $cards = PaiModule::forProdi($student->prodi)->orderBy('code')->get()->map(function (PaiModule $module) use ($student, $existingSubmissions) {
             return [
                 'module' => $module,
                 'color' => 'bg-module-'.strtolower($module->code),
-                'componentNames' => $module->coursesForCurriculum('baru')->pluck('name')->implode(', '),
+                'componentNames' => $module->uniqueCoursesForProdi($student->prodi)->pluck('name')->implode(', '),
                 'result' => $this->eligibility->evaluate($student, $module),
                 'submission' => $existingSubmissions->get($module->id),
             ];

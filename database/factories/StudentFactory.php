@@ -22,7 +22,7 @@ class StudentFactory extends Factory
             'user_id' => User::factory(),
             'no_induk' => $this->faker->unique()->numerify('19502010####'),
             'nama' => $this->faker->name(),
-            'prodi' => $this->faker->randomElement(['S1 Ilmu Aktuaria', 'S1 Matematika']),
+            'prodi' => 'S1 Ilmu Aktuaria',
         ];
     }
 }

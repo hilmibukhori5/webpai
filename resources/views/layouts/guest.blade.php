@@ -19,8 +19,13 @@
 
             <!-- Panel kiri: brand + penjelasan (disembunyikan di mobile) -->
             <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex-col justify-between p-12">
-                <a href="/" class="font-heading text-lg font-semibold">
-                    Penyetaraan Modul PAI
+                <a href="/" class="flex items-center gap-2.5">
+                    <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                         alt="FSTeM UB" class="h-9 w-auto brightness-0 invert">
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-heading font-semibold text-white leading-none">Penyetaraan Modul PAI</span>
+                        <span class="text-indigo-200 text-xs leading-none mt-0.5">Dep. Matematika FSTeM UB</span>
+                    </div>
                 </a>
 
                 <div class="space-y-6 max-w-md">
@@ -44,7 +49,7 @@
                 </div>
 
                 <p class="text-indigo-200 text-xs">
-                    &copy; {{ date('Y') }} Penyetaraan Modul PAI &mdash; UB
+                    &copy; {{ date('Y') }} Penyetaraan Modul PAI &mdash; Dep. Matematika FSTeM UB
                 </p>
             </div>
 
@@ -52,8 +57,11 @@
             <div class="flex-1 flex flex-col items-center justify-center px-6 py-12">
                 <div class="w-full sm:max-w-md">
                     <div class="lg:hidden text-center mb-6">
-                        <a href="/" class="font-heading text-lg font-semibold text-slate-900">
-                            Penyetaraan Modul PAI
+                        <a href="/" class="inline-flex flex-col items-center gap-1.5">
+                            <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                                 alt="FSTeM UB" class="h-10 w-auto">
+                            <span class="font-heading text-base font-semibold text-slate-900 leading-none">Penyetaraan Modul PAI</span>
+                            <span class="text-xs text-slate-500 leading-none">Dep. Matematika FSTeM UB</span>
                         </a>
                     </div>
 

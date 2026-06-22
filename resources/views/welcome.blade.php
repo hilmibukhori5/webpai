@@ -18,9 +18,19 @@
         <!-- Top nav -->
         <header class="border-b border-slate-200 bg-white">
             <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                <span class="font-heading font-semibold text-slate-900">Penyetaraan Modul PAI</span>
+                <a href="/" class="flex items-center gap-3">
+                    <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                         alt="FSTeM UB" class="h-10 w-auto">
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-heading font-semibold text-slate-900 leading-none">Penyetaraan Modul PAI</span>
+                        <span class="text-xs text-slate-500 leading-none mt-0.5">Departemen Matematika FSTeM Universitas Brawijaya</span>
+                    </div>
+                </a>
 
                 <nav class="flex items-center gap-3">
+                    <a href="{{ route('manual') }}" class="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2">
+                        Panduan
+                    </a>
                     @auth
                         <a href="{{ Auth::user()->isAdmin() ? route('admin.students.index') : route('dashboard') }}"
                            class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-sm font-medium">
@@ -41,8 +51,16 @@
         <!-- Hero -->
         <section class="bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
             <div class="max-w-6xl mx-auto px-6 py-20 text-center space-y-6">
+                <div class="flex items-center justify-center gap-3 flex-wrap">
+                    <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                         alt="FSTeM UB" class="h-10 w-auto brightness-0 invert opacity-90">
+                    <div class="text-left">
+                        <div class="text-indigo-100 text-xs font-medium">Departemen Matematika</div>
+                        <div class="text-white font-heading font-semibold text-sm leading-tight">FSTeM Universitas Brawijaya</div>
+                    </div>
+                </div>
                 <span class="inline-block bg-white/10 text-indigo-50 text-xs font-medium px-3 py-1 rounded-full">
-                    Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika, Departemen Matematika UB
+                    Khusus mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika
                 </span>
                 <h1 class="font-heading text-3xl sm:text-4xl font-semibold leading-tight max-w-2xl mx-auto">
                     Setarakan matkul yang sudah kamu lulus ke Modul PAI ASAI
@@ -125,8 +143,18 @@
             </div>
         </section>
 
-        <footer class="max-w-6xl mx-auto px-6 py-8 text-center text-xs text-slate-500">
-            &copy; {{ date('Y') }} Penyetaraan Modul PAI &mdash; Departemen Matematika UB
+        <footer class="border-t border-slate-200 bg-white mt-4">
+            <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                         alt="FSTeM UB" class="h-8 w-auto opacity-70">
+                    <div class="text-xs text-slate-500 leading-tight">
+                        <div class="font-medium text-slate-700">Departemen Matematika</div>
+                        <div>Fakultas Sains dan Teknologi — FSTeM, Universitas Brawijaya</div>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400">&copy; {{ date('Y') }} Sistem Penyetaraan Modul PAI</p>
+            </div>
         </footer>
     </body>
 </html>

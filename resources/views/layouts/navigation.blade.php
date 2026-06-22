@@ -5,8 +5,13 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ Auth::user()->isAdmin() ? route('admin.students.index') : route('dashboard') }}" class="font-heading font-semibold text-slate-900">
-                        Penyetaraan PAI
+                    <a href="{{ Auth::user()->isAdmin() ? route('admin.students.index') : route('dashboard') }}" class="flex items-center gap-2.5">
+                        <img src="https://stem.ub.ac.id/wp-content/uploads/2026/05/Logo-Website-sementara-1-1.png"
+                             alt="FSTeM UB" class="h-8 w-auto">
+                        <div class="flex flex-col leading-tight">
+                            <span class="font-heading font-semibold text-slate-900 text-sm leading-none">Penyetaraan Modul PAI</span>
+                            <span class="text-[10px] text-slate-500 leading-none mt-0.5">Dep. Matematika FSTeM UB</span>
+                        </div>
                     </a>
                 </div>
 
@@ -18,6 +23,9 @@
                         </x-nav-link>
                         <x-nav-link :href="route('admin.grades.import.create')" :active="request()->routeIs('admin.grades.import.*')">
                             Import Nilai
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*')">
+                            Cek Eligibility
                         </x-nav-link>
                         <x-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
                             Laporan
@@ -85,6 +93,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.grades.import.create')" :active="request()->routeIs('admin.grades.import.*')">
                     Import Nilai
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*')">
+                    Cek Eligibility
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
                     Laporan
