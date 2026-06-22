@@ -104,7 +104,7 @@ class EligibilityServiceTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 1b: PKS Lama DIUTAMAKAN — kalau lolos keduanya, pilih lama (lebih murah)
+    // Kasus 1b: Adendum PKS Lama DIUTAMAKAN — kalau lolos keduanya, pilih lama (lebih murah)
     // -------------------------------------------------------------------------
 
     /**
@@ -127,7 +127,7 @@ class EligibilityServiceTest extends TestCase
 
         $result = $this->service->evaluate($student, $module);
 
-        // Lolos PKS Baru (NA ≥ threshold) DAN PKS Lama (bobot A = 4.0 > 3.5, kode kurikulum lama)
+        // Lolos PKS Baru (NA ≥ threshold) DAN Adendum PKS Lama (bobot A = 4.0 > 3.5, kode kurikulum lama)
         $this->assertTrue($result->eligibleBaru);
         $this->assertTrue($result->eligibleLama);
         // Pilih lama karena lebih murah
@@ -136,7 +136,7 @@ class EligibilityServiceTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 2: PKS Lama — matkul berkode kurikulum lama, old-year grade
+    // Kasus 2: Adendum PKS Lama — matkul berkode kurikulum lama, old-year grade
     // -------------------------------------------------------------------------
 
     /**
@@ -160,7 +160,7 @@ class EligibilityServiceTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 3: PKS Lama lolos tapi semua kode baru + nilai BARU (≥ 24/25) → none
+    // Kasus 3: Adendum PKS Lama lolos tapi semua kode baru + nilai BARU (≥ 24/25) → none
     // (Rule lama masih berlaku untuk nilai dari TA 24/25 ke atas)
     // -------------------------------------------------------------------------
 
@@ -219,7 +219,7 @@ class EligibilityServiceTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 5: weighted average tepat 3.5 → gagal PKS Lama (strictly greater)
+    // Kasus 5: weighted average tepat 3.5 → gagal Adendum PKS Lama (strictly greater)
     // -------------------------------------------------------------------------
 
     public function test_lama_fails_when_weighted_average_is_exactly_3_5(): void
@@ -285,7 +285,7 @@ class EligibilityServiceTest extends TestCase
     // -------------------------------------------------------------------------
 
     /**
-     * Nilai dari TA 23/24 + lolos percentile → tetap PKS Lama (bukan PKS Baru).
+     * Nilai dari TA 23/24 + lolos percentile → tetap Adendum PKS Lama (bukan PKS Baru).
      * A10 kurikulum baru (MAA62043 + MAA61041) dengan nilai A, threshold 80.
      */
     public function test_old_year_grade_forces_pks_lama_even_when_na_meets_threshold(): void

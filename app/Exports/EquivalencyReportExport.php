@@ -15,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
  * Laporan penyetaraan modul PAI yang SUDAH DISETUJUI admin, per skema
- * (PKS Lama -> nilai NH, PKS Baru -> nilai NA). Format kolom: No, Nomor
+ * (Adendum PKS Lama -> nilai NH, PKS Baru -> nilai NA). Format kolom: No, Nomor
  * Kandidat (kosong, tidak ada di sistem kita), Nomor Mahasiswa, Nama
  * Kandidat, Modul PAI (one-hot A10-A70), lalu grup berulang Kode/Nilai/
  * Semester per matkul komponen yang dipakai saat disetujui (jumlah grup
@@ -36,7 +36,7 @@ class EquivalencyReportExport implements WithEvents, WithTitle
 
     public function title(): string
     {
-        return $this->scheme === 'lama' ? 'PKS Lama' : 'PKS Baru';
+        return $this->scheme === 'lama' ? 'Adendum PKS Lama' : 'PKS Baru';
     }
 
     public function registerEvents(): array

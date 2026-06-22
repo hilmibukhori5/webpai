@@ -23,8 +23,8 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   Contoh nyata: percentile awalnya diasumsikan 1 nilai global (`EQUIVALENCY_PERCENTILE`), user
   klarifikasi ternyata **per-modul** (kolom `pai_modules.percentile`, lihat bagian 2/4a spec)
   — jangan ulang asumsi lama itu. Decision tree 4c juga sudah dikonfirmasi user (lihat spec
-  bagian 4c): PKS Lama cuma valid fallback kalau matched courses mengandung kode kurikulum
-  lama; kalau semua kode baru, tetap `decision=none` walau lolos syarat PKS Lama matematis.
+  bagian 4c): Adendum PKS Lama cuma valid fallback kalau matched courses mengandung kode kurikulum
+  lama; kalau semua kode baru, tetap `decision=none` walau lolos syarat Adendum PKS Lama matematis.
 - `pai_modules.code` tetap A10–A70 (dipakai UI/desain). `official_code` (CF1-CF4/TA1-TA3) cuma
   referensi nama resmi ASAI, bukan identifier utama.
 - Retake/duplikat `course_grades` (no_induk+course sama, >1 baris): pakai **NA tertinggi**
@@ -56,7 +56,7 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
 - **Laporan penyetaraan** (di luar 8 fase asli, ditambah belakangan atas permintaan user):
   `Admin\ReportController` + `App\Exports\EquivalencyReportExport` — download .xlsx PER SKEMA
   (`/admin/reports/export/{lama|baru}`), cuma submission **approved**, 1 baris = 1 submission
-  (bukan 1 per mahasiswa). PKS Lama nilai = NH, PKS Baru nilai = NA. Header 2-baris + grup
+  (bukan 1 per mahasiswa). Adendum PKS Lama nilai = NH, PKS Baru nilai = NA. Header 2-baris + grup
   Kode/Nilai/Semester berulang dibangun manual via PhpSpreadsheet (`WithEvents`/`AfterSheet`,
   bukan `FromArray`/`WithHeadings` biasa — terlalu kompleks buat itu). No Induk WAJIB
   `setCellValueExplicit(..., DataType::TYPE_STRING)`, kalau tidak PhpSpreadsheet auto-detect
@@ -72,7 +72,7 @@ maatwebsite/excel (import nilai, sejak Fase 2) · PHPUnit (test suite tetap paka
   mahasiswa itu dalam 1 surat (bukan per modul). Nomor surat & TTE sengaja dikosongkan (diisi
   manual setelah download). Identitas penandatangan (nama/NIP/jabatan Ketua Departemen
   Matematika) + kop surat ada di `config/letter.php` — update di situ kalau ganti pejabat,
-  jangan di code. Kolom "Nilai" tergantung skema modul: PKS Lama -> bobot/grade_point (0-4,
+  jangan di code. Kolom "Nilai" tergantung skema modul: Adendum PKS Lama -> bobot/grade_point (0-4,
   BUKAN huruf NH mentah — dikonfirmasi user dari baca ulang screenshot), PKS Baru -> NA (0-100).
   "Rata-rata" per modul pakai rata-rata tertimbang SKS, formula sama dengan eligibility 4b.
   Tombol "Download Surat" di list mahasiswa cuma muncul kalau `approved_count > 0`.

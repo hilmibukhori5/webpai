@@ -17,7 +17,7 @@ Ada **2 dimensi terpisah** yang sering ketukar—pisahkan baik-baik:
 - **Kurikulum (Lama vs Baru)** → menentukan *kode matkul mana* yang masuk ke tiap modul.
 - **Skema PKS (Lama vs Baru)** → menentukan *aturan kelulusan penyetaraan*.
 
-PKS Lama/Baru **tidak** identik dengan Kurikulum Lama/Baru. Mereka dievaluasi independen.
+Adendum PKS Lama/Baru **tidak** identik dengan Kurikulum Lama/Baru. Mereka dievaluasi independen.
 
 ---
 
@@ -63,7 +63,7 @@ Asumsi skala UB (NH → bobot):
 | E | 0.0 |
 
 - **NA** = nilai angka (mis. 0–100), dipakai untuk perhitungan **percentile** (PKS Baru).
-- **NH** = nilai huruf → dikonversi ke **bobot**, dipakai untuk rata-rata **> 3.5** (PKS Lama).
+- **NH** = nilai huruf → dikonversi ke **bobot**, dipakai untuk rata-rata **> 3.5** (Adendum PKS Lama).
 
 ---
 
@@ -87,10 +87,10 @@ terbaik) sebagai nilai yang dipakai untuk evaluasi.
   Semua matkul komponen modul M memakai `P` milik modul M itu sendiri.
 - Mahasiswa **eligible PKS Baru untuk M** jika `NA mahasiswa ≥ batas_bawah` di **semua** matkul komponen M.
 
-### 4b. PKS Lama (> 3.5)
+### 4b. Adendum PKS Lama (> 3.5)
 - Hitung **rata-rata bobot tertimbang SKS** atas semua matkul komponen M:
   `Σ(bobot_i × sks_i) / Σ(sks_i)`.
-- **Eligible PKS Lama untuk M** jika hasil **> 3.5** (strictly greater).
+- **Eligible Adendum PKS Lama untuk M** jika hasil **> 3.5** (strictly greater).
 - Contoh: A(4.0, 3sks) + B+(3.5, 3sks) = (12+10.5)/6 = 3.75 > 3.5 → eligible.
   B+ + B+ = 3.5 → **tidak** eligible.
 
@@ -104,11 +104,11 @@ atau lebih lama) → set `forceOldScheme = true`.
 
 Efek `forceOldScheme`:
 - PKS Baru (4a / percentile) **tidak dievaluasi** — dilewati.
-- PKS Lama (4b / weighted average) tetap dievaluasi.
+- Adendum PKS Lama (4b / weighted average) tetap dievaluasi.
 - Cek kode kurikulum di step `lama`-branch **diabaikan** (kode baru pun dapat `decision=lama`).
 
 Rasional: mahasiswa yang mengambil matkul di TA 23/24 atau lebih lama diperlakukan
-sepenuhnya sebagai era kurikulum lama — skema mereka PKS Lama tanpa syarat kode.
+sepenuhnya sebagai era kurikulum lama — skema mereka Adendum PKS Lama tanpa syarat kode.
 
 ```
 // Step 0
@@ -118,7 +118,7 @@ evaluate(student, module):
   baru = forceOldScheme ? false : eligibleBaru(student, module)   // 4a dilewati jika old
   lama = eligibleLama(student, module)                             // 4b selalu dihitung
 
-  // PKS Lama DIUTAMAKAN — lebih murah (Rp500.000 vs Rp550.000)
+  // Adendum PKS Lama DIUTAMAKAN — lebih murah (Rp500.000 vs Rp550.000)
   if lama AND (forceOldScheme OR >=1 kode matkul LAMA):
                                          -> decision = "lama"   (Rp500.000)
   elif baru:                             -> decision = "baru"   (Rp550.000)
@@ -131,10 +131,10 @@ evaluate(student, module):
   diutamakan karena lebih murah, meski PKS Baru juga lolos).
 - Matkul 1 nilai TA 23/24, Matkul 2 nilai TA 24/25 → `forceOldScheme=true` → PKS Baru
   diblokir walau NA lolos percentile → decision=lama kalau 4b lolos.
-- Semua nilai TA 24/25+, kode baru → `forceOldScheme=false` → evaluasi PKS Lama dulu
+- Semua nilai TA 24/25+, kode baru → `forceOldScheme=false` → evaluasi Adendum PKS Lama dulu
   (tapi butuh kode lama — tidak ada → skip), lalu PKS Baru.
 
-**Catatan kode kurikulum (berlaku HANYA saat forceOldScheme=false):** PKS Lama cuma valid
+**Catatan kode kurikulum (berlaku HANYA saat forceOldScheme=false):** Adendum PKS Lama cuma valid
 bagi mahasiswa yang matkul-nya berkode kurikulum lama. Kalau mahasiswa punya matkul kode
 baru + nilai baru (≥TA 24/25) + lolos 4b, tetap `decision=none` — bukan celah bagi
 mahasiswa kurikulum baru yang gagal percentile PKS Baru.
@@ -142,13 +142,13 @@ mahasiswa kurikulum baru yang gagal percentile PKS Baru.
 Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bool),
 `decision` (`baru|lama|none`), `price`, `component_grades` (buat ditampilkan ke admin).
 
-> Tampilkan ke mahasiswa 3 state: **Eligible (PKS Baru)** / **Eligible (PKS Lama)** / **Belum Eligible**,
+> Tampilkan ke mahasiswa 3 state: **Eligible (PKS Baru)** / **Eligible (Adendum PKS Lama)** / **Belum Eligible**,
 > bukan cuma enable/disable, biar dia paham alasannya.
 
 ---
 
 ## 5. Harga
-- PKS Lama: **Rp500.000 / modul**
+- Adendum PKS Lama: **Rp500.000 / modul**
 - PKS Baru: **Rp550.000 / modul**
 
 ---
@@ -228,7 +228,7 @@ juga. Sertakan validasi & contoh file.
 Buat App\Services\EligibilityService dengan method evaluate(Student, PaiModule)
 yang mengembalikan DTO: eligible_baru, eligible_lama, decision(baru|lama|none),
 price, component_grades, reason. Ikuti PERSIS aturan di bagian 4 @docs/spec.md
-(PKS Baru = NA >= batas_bawah di semua matkul; PKS Lama = rata2 bobot tertimbang SKS > 3.5;
+(PKS Baru = NA >= batas_bawah di semua matkul; Adendum PKS Lama = rata2 bobot tertimbang SKS > 3.5;
 decision tree 4c). Cocokkan nilai mahasiswa via no_induk.
 WAJIB tulis unit test untuk kasus: eligible baru, eligible lama (ada kode kurikulum lama),
 eligible lama tapi semua kode baru (-> none), tidak lengkap matkulnya, batas tepat 3.5 (-> gagal).
@@ -239,7 +239,7 @@ eligible lama tapi semua kode baru (-> none), tidak lengkap matkulnya, batas tep
 ```
 Bangun area mahasiswa: register (input no_induk, prodi) + login + dashboard.
 Dashboard: kartu per modul A10–A70 pakai EligibilityService. Tiap kartu tampilkan
-3 state (Eligible PKS Baru / Eligible PKS Lama / Belum Eligible) + alasan singkat.
+3 state (Eligible PKS Baru / Eligible Adendum PKS Lama / Belum Eligible) + alasan singkat.
 Tombol "Ajukan Penyetaraan" hanya aktif kalau decision != none -> buka form persetujuan
 (checkbox bersedia diajukan + bersedia bayar, tampilkan skema & harga dari bagian 5).
 Submit -> buat submissions (status pending) + snapshot submission_courses.
@@ -305,7 +305,7 @@ Jalankan semua test, pastikan hijau.
   | A70 | lime-600 | #65A30D |
 - **Status (badge)** — semantik, konsisten:
   - Eligible PKS Baru → `emerald` (bg emerald-50, text emerald-700, ikon check)
-  - Eligible PKS Lama → `blue` (bg blue-50, text blue-700, ikon check)
+  - Eligible Adendum PKS Lama → `blue` (bg blue-50, text blue-700, ikon check)
   - Belum eligible → `slate` (bg slate-100, text slate-500, ikon lock) + tombol disabled
 
 ### Token komponen
@@ -331,7 +331,7 @@ Buat dulu lapisan dasar TANPA mengubah logika:
 2) Buat komponen Blade reusable: <x-module-card>, <x-status-badge scheme="baru|lama|none">,
    <x-metric-card>, <x-btn variant="primary|ghost|disabled">. Patuhi token di bagian 10.
 3) Rombak dashboard mahasiswa pakai komponen itu: chip kode berwarna per modul + badge status
-   semantik (emerald=PKS Baru, blue=PKS Lama, slate+lock=belum eligible), tombol Ajukan auto-disable
+   semantik (emerald=PKS Baru, blue=Adendum PKS Lama, slate+lock=belum eligible), tombol Ajukan auto-disable
    saat decision=none. Grid responsif sm:2 / lg:3.
 Tunjukkan screenshot/markup hasilnya. Jangan sentuh EligibilityService atau migration.
 ```

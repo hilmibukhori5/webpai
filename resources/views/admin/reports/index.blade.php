@@ -10,7 +10,7 @@
 
             <p class="text-sm text-slate-500">
                 Download laporan modul yang sudah <strong>disetujui</strong>, dipisah per skema —
-                soalnya format nilainya beda: PKS Lama pakai nilai huruf (NH, mis. A, B+), PKS Baru
+                soalnya format nilainya beda: Adendum PKS Lama pakai nilai huruf (NH, mis. A, B+), PKS Baru
                 pakai nilai angka (NA, mis. 80, 83.2). Tiap baris di laporan = 1 modul yang
                 disetujui untuk 1 mahasiswa, lengkap dengan rincian matkul yang dipakai sebagai
                 dasar penyetaraan.
@@ -19,7 +19,7 @@
             <div class="grid sm:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-3">
                     <div>
-                        <h3 class="font-heading font-semibold text-slate-900">Laporan PKS Lama</h3>
+                        <h3 class="font-heading font-semibold text-slate-900">Laporan Adendum PKS Lama</h3>
                         <p class="text-sm text-slate-500 mt-1">
                             {{ $approvedLamaCount }} modul disetujui dengan skema ini. Kolom nilai
                             berisi huruf (A, B+, B, dst).

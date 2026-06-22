@@ -109,7 +109,7 @@ class StudentLetterTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.students.letter', $student));
         $xml = $this->extractDocumentXml($response->baseResponse->getFile()->getPathname());
 
-        // Nilai PKS Lama = bobot (grade_point), bukan NA mentah.
+        // Nilai Adendum PKS Lama = bobot (grade_point), bukan NA mentah.
         $this->assertStringContainsString('>4<', $xml);
         $this->assertStringContainsString('>3.5<', $xml);
         $this->assertStringNotContainsString('>88<', $xml);

@@ -92,7 +92,7 @@
                             <div>
                                 <h4 class="font-heading font-semibold text-slate-900">{{ $submission->paiModule->name }}</h4>
                                 <p class="text-sm text-slate-500">
-                                    Skema {{ $submission->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama' }} &middot;
+                                    Skema {{ $submission->scheme === 'baru' ? 'PKS Baru' : 'Adendum PKS Lama' }} &middot;
                                     Rp{{ number_format($submission->price, 0, ',', '.') }}
                                 </p>
                             </div>

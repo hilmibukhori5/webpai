@@ -46,13 +46,13 @@ class DemoSeeder extends Seeder
         $this->giveGrade($ahmad, 'MAA61041', 98.0, 'A');
         $this->submitAndReview($ahmad, 'A10', 'approved', $admin);
 
-        // 2) Eligible PKS Lama (matkul kode kurikulum lama) -> masih pending.
+        // 2) Eligible Adendum PKS Lama (matkul kode kurikulum lama) -> masih pending.
         $siti = $this->createStudent('195020100002', 'Siti Aminah', 'S1 Matematika');
         $this->giveGrade($siti, 'MAA62004', 70.0, 'A');   // shared baru/lama
         $this->giveGrade($siti, 'MAA61009', 70.0, 'B+');  // kode lama
         $this->submitAndReview($siti, 'A30', 'pending');
 
-        // 3) Lolos syarat PKS Lama tapi semua matkul kode kurikulum baru
+        // 3) Lolos syarat Adendum PKS Lama tapi semua matkul kode kurikulum baru
         //    -> decision tetap none (bukan celah kurikulum baru).
         $budi = $this->createStudent('195020100003', 'Budi Santoso', 'S1 Ilmu Aktuaria');
         $this->giveGrade($budi, 'MAA62042', 85.0, 'A'); // di bawah threshold (91) -> percentile gagal
@@ -63,7 +63,7 @@ class DemoSeeder extends Seeder
         $dewi = $this->createStudent('195020100004', 'Dewi Lestari', 'S1 Matematika');
         $this->giveGrade($dewi, 'MAA62048', 90.0, 'A'); // Mat. Aktuaria I saja, II belum diambil
 
-        // 5) Tepat di batas 3.5 -> gagal PKS Lama (strictly greater than).
+        // 5) Tepat di batas 3.5 -> gagal Adendum PKS Lama (strictly greater than).
         $rudi = $this->createStudent('195020100005', 'Rudi Hartono', 'S1 Ilmu Aktuaria');
         $this->giveGrade($rudi, 'MAA62003', 70.0, 'B+');
         $this->giveGrade($rudi, 'MAA61007', 70.0, 'B+');

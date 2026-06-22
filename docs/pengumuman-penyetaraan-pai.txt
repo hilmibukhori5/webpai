@@ -46,7 +46,7 @@ KETENTUAN KHUSUS
     PKS Baru — nilai NA mahasiswa harus memenuhi ambang persentil yang ditetapkan per modul
     (berbeda-beda untuk tiap modul A10–A70). Biaya: Rp550.000/modul.
 
-    PKS Lama — rata-rata terbobot nilai (berdasarkan SKS) lebih besar dari 3,5 (> 3,5),
+    Adendum PKS Lama — rata-rata terbobot nilai (berdasarkan SKS) lebih besar dari 3,5 (> 3,5),
     berlaku bagi mahasiswa yang menempuh mata kuliah berkode kurikulum lama.
     Biaya: Rp500.000/modul.
 

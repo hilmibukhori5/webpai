@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class ReportController extends Controller
 {
     /**
-     * Halaman pilih skema laporan (PKS Lama/Baru) sebelum download.
+     * Halaman pilih skema laporan (Adendum PKS Lama/Baru) sebelum download.
      */
     public function index(): View
     {

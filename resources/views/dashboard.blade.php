@@ -42,13 +42,13 @@
                 </div>
 
                 <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5 text-sm text-slate-700 space-y-1">
-                    <p class="font-medium text-slate-900">Soal skema PKS Baru &amp; PKS Lama</p>
+                    <p class="font-medium text-slate-900">Soal skema PKS Baru &amp; Adendum PKS Lama</p>
                     <p>
-                        <span class="font-medium text-blue-700">PKS Lama</span> dicek dari
+                        <span class="font-medium text-blue-700">Adendum PKS Lama</span> dicek dari
                         rata-rata bobot nilai (NH) matkul kurikulum lama — harga Rp500.000/modul.
                         <span class="font-medium text-emerald-700">PKS Baru</span> dicek dari percentile nilai
                         (NA) dibanding semua mahasiswa lain — harga Rp550.000/modul. Kalau lolos keduanya,
-                        sistem otomatis pilih <strong>PKS Lama</strong> karena lebih murah; kalau belum eligible di
+                        sistem otomatis pilih <strong>Adendum PKS Lama</strong> karena lebih murah; kalau belum eligible di
                         keduanya, kartu modul bakal kasih tahu alasannya.
                     </p>
                 </div>
@@ -87,7 +87,7 @@
                                 $buttonHref = route('submissions.create', $module->code);
                             } elseif ($result->decision === 'lama') {
                                 $badgeVariant = 'eligible-lama';
-                                $badgeLabel = 'Eligible (PKS Lama)';
+                                $badgeLabel = 'Eligible (Adendum PKS Lama)';
                                 $buttonLabel = 'Ajukan Penyetaraan';
                                 $buttonHref = route('submissions.create', $module->code);
                             } else {

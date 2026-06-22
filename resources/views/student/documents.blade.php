@@ -30,7 +30,7 @@
                         <li class="flex items-center justify-between py-2">
                             <span class="text-slate-700">
                                 <span class="font-medium">{{ $s->paiModule->code }}</span> — {{ $s->paiModule->name }}
-                                <span class="text-slate-400 ml-1">({{ $s->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama' }})</span>
+                                <span class="text-slate-400 ml-1">({{ $s->scheme === 'baru' ? 'PKS Baru' : 'Adendum PKS Lama' }})</span>
                             </span>
                             <span class="text-slate-700 font-medium">Rp{{ number_format($s->price, 0, ',', '.') }}</span>
                         </li>

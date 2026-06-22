@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Lihat docs/spec.md bagian 3. Dipakai untuk konversi nilai huruf (NH)
-    | ke bobot saat menghitung rata-rata tertimbang SKS (PKS Lama).
+    | ke bobot saat menghitung rata-rata tertimbang SKS (Adendum PKS Lama).
     |
     */
     'weights' => [

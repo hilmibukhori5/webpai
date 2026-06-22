@@ -200,7 +200,7 @@
                                         @if ($result->decision === 'baru')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold">PKS Baru</span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold">PKS Lama</span>
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold">Adendum PKS Lama</span>
                                         @endif
                                         @if ($deciding)
                                             <div class="text-xs text-slate-400 mt-1">kurikulum <span class="font-medium">{{ $deciding }}</span></div>

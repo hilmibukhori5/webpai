@@ -3,7 +3,7 @@
 @php
     // docs/spec.md bagian 10: 3 state eligibility (eligible-baru, eligible-lama,
     // belum-eligible) + state submission (pending/approved/rejected) pakai
-    // bahasa warna yang sama biar konsisten (emerald=positif, blue=PKS Lama,
+    // bahasa warna yang sama biar konsisten (emerald=positif, blue=Adendum PKS Lama,
     // amber=menunggu, rose=negatif, slate=netral).
     $styles = [
         'eligible-baru' => ['bg-emerald-50', 'text-emerald-700', 'check'],

@@ -63,7 +63,7 @@ class StudentDashboardTest extends TestCase
         $this->giveGrade($student, 'MAA62043', 85.0, 'A');
         $this->giveGrade($student, 'MAA61041', 90.0, 'A');
 
-        // A30 -> eligible PKS Lama (lewat kode kurikulum lama MAA61009).
+        // A30 -> eligible Adendum PKS Lama (lewat kode kurikulum lama MAA61009).
         $this->giveGrade($student, 'MAA62004', 70.0, 'A');
         $this->giveGrade($student, 'MAA61009', 70.0, 'B+');
 
@@ -73,7 +73,7 @@ class StudentDashboardTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Eligible (PKS Baru)');
-        $response->assertSee('Eligible (PKS Lama)');
+        $response->assertSee('Eligible (Adendum PKS Lama)');
         $response->assertSee('Belum Eligible');
     }
 

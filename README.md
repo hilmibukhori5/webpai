@@ -5,7 +5,7 @@ menyetarakan matkul yang sudah lulus ke Modul PAI level ASAI (A10–A70). Mahasi
 mengajukan penyetaraan per modul berdasarkan eligibility otomatis (dihitung dari nilai),
 lalu admin menyetujui/menolak tiap pengajuan dengan notifikasi email.
 
-Aturan bisnis lengkap (skema PKS Lama/Baru, decision tree, harga, dll) ada di
+Aturan bisnis lengkap (skema Adendum PKS Lama/Baru, decision tree, harga, dll) ada di
 [`docs/spec.md`](docs/spec.md) — itu sumber kebenaran domain untuk project ini.
 
 ## Stack
@@ -63,8 +63,8 @@ Aturan bisnis lengkap (skema PKS Lama/Baru, decision tree, harga, dll) ada di
    |---|---|---|
    | Admin | `admin@pai.test` | dashboard admin |
    | Student | `ahmad@pai.test` | A10 — eligible PKS Baru, sudah disetujui |
-   | Student | `siti@pai.test` | A30 — eligible PKS Lama, masih pending |
-   | Student | `budi@pai.test` | A40 — lolos PKS Lama tapi kode kurikulum baru → belum eligible |
+   | Student | `siti@pai.test` | A30 — eligible Adendum PKS Lama, masih pending |
+   | Student | `budi@pai.test` | A40 — lolos Adendum PKS Lama tapi kode kurikulum baru → belum eligible |
    | Student | `dewi@pai.test` | A60 — belum lengkap matkul komponennya |
    | Student | `rudi@pai.test` | A20 — rata-rata bobot pas 3.5 → gagal |
    | Student | `maya@pai.test` | A50 — eligible PKS Baru tapi ditolak admin (coba "ajukan ulang") |

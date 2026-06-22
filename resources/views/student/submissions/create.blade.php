@@ -18,7 +18,7 @@
                     <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2 text-sm">
                         <p>
                             <span class="font-medium">Skema:</span>
-                            {{ $result->decision === 'baru' ? 'PKS Baru (percentile)' : 'PKS Lama (rata-rata bobot SKS)' }}
+                            {{ $result->decision === 'baru' ? 'PKS Baru (percentile)' : 'Adendum PKS Lama (rata-rata bobot SKS)' }}
                         </p>
                         <p>
                             <span class="font-medium">Harga:</span>

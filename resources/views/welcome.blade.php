@@ -108,7 +108,7 @@
                     <h3 class="font-heading font-semibold text-slate-900">Cek eligibility otomatis</h3>
                     <p class="text-sm text-slate-500">
                         Tiap modul A10&ndash;A70 dicek otomatis: lolos PKS Baru (percentile),
-                        PKS Lama (rata-rata nilai), atau belum eligible — lengkap dengan alasannya.
+                        Adendum PKS Lama (rata-rata nilai), atau belum eligible — lengkap dengan alasannya.
                     </p>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-2">

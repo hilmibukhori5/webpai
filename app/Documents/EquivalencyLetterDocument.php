@@ -14,7 +14,7 @@ use PhpOffice\PhpWord\SimpleType\JcTable;
  * resmi yang dikasih user — Nomor & TTE (tanda tangan elektronik) memang
  * dikosongkan, diisi manual setelah didownload.
  *
- * Kolom "Nilai" tergantung skema modul itu: PKS Lama -> bobot (grade_point,
+ * Kolom "Nilai" tergantung skema modul itu: Adendum PKS Lama -> bobot (grade_point,
  * 0-4), PKS Baru -> NA (0-100). "Rata-rata" per modul pakai rata-rata
  * tertimbang SKS (Sigma(nilai*sks)/Sigma(sks)) -- formula sama dengan
  * eligibility 4b di docs/spec.md, dikonfirmasi user 2026-06-16.

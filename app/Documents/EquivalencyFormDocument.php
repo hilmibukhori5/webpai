@@ -97,7 +97,7 @@ class EquivalencyFormDocument
             $table->addRow();
             $table->addCell(1000)->addText($submission->paiModule->code);
             $table->addCell(3500)->addText($submission->paiModule->name);
-            $table->addCell(1500)->addText($submission->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama');
+            $table->addCell(1500)->addText($submission->scheme === 'baru' ? 'PKS Baru' : 'Adendum PKS Lama');
             $table->addCell(1500)->addText(number_format($submission->price, 0, ',', '.'));
         }
 

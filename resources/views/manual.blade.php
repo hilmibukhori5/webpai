@@ -232,7 +232,7 @@
   <span class="badge">Buku Panduan Mahasiswa</span>
   <h1>Sistem Penyetaraan Modul PAI</h1>
   <p>Panduan lengkap step-by-step: daftar, masuk, memahami dashboard &amp; eligibility,
-  perhitungan skema PKS Baru/PKS Lama, mengajukan penyetaraan, sampai proses verifikasi
+  perhitungan skema PKS Baru/Adendum PKS Lama, mengajukan penyetaraan, sampai proses verifikasi
   oleh admin — untuk mahasiswa S1 Ilmu Aktuaria &amp; S1 Matematika, Departemen Matematika UB.</p>
   <div class="chips">
     <span class="chip c-a10">A10</span><span class="chip c-a20">A20</span><span class="chip c-a30">A30</span>
@@ -276,7 +276,7 @@
       <li><a href="#daftar">Langkah 1 — Mendaftar (Register)</a></li>
       <li><a href="#login">Langkah 2 — Masuk (Login)</a></li>
       <li><a href="#dashboard">Langkah 3 — Memahami Dashboard</a></li>
-      <li><a href="#perhitungan">Memahami Perhitungan Eligibility (PKS Baru vs PKS Lama)</a></li>
+      <li><a href="#perhitungan">Memahami Perhitungan Eligibility (PKS Baru vs Adendum PKS Lama)</a></li>
       <li><a href="#ajukan">Langkah 4 — Mengajukan Penyetaraan</a></li>
       <li><a href="#status">Langkah 5 — Memantau Status Pengajuan</a></li>
       <li><a href="#verifikasi">Langkah 6 — Proses Verifikasi oleh Admin</a></li>
@@ -317,14 +317,14 @@
       + <strong>Pengantar Statistika Matematika+ (MAM60602, 4&nbsp;SKS)</strong>.
       Dashboard otomatis menampilkan komponen yang sesuai prodi Anda.
     </p>
-    <div class="callout tip">
+    <!-- <div class="callout tip">
       <strong>Penting dipahami dari awal:</strong> ada <u>dua dimensi berbeda</u> yang sering
       tertukar. <mark class="key">Kurikulum (Baru/Lama)</mark> menentukan <em>kode matkul mana</em>
       yang dipakai. Sedangkan
-      <mark class="baru">PKS Baru</mark>/<mark class="lama">PKS Lama</mark> adalah <em>skema aturan
+      <mark class="baru">PKS Baru</mark>/<mark class="lama">Adendum PKS Lama</mark> adalah <em>skema aturan
       kelulusan penyetaraan</em> — dua hal ini dievaluasi terpisah, dijelaskan lengkap di
       <a href="#perhitungan">bagian 5</a>.
-    </div>
+    </div> -->
   </section>
 
   <section id="daftar">
@@ -423,7 +423,7 @@
 
     <h3>3 metric card di atas</h3>
     <ul>
-      <li><strong>Eligible</strong> — jumlah modul yang lolos PKS Baru maupun PKS Lama.</li>
+      <li><strong>Eligible</strong> — jumlah modul yang lolos PKS Baru maupun Adendum PKS Lama.</li>
       <li><strong>Diajukan</strong> — total pengajuan yang pernah Anda kirim (semua status).</li>
       <li><strong>Disetujui</strong> — pengajuan yang sudah di-approve admin.</li>
     </ul>
@@ -433,7 +433,7 @@
     perhitungan eligibility Anda:</p>
     <div class="shot-row">
       <figure class="crop"><img src="{{ asset('manual-screenshots/07-card-eligible-baru.png') }}" alt="Kartu modul eligible PKS Baru"><figcaption>Eligible <mark class="baru">PKS Baru</mark> — tombol aktif</figcaption></figure>
-      <figure class="crop"><img src="{{ asset('manual-screenshots/17-card-eligible-lama.png') }}" alt="Kartu modul eligible PKS Lama"><figcaption>Eligible <mark class="lama">PKS Lama</mark> — tombol aktif</figcaption></figure>
+      <figure class="crop"><img src="{{ asset('manual-screenshots/17-card-eligible-lama.png') }}" alt="Kartu modul eligible Adendum PKS Lama"><figcaption>Eligible <mark class="lama">Adendum PKS Lama</mark> — tombol aktif</figcaption></figure>
       <figure class="crop"><img src="{{ asset('manual-screenshots/08-card-belum-eligible.png') }}" alt="Kartu modul belum eligible"><figcaption><mark class="none">Belum eligible</mark> — tombol terkunci</figcaption></figure>
     </div>
     <p>Tiap kartu menampilkan: <strong>chip kode modul berwarna</strong> (kiri atas, warnanya
@@ -444,7 +444,7 @@
     <h3>3 kemungkinan badge status eligibility</h3>
     <div class="badges-demo">
       <span class="b b-baru">&#10003; Eligible (PKS Baru)</span>
-      <span class="b b-lama">&#10003; Eligible (PKS Lama)</span>
+      <span class="b b-lama">&#10003; Eligible (Adendum PKS Lama)</span>
       <span class="b b-none">&#128274; Belum Eligible</span>
     </div>
     <p>Begitu Anda sudah mengajukan, badge berganti jadi status pengajuan:</p>
@@ -459,7 +459,7 @@
       Lama"</strong> persis di atas grid kartu modul — ringkasan singkat dari penjelasan lengkap
       di <a href="#perhitungan">bagian berikut</a>. Sistem <strong>otomatis memilih skema yang
       paling menguntungkan</strong> — kalau Anda lolos keduanya, sistem memilih
-      <strong>PKS Lama</strong> karena lebih murah; Anda tidak perlu memilih sendiri.
+      <strong>Adendum PKS Lama</strong> karena lebih murah; Anda tidak perlu memilih sendiri.
     </div>
   </section>
 
@@ -522,7 +522,7 @@
     halaman pengajuan:</p>
     <figure><img src="{{ asset('manual-screenshots/09-submission-form-baru.png') }}" alt="Contoh rincian PKS Baru"></figure>
 
-    <h3>5.3 <mark class="lama">PKS Lama</mark> — berbasis rata-rata bobot nilai huruf (NH)</h3>
+    <h3>5.3 <mark class="lama">Adendum PKS Lama</mark> — berbasis rata-rata bobot nilai huruf (NH)</h3>
     <p>Nilai huruf (NH) tiap matkul dikonversi ke bobot menurut skala UB:</p>
     <table>
       <thead><tr><th>NH</th><th>A</th><th>B+</th><th>B</th><th>C+</th><th>C</th><th>D+</th><th>D</th><th>E</th></tr></thead>
@@ -530,7 +530,7 @@
     </table>
     <p>Lalu dihitung <strong>rata-rata bobot tertimbang SKS</strong> dari semua matkul komponen modul:</p>
     <div class="formula">rata-rata = &Sigma;(bobot<sub>i</sub> &times; sks<sub>i</sub>) / &Sigma;(sks<sub>i</sub>)</div>
-    <p>Anda <strong>eligible PKS Lama</strong> kalau hasilnya <strong>lebih besar dari 3.5</strong>
+    <p>Anda <strong>eligible Adendum PKS Lama</strong> kalau hasilnya <strong>lebih besar dari 3.5</strong>
     (harus <em>strictly greater</em> — pas <mark class="warn">3.5 sendiri dianggap GAGAL</mark>,
     bukan lolos).</p>
     <div class="example">
@@ -549,12 +549,12 @@
       </div>
       <div class="example-result">
         <span>3,75 &gt; 3,5</span>
-        <mark class="lama">Eligible PKS Lama</mark>
+        <mark class="lama">Eligible Adendum PKS Lama</mark>
       </div>
     </div>
     <p style="margin-top:-6px">Angka yang sama persis tampil di kolom "NH" pada tabel rincian
     halaman pengajuan:</p>
-    <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Contoh rincian PKS Lama"></figure>
+    <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Contoh rincian Adendum PKS Lama"></figure>
 
     <div class="example">
       <div class="example-head">Sebagai pembanding <span class="pill">tepat di batas 3,5</span></div>
@@ -578,8 +578,8 @@
 
     <h3 id="prio">5.4 Prioritas keputusan (decision tree)</h3>
     <p>Sistem mengevaluasi eligibilitas dalam <strong>urutan tetap</strong>, langkah demi langkah
-    dari atas ke bawah. <mark class="lama">PKS Lama diutamakan</mark> karena lebih murah —
-    jika Anda lolos keduanya, sistem memilih PKS Lama. Begitu satu langkah menghasilkan keputusan,
+    dari atas ke bawah. <mark class="lama">Adendum PKS Lama diutamakan</mark> karena lebih murah —
+    jika Anda lolos keduanya, sistem memilih Adendum PKS Lama. Begitu satu langkah menghasilkan keputusan,
     proses <strong>berhenti</strong> — tidak lanjut ke langkah berikutnya.</p>
 
     <div class="callout warn" style="margin-bottom:20px">
@@ -588,7 +588,7 @@
       nilai yang digunakan untuk evaluasi. Jika <strong>ada satu pun nilai dari TA&nbsp;23/24
       atau lebih lama</strong> (termasuk 22/23, 21/22, dst.) maka:
       <ul style="margin:8px 0 0 18px; padding:0">
-        <li>PKS Lama berlaku langsung kalau rata-rata bobot lolos — <strong>kode kurikulum tidak dicek</strong>.</li>
+        <li>Adendum PKS Lama berlaku langsung kalau rata-rata bobot lolos — <strong>kode kurikulum tidak dicek</strong>.</li>
         <li><strong>Langkah 2 (PKS Baru) dilewati otomatis</strong> — PKS Baru tidak berlaku untuk Anda.</li>
       </ul>
       <span style="display:block; margin-top:8px; color:var(--muted); font-size:13px">
@@ -601,7 +601,7 @@
       <div class="prio-head">
         <span class="dot">1</span>
         <span class="q">
-          Lolos syarat PKS Lama PENUH?
+          Lolos syarat Adendum PKS Lama PENUH?
           <span style="color:var(--muted); font-weight:400;">(rata-rata bobot tertimbang SKS &gt; 3,5 DAN ada nilai ≤ TA 23/24 atau ada kode kurikulum lama)</span>
         </span>
       </div>
@@ -609,7 +609,7 @@
         <div class="outcome">
           <span class="tag tag-yes">Ya</span>
           <span class="txt">Keputusan ditetapkan di sini, proses selesai — dipilih karena lebih murah.</span>
-          <span class="result"><mark class="lama">PKS Lama</mark></span>
+          <span class="result"><mark class="lama">Adendum PKS Lama</mark></span>
           <span class="result priceTag price-lama">Rp500.000</span>
         </div>
         <div class="outcome">
@@ -647,22 +647,22 @@
     </div>
 
     <div class="callout warn">
-      <strong>Kenapa ada mahasiswa yang "lolos syarat PKS Lama tapi tetap belum eligible"?</strong>
-      Untuk mahasiswa dengan <em>semua</em> nilai dari TA&nbsp;24/25 ke atas: PKS Lama sengaja
+      <strong>Kenapa ada mahasiswa yang "lolos syarat Adendum PKS Lama tapi tetap belum eligible"?</strong>
+      Untuk mahasiswa dengan <em>semua</em> nilai dari TA&nbsp;24/25 ke atas: Adendum PKS Lama sengaja
       hanya berlaku bagi yang memang mengambil matkul berkode <strong>kurikulum lama</strong>.
       Kalau matkul yang Anda ambil semuanya berkode kurikulum baru, kebetulan rata-rata bobotnya
-      lolos &gt;3,5 pun tetap <mark class="none">tidak dianggap eligible</mark> lewat PKS Lama
-      — ini mencegah mahasiswa kurikulum baru menggunakan PKS Lama sebagai "jalan pintas"
+      lolos &gt;3,5 pun tetap <mark class="none">tidak dianggap eligible</mark> lewat Adendum PKS Lama
+      — ini mencegah mahasiswa kurikulum baru menggunakan Adendum PKS Lama sebagai "jalan pintas"
       menghindari syarat persentil PKS Baru.
       <br><br>
       Namun, aturan ini <strong>tidak berlaku</strong> jika ada nilai dari TA&nbsp;23/24 atau
-      lebih lama — mahasiswa era tersebut langsung mendapat PKS Lama jika rata-rata bobot lolos,
+      lebih lama — mahasiswa era tersebut langsung mendapat Adendum PKS Lama jika rata-rata bobot lolos,
       tanpa perlu mengecek kode kurikulum.
     </div>
 
     <h3>5.5 Harga per skema</h3>
     <p>
-      <span class="priceTag price-lama">PKS Lama — Rp500.000 / modul</span>
+      <span class="priceTag price-lama">Adendum PKS Lama — Rp500.000 / modul</span>
       &nbsp;&nbsp;
       <span class="priceTag price-baru">PKS Baru — Rp550.000 / modul</span>
     </p>
@@ -673,7 +673,7 @@
   <section id="ajukan">
     <h2><span class="num">6</span>Langkah 4 — Mengajukan Penyetaraan</h2>
     <p>Begitu sebuah kartu modul menunjukkan badge <mark class="baru">Eligible (PKS Baru)</mark>
-    atau <mark class="lama">Eligible (PKS Lama)</mark>, tombol <strong>"Ajukan Penyetaraan"</strong>
+    atau <mark class="lama">Eligible (Adendum PKS Lama)</mark>, tombol <strong>"Ajukan Penyetaraan"</strong>
     di kartu itu akan aktif.</p>
 
     <div class="step">
@@ -693,10 +693,10 @@
         <p>Halaman ini menampilkan: nama &amp; kode modul, <strong>skema</strong> yang berlaku
         (PKS Baru/Lama), <strong>harga</strong>, kalimat <strong>alasan</strong> dari sistem, dan
         <strong>tabel rincian matkul komponen</strong> (kode, nama, SKS, NA, NH) yang dipakai
-        sebagai dasar keputusan. Contoh skema PKS Baru (kiri) dan PKS Lama (kanan):</p>
+        sebagai dasar keputusan. Contoh skema PKS Baru (kiri) dan Adendum PKS Lama (kanan):</p>
         <div class="shot-row">
           <figure><img src="{{ asset('manual-screenshots/09-submission-form-baru.png') }}" alt="Form pengajuan skema PKS Baru"></figure>
-          <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Form pengajuan skema PKS Lama"></figure>
+          <figure><img src="{{ asset('manual-screenshots/18-submission-form-lama.png') }}" alt="Form pengajuan skema Adendum PKS Lama"></figure>
         </div>
       </div>
     </div>
@@ -917,12 +917,12 @@
     <ul>
       <li>Pastikan <strong>No Induk (NIM)</strong> yang diisi saat register sama persis dengan
       yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
-      <li><mark class="lama">PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
+      <li><mark class="lama">Adendum PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
       hanya berlaku apabila matkul yang Anda penuhi berkode <strong>kurikulum lama</strong> (atau ada nilai
       dari TA 23/24 ke bawah). Harga <strong>Rp500.000</strong>/modul —
       <strong>diutamakan</strong> karena lebih murah.</li>
       <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
-      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat PKS Lama penuh. Harga
+      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat Adendum PKS Lama penuh. Harga
       <strong>Rp550.000</strong>/modul.</li>
       <li>Satu modul = satu pengajuan dengan status sendiri (<span class="b b-pending">pending</span>
       / <span class="b b-approved">approved</span> / <span class="b b-rejected">rejected</span>);

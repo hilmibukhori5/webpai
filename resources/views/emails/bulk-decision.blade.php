@@ -11,7 +11,7 @@ Berikut keputusan pengajuan penyetaraan modul PAI kamu:
 **Disetujui:**
 
 @foreach ($approved as $s)
-- **{{ $s->paiModule->code }} — {{ $s->paiModule->name }}** ({{ $s->scheme === 'baru' ? 'PKS Baru' : 'PKS Lama' }}) — Rp{{ number_format($s->price, 0, ',', '.') }}
+- **{{ $s->paiModule->code }} — {{ $s->paiModule->name }}** ({{ $s->scheme === 'baru' ? 'PKS Baru' : 'Adendum PKS Lama' }}) — Rp{{ number_format($s->price, 0, ',', '.') }}
 @endforeach
 
 **Total biaya: Rp{{ number_format($totalPrice, 0, ',', '.') }}**

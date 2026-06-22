@@ -122,7 +122,7 @@ class ReportExportTest extends TestCase
         $this->assertSame('Stella Paulina Gadis Ginanda', $sheet->getCell('D3')->getValue());
         $this->assertSame(1, $sheet->getCell('G3')->getValue()); // one-hot A30
         $this->assertSame('MAA62004', $sheet->getCell('L3')->getValue());
-        $this->assertSame('A', $sheet->getCell('M3')->getValue()); // PKS Lama -> NH
+        $this->assertSame('A', $sheet->getCell('M3')->getValue()); // Adendum PKS Lama -> NH
         $this->assertSame('Genap/2022', $sheet->getCell('N3')->getValue());
         $this->assertSame('MAA61009', $sheet->getCell('O3')->getValue());
         $this->assertSame('A', $sheet->getCell('P3')->getValue());
