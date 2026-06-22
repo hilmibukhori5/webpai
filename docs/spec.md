@@ -147,7 +147,7 @@ Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bo
 
 ---
 
-## 5. Harga
+## 5. Biaya
 - Adendum PKS Lama: **Rp500.000 / modul**
 - PKS Baru: **Rp550.000 / modul**
 

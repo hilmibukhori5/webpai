@@ -646,7 +646,7 @@
       </div>
     </div>
 
-    <div class="callout warn">
+    <!-- <div class="callout warn">
       <strong>Kenapa ada mahasiswa yang "lolos syarat Adendum PKS Lama tapi tetap belum eligible"?</strong>
       Untuk mahasiswa dengan <em>semua</em> nilai dari TA&nbsp;24/25 ke atas: Adendum PKS Lama sengaja
       hanya berlaku bagi yang memang mengambil matkul berkode <strong>kurikulum lama</strong>.
@@ -658,15 +658,15 @@
       Namun, aturan ini <strong>tidak berlaku</strong> jika ada nilai dari TA&nbsp;23/24 atau
       lebih lama — mahasiswa era tersebut langsung mendapat Adendum PKS Lama jika rata-rata bobot lolos,
       tanpa perlu mengecek kode kurikulum.
-    </div>
+    </div> -->
 
-    <h3>5.5 Harga per skema</h3>
+    <h3>5.5 Biaya per skema</h3>
     <p>
       <span class="priceTag price-lama">Adendum PKS Lama — Rp500.000 / modul</span>
       &nbsp;&nbsp;
       <span class="priceTag price-baru">PKS Baru — Rp550.000 / modul</span>
     </p>
-    <p>Harga ini sudah otomatis muncul di form pengajuan sesuai skema yang berlaku untuk Anda —
+    <p>Biaya ini sudah otomatis muncul di form pengajuan sesuai skema yang berlaku untuk Anda —
     Anda tidak perlu menghitung sendiri.</p>
   </section>
 
@@ -919,10 +919,10 @@
       yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
       <li><mark class="lama">Adendum PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
       hanya berlaku apabila matkul yang Anda penuhi berkode <strong>kurikulum lama</strong> (atau ada nilai
-      dari TA 23/24 ke bawah). Harga <strong>Rp500.000</strong>/modul —
+      dari TA 23/24 ke bawah). Biaya <strong>Rp500.000</strong>/modul —
       <strong>diutamakan</strong> karena lebih murah.</li>
       <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
-      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat Adendum PKS Lama penuh. Harga
+      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat Adendum PKS Lama penuh. Biaya
       <strong>Rp550.000</strong>/modul.</li>
       <li>Satu modul = satu pengajuan dengan status sendiri (<span class="b b-pending">pending</span>
       / <span class="b b-approved">approved</span> / <span class="b b-rejected">rejected</span>);

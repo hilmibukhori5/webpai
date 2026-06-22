@@ -21,7 +21,7 @@
                             {{ $result->decision === 'baru' ? 'PKS Baru (percentile)' : 'Adendum PKS Lama (rata-rata bobot SKS)' }}
                         </p>
                         <p>
-                            <span class="font-medium">Harga:</span>
+                            <span class="font-medium">Biaya:</span>
                             Rp{{ number_format($result->price, 0, ',', '.') }}
                         </p>
                         <p class="text-slate-500">{{ $result->reason }}</p>
