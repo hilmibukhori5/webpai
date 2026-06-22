@@ -583,17 +583,13 @@
     proses <strong>berhenti</strong> — tidak lanjut ke langkah berikutnya.</p>
 
     <div class="callout warn" style="margin-bottom:20px">
-      <strong>&#9888; Aturan penting: Nilai dari TA 23/24 atau lebih lama</strong><br>
-      Sebelum langkah 1 di bawah, sistem mengecek <strong>tahun akademik</strong> dari setiap
-      nilai yang digunakan untuk evaluasi. Jika <strong>ada satu pun nilai dari TA&nbsp;23/24
-      atau lebih lama</strong> (termasuk 22/23, 21/22, dst.) maka:
-      <ul style="margin:8px 0 0 18px; padding:0">
-        <li>Adendum PKS Lama berlaku langsung kalau rata-rata bobot lolos — <strong>kode kurikulum tidak dicek</strong>.</li>
-        <li><strong>Langkah 2 (PKS Baru) dilewati otomatis</strong> — PKS Baru tidak berlaku untuk Anda.</li>
-      </ul>
+      <strong>&#9888; Aturan khusus: Ada nilai dari TA 23/24 atau lebih lama</strong><br>
+      Jika <strong>ada satu pun nilai dari TA&nbsp;23/24 atau lebih lama</strong> (termasuk 22/23, 21/22, dst.),
+      maka <strong>langkah 2 (PKS Baru) dilewati otomatis</strong> — PKS Baru tidak berlaku untuk Anda.
+      Adendum PKS Lama di langkah 1 tetap dievaluasi seperti biasa.
       <span style="display:block; margin-top:8px; color:var(--muted); font-size:13px">
         Contoh: Matkul A nilai Anda dari TA&nbsp;23/24, Matkul B dari TA&nbsp;24/25 — cukup satu
-        nilai lama untuk mengaktifkan aturan ini.
+        nilai lama untuk memblokir PKS Baru.
       </span>
     </div>
 
@@ -601,8 +597,8 @@
       <div class="prio-head">
         <span class="dot">1</span>
         <span class="q">
-          Lolos syarat Adendum PKS Lama PENUH?
-          <span style="color:var(--muted); font-weight:400;">(rata-rata bobot tertimbang SKS &gt; 3,5 DAN ada nilai ≤ TA 23/24 atau ada kode kurikulum lama)</span>
+          Lolos syarat Adendum PKS Lama?
+          <span style="color:var(--muted); font-weight:400;">(rata-rata bobot tertimbang SKS &gt; 3,5 — berlaku untuk semua kode kurikulum)</span>
         </span>
       </div>
       <div class="prio-body">
@@ -645,20 +641,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="callout warn">
-      <strong>Kenapa ada mahasiswa yang "lolos syarat Adendum PKS Lama tapi tetap belum eligible"?</strong>
-      Untuk mahasiswa dengan <em>semua</em> nilai dari TA&nbsp;24/25 ke atas: Adendum PKS Lama sengaja
-      hanya berlaku bagi yang memang mengambil matkul berkode <strong>kurikulum lama</strong>.
-      Kalau matkul yang Anda ambil semuanya berkode kurikulum baru, kebetulan rata-rata bobotnya
-      lolos &gt;3,5 pun tetap <mark class="none">tidak dianggap eligible</mark> lewat Adendum PKS Lama
-      — ini mencegah mahasiswa kurikulum baru menggunakan Adendum PKS Lama sebagai "jalan pintas"
-      menghindari syarat persentil PKS Baru.
-      <br><br>
-      Namun, aturan ini <strong>tidak berlaku</strong> jika ada nilai dari TA&nbsp;23/24 atau
-      lebih lama — mahasiswa era tersebut langsung mendapat Adendum PKS Lama jika rata-rata bobot lolos,
-      tanpa perlu mengecek kode kurikulum.
-    </div> -->
 
     <h3>5.5 Biaya per skema</h3>
     <p>
@@ -917,12 +899,11 @@
     <ul>
       <li>Pastikan <strong>No Induk (NIM)</strong> yang diisi saat register sama persis dengan
       yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
-      <li><mark class="lama">Adendum PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3.5</strong>,
-      hanya berlaku apabila matkul yang Anda penuhi berkode <strong>kurikulum lama</strong> (atau ada nilai
-      dari TA 23/24 ke bawah). Biaya <strong>Rp500.000</strong>/modul —
-      <strong>diutamakan</strong> karena lebih murah.</li>
+      <li><mark class="lama">Adendum PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3,5</strong>,
+      berlaku untuk <strong>semua kode kurikulum</strong> (lama maupun baru). Biaya <strong>Rp500.000</strong>/modul —
+      <strong>diutamakan</strong> karena lebih murah. Jika ada nilai dari TA&nbsp;23/24 ke bawah, PKS Baru otomatis diblokir.</li>
       <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
-      (beda ambang tiap modul) — dipilih hanya kalau tidak memenuhi syarat Adendum PKS Lama penuh. Biaya
+      (beda ambang tiap modul) — dipilih hanya kalau tidak lolos Adendum PKS Lama. Biaya
       <strong>Rp550.000</strong>/modul.</li>
       <li>Satu modul = satu pengajuan dengan status sendiri (<span class="b b-pending">pending</span>
       / <span class="b b-approved">approved</span> / <span class="b b-rejected">rejected</span>);

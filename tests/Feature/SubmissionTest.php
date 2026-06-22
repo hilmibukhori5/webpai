@@ -60,8 +60,9 @@ class SubmissionTest extends TestCase
 
         $this->setThreshold('MAA62043', 80.0);
         $this->setThreshold('MAA61041', 80.0);
-        $this->giveGrade($student, 'MAA62043', 85.0, 'A');
-        $this->giveGrade($student, 'MAA61041', 90.0, 'A');
+        // NH='C' (grade_point=2.0) → weighted avg ≤ 3.5 → eligibleLama=false → decision='baru'
+        $this->giveGrade($student, 'MAA62043', 85.0, 'C');
+        $this->giveGrade($student, 'MAA61041', 90.0, 'C');
 
         return [$student, $module];
     }

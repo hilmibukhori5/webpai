@@ -14,18 +14,17 @@ use Illuminate\Support\Collection;
  * Alur evaluate():
  * 0. Cek tahun akademik dari nilai terbaik tiap matkul yang matched. Jika ADA
  *    satu pun dari tahun ≤ TA 23/24 (kode tahun "2324" atau lebih kecil),
- *    set forceOldScheme=true → PKS Baru dilewati, Adendum PKS Lama berlaku tanpa
- *    cek kode kurikulum (dikonfirmasi 2026-06-21).
+ *    set forceOldScheme=true → PKS Baru dilewati sepenuhnya.
  * 1. Untuk tiap curriculum (baru, lama), cek apakah mahasiswa LENGKAP.
  * 2. Kalau tidak ada satupun curriculum yang lengkap → decision=none.
  * 3. eligible_baru = true kalau ADA matched set yang lolos percentile (4a),
  *    HANYA jika forceOldScheme=false.
  *    eligible_lama = true kalau ADA matched set yang lolos rata-rata bobot
- *    tertimbang SKS > 3.5 (4b).
- * 4. Decision tree (4c): lama DIUTAMAKAN (lebih murah, Rp500.000 vs Rp550.000).
- *    - eligible_lama PENUH (forceOldScheme=true ATAU ada kode 'lama') → decision=lama
+ *    tertimbang SKS > 3.5 (4b) — berlaku untuk kode kurikulum LAMA maupun BARU.
+ * 4. Decision tree (4c): Adendum PKS Lama DIUTAMAKAN (lebih murah):
+ *    - eligible_lama (kode apapun) → decision=lama
  *    - eligible_baru → decision=baru
- *    - eligible_lama tapi semua kode baru + nilai baru → decision=none
+ *    - else → decision=none
  */
 class EligibilityService
 {
@@ -64,9 +63,8 @@ class EligibilityService
         $eligibleLama = ! empty($passingLamaCurricula);
         $componentGrades = $this->buildComponentGrades($matchedSets);
 
-        // Adendum PKS Lama diutamakan karena lebih murah (Rp500.000 vs Rp550.000).
-        // "Lama penuh" = lolos 4b DAN (nilai dari TA ≤ 23/24 ATAU ada kode kurikulum lama).
-        if ($eligibleLama && ($forceOldScheme || in_array('lama', $passingLamaCurricula, true))) {
+        // Adendum PKS Lama diutamakan — berlaku untuk semua kode kurikulum (lama maupun baru).
+        if ($eligibleLama) {
             $decidingCurriculum = in_array('lama', $passingLamaCurricula, true)
                 ? 'lama'
                 : $passingLamaCurricula[0];
@@ -78,8 +76,8 @@ class EligibilityService
                 price: config('grading.prices.lama'),
                 componentGrades: $componentGrades,
                 reason: $forceOldScheme
-                    ? 'Lolos Adendum PKS Lama: ada nilai dari TA 23/24 atau sebelumnya, sehingga otomatis menggunakan skema Adendum PKS Lama (rata-rata bobot tertimbang SKS > 3,5).'
-                    : 'Lolos Adendum PKS Lama: rata-rata bobot tertimbang SKS > 3,5, matkul berkode kurikulum lama.',
+                    ? 'Lolos Adendum PKS Lama: ada nilai dari TA 23/24 atau sebelumnya, rata-rata bobot tertimbang SKS > 3,5.'
+                    : 'Lolos Adendum PKS Lama: rata-rata bobot tertimbang SKS > 3,5.',
                 decidingCurriculum: $decidingCurriculum,
             );
         }
@@ -87,24 +85,12 @@ class EligibilityService
         if ($eligibleBaru) {
             return new EligibilityResult(
                 eligibleBaru: true,
-                eligibleLama: $eligibleLama,
+                eligibleLama: false,
                 decision: 'baru',
                 price: config('grading.prices.baru'),
                 componentGrades: $componentGrades,
                 reason: 'Lolos PKS Baru: NA mahasiswa ≥ batas bawah percentile di semua matkul komponen.',
                 decidingCurriculum: $percentilePassingCurricula[0],
-            );
-        }
-
-        if ($eligibleLama) {
-            // Lolos 4b secara matematis tapi semua kode baru + nilai baru → wajib PKS Baru
-            return new EligibilityResult(
-                eligibleBaru: false,
-                eligibleLama: true,
-                decision: 'none',
-                price: null,
-                componentGrades: $componentGrades,
-                reason: 'Lolos syarat Adendum PKS Lama, tapi matkul yang diambil berkode kurikulum baru — wajib lewat PKS Baru (percentile).',
             );
         }
 

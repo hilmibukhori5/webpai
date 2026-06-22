@@ -94,7 +94,7 @@ terbaik) sebagai nilai yang dipakai untuk evaluasi.
 - Contoh: A(4.0, 3sks) + B+(3.5, 3sks) = (12+10.5)/6 = 3.75 > 3.5 → eligible.
   B+ + B+ = 3.5 → **tidak** eligible.
 
-### 4c. Decision tree (prioritas) — DIPERBARUI 2026-06-21
+### 4c. Decision tree (prioritas) — DIPERBARUI 2026-06-22
 
 **Step 0 (pre-check tahun) — DIKONFIRMASI 2026-06-21:**
 Sebelum evaluasi PKS, cek tahun akademik dari setiap `bestGrade` yang dipakai evaluasi
@@ -103,12 +103,8 @@ Sebelum evaluasi PKS, cek tahun akademik dari setiap `bestGrade` yang dipakai ev
 atau lebih lama) → set `forceOldScheme = true`.
 
 Efek `forceOldScheme`:
-- PKS Baru (4a / percentile) **tidak dievaluasi** — dilewati.
-- Adendum PKS Lama (4b / weighted average) tetap dievaluasi.
-- Cek kode kurikulum di step `lama`-branch **diabaikan** (kode baru pun dapat `decision=lama`).
-
-Rasional: mahasiswa yang mengambil matkul di TA 23/24 atau lebih lama diperlakukan
-sepenuhnya sebagai era kurikulum lama — skema mereka Adendum PKS Lama tanpa syarat kode.
+- PKS Baru (4a / percentile) **tidak dievaluasi** — dilewati sepenuhnya.
+- Adendum PKS Lama (4b / weighted average) tetap dievaluasi seperti biasa.
 
 ```
 // Step 0
@@ -117,27 +113,21 @@ forceOldScheme = any(yearCode(bestGrade.semester) <= 2324 for all matched course
 evaluate(student, module):
   baru = forceOldScheme ? false : eligibleBaru(student, module)   // 4a dilewati jika old
   lama = eligibleLama(student, module)                             // 4b selalu dihitung
+                                                                   // berlaku semua kode kurikulum
 
   // Adendum PKS Lama DIUTAMAKAN — lebih murah (Rp500.000 vs Rp550.000)
-  if lama AND (forceOldScheme OR >=1 kode matkul LAMA):
-                                         -> decision = "lama"   (Rp500.000)
-  elif baru:                             -> decision = "baru"   (Rp550.000)
-  elif lama (semua kode BARU, new year): -> decision = "none"   // wajib PKS Baru tapi gagal
-  else:                                  -> decision = "none"
+  if lama:   -> decision = "lama"   (Rp500.000)  // kode kurikulum tidak diblokir
+  elif baru: -> decision = "baru"   (Rp550.000)
+  else:      -> decision = "none"
 ```
 
 **Contoh:**
-- Nilai TA 24/25, kode lama, lolos 4b DAN lolos percentile → **decision=lama** (lama
-  diutamakan karena lebih murah, meski PKS Baru juga lolos).
+- Nilai TA 24/25, kode baru, lolos 4b DAN lolos percentile → **decision=lama** (lama
+  diutamakan, kode kurikulum tidak memblokir Adendum PKS Lama).
+- Nilai TA 24/25, kode baru, GAGAL 4b tapi lolos percentile → **decision=baru**.
 - Matkul 1 nilai TA 23/24, Matkul 2 nilai TA 24/25 → `forceOldScheme=true` → PKS Baru
   diblokir walau NA lolos percentile → decision=lama kalau 4b lolos.
-- Semua nilai TA 24/25+, kode baru → `forceOldScheme=false` → evaluasi Adendum PKS Lama dulu
-  (tapi butuh kode lama — tidak ada → skip), lalu PKS Baru.
-
-**Catatan kode kurikulum (berlaku HANYA saat forceOldScheme=false):** Adendum PKS Lama cuma valid
-bagi mahasiswa yang matkul-nya berkode kurikulum lama. Kalau mahasiswa punya matkul kode
-baru + nilai baru (≥TA 24/25) + lolos 4b, tetap `decision=none` — bukan celah bagi
-mahasiswa kurikulum baru yang gagal percentile PKS Baru.
+- Semua nilai TA 24/25+, kode baru, gagal 4b, gagal percentile → **decision=none**.
 
 Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bool),
 `decision` (`baru|lama|none`), `price`, `component_grades` (buat ditampilkan ke admin).
@@ -230,8 +220,9 @@ yang mengembalikan DTO: eligible_baru, eligible_lama, decision(baru|lama|none),
 price, component_grades, reason. Ikuti PERSIS aturan di bagian 4 @docs/spec.md
 (PKS Baru = NA >= batas_bawah di semua matkul; Adendum PKS Lama = rata2 bobot tertimbang SKS > 3.5;
 decision tree 4c). Cocokkan nilai mahasiswa via no_induk.
-WAJIB tulis unit test untuk kasus: eligible baru, eligible lama (ada kode kurikulum lama),
-eligible lama tapi semua kode baru (-> none), tidak lengkap matkulnya, batas tepat 3.5 (-> gagal).
+WAJIB tulis unit test untuk kasus: eligible baru (weighted avg gagal tapi lolos percentile),
+eligible lama (kode lama), eligible lama (kode baru, weighted avg lolos → lama),
+tidak lengkap matkulnya, batas tepat 3.5 (-> gagal).
 ```
 > Aku review output fase ini dulu sebelum lanjut ke UI — ini bagian paling rawan.
 

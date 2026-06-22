@@ -57,11 +57,11 @@ class StudentDashboardTest extends TestCase
     {
         $student = Student::factory()->create();
 
-        // A10 -> eligible PKS Baru.
+        // A10 -> eligible PKS Baru (NH='C' → grade_point=2.0 ≤ 3.5 → eligibleLama=false).
         $this->setThreshold('MAA62043', 80.0);
         $this->setThreshold('MAA61041', 80.0);
-        $this->giveGrade($student, 'MAA62043', 85.0, 'A');
-        $this->giveGrade($student, 'MAA61041', 90.0, 'A');
+        $this->giveGrade($student, 'MAA62043', 85.0, 'C');
+        $this->giveGrade($student, 'MAA61041', 90.0, 'C');
 
         // A30 -> eligible Adendum PKS Lama (lewat kode kurikulum lama MAA61009).
         $this->giveGrade($student, 'MAA62004', 70.0, 'A');

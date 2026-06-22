@@ -92,12 +92,14 @@ class EligibilityServiceTest extends TestCase
 
         $this->setThreshold('MAA62043', 80.0);
         $this->setThreshold('MAA61041', 80.0);
-        // Semester TA 24/25 supaya tidak kena forceOldScheme
-        $this->giveGrade($student, 'MAA62043', 85.0, 'A', 'Genap 2425');
-        $this->giveGrade($student, 'MAA61041', 90.0, 'A', 'Ganjil 2425');
+        // NH='C' (grade_point=2.0) → weighted avg=2.0 ≤ 3.5 → eligibleLama=false
+        // NA ≥ threshold → eligibleBaru=true → decision='baru'
+        $this->giveGrade($student, 'MAA62043', 85.0, 'C', 'Genap 2425');
+        $this->giveGrade($student, 'MAA61041', 90.0, 'C', 'Ganjil 2425');
 
         $result = $this->service->evaluate($student, $module);
 
+        $this->assertFalse($result->eligibleLama);
         $this->assertTrue($result->eligibleBaru);
         $this->assertSame('baru', $result->decision);
         $this->assertSame(550000, $result->price);
@@ -160,15 +162,14 @@ class EligibilityServiceTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 3: Adendum PKS Lama lolos tapi semua kode baru + nilai BARU (≥ 24/25) → none
-    // (Rule lama masih berlaku untuk nilai dari TA 24/25 ke atas)
+    // Kasus 3: Adendum PKS Lama lolos dengan kode kurikulum baru + nilai BARU (≥ 24/25) → lama
+    // Adendum PKS Lama berlaku untuk semua kode kurikulum (lama maupun baru).
     // -------------------------------------------------------------------------
 
     /**
-     * A10 kurikulum baru + nilai TA 24/25: lolos 4b tapi kode semua baru → none.
-     * (forceOldScheme=false karena nilai 24/25, sehingga cek kode masih aktif)
+     * A10 kurikulum baru + nilai TA 24/25: lolos 4b → Adendum PKS Lama (kode tidak diblokir).
      */
-    public function test_none_when_lama_passes_but_all_matched_courses_are_new_curriculum(): void
+    public function test_lama_when_weighted_avg_passes_with_all_new_curriculum_codes(): void
     {
         $student = $this->makeStudent();
         $module = PaiModule::where('code', 'A10')->firstOrFail();
@@ -180,9 +181,9 @@ class EligibilityServiceTest extends TestCase
         $result = $this->service->evaluate($student, $module);
 
         $this->assertFalse($result->eligibleBaru);
-        $this->assertTrue($result->eligibleLama);  // lolos 4b secara matematis...
-        $this->assertSame('none', $result->decision); // ...tapi kode kurikulum baru, nilai juga baru → none
-        $this->assertNull($result->price);
+        $this->assertTrue($result->eligibleLama);
+        $this->assertSame('lama', $result->decision); // kode baru tidak memblokir Adendum PKS Lama
+        $this->assertSame(500000, $result->price);
     }
 
     // -------------------------------------------------------------------------
@@ -275,8 +276,11 @@ class EligibilityServiceTest extends TestCase
 
         $result = $this->service->evaluate($student, $module);
 
+        // NA=90 (grade terbaik) ≥ threshold=80 → eligibleBaru=true membuktikan NA tertinggi dipakai.
+        // Adendum PKS Lama tetap menang (grade_point=4.0 → weighted avg > 3.5).
         $this->assertTrue($result->eligibleBaru);
-        $this->assertSame('baru', $result->decision);
+        $this->assertSame('lama', $result->decision);
+        $this->assertSame(500000, $result->price);
     }
 
     // -------------------------------------------------------------------------
