@@ -40,28 +40,27 @@ class DemoSeeder extends Seeder
         $admin = $this->createAdmin();
         $this->seedThresholdPools();
 
-        // 1) Eligible PKS Baru -> sudah disetujui admin.
+        // 1) Eligible PKS Baru (NH=C → avg≤3.5, NA≥threshold=91) -> sudah disetujui admin.
         $ahmad = $this->createStudent('195020100001', 'Ahmad Fauzi', 'S1 Ilmu Aktuaria');
-        $this->giveGrade($ahmad, 'MAA62043', 95.0, 'A');
-        $this->giveGrade($ahmad, 'MAA61041', 98.0, 'A');
+        $this->giveGrade($ahmad, 'MAA62043', 95.0, 'C', 'Genap 2425'); // gp=2.0 → eligibleLama=false
+        $this->giveGrade($ahmad, 'MAA61041', 98.0, 'C', 'Ganjil 2425'); // NA≥91 → eligibleBaru=true
         $this->submitAndReview($ahmad, 'A10', 'approved', $admin);
 
-        // 2) Eligible Adendum PKS Lama (matkul kode kurikulum lama) -> masih pending.
-        $siti = $this->createStudent('195020100002', 'Siti Aminah', 'S1 Matematika');
-        $this->giveGrade($siti, 'MAA62004', 70.0, 'A');   // shared baru/lama
-        $this->giveGrade($siti, 'MAA61009', 70.0, 'B+');  // kode lama
+        // 2) Eligible Adendum PKS Lama — kode baru A30, nilai lama (forceOldScheme), avg A+A=4.0>3.5.
+        $siti = $this->createStudent('195020100002', 'Siti Aminah', 'S1 Ilmu Aktuaria');
+        $this->giveGrade($siti, 'MAA62004', 70.0, 'A');  // A30 baru — Pengantar Ekonomi Mikro
+        $this->giveGrade($siti, 'MAA61052', 70.0, 'A');  // A30 baru — Pengantar Ekonomi Makro (kode baru)
         $this->submitAndReview($siti, 'A30', 'pending');
 
-        // 3) Lolos syarat Adendum PKS Lama tapi semua matkul kode kurikulum baru
-        //    -> decision tetap none (bukan celah kurikulum baru).
+        // 3) Hanya nilai kode kurikulum lama (rule c) → tidak bisa disetarakan → none.
+        //    A40 lama: MAA62007+MAA61022 (berbeda dari baru: MAA62042+MAA61044).
         $budi = $this->createStudent('195020100003', 'Budi Santoso', 'S1 Ilmu Aktuaria');
-        $this->giveGrade($budi, 'MAA62042', 85.0, 'A'); // di bawah threshold (91) -> percentile gagal
-        $this->giveGrade($budi, 'MAA61044', 85.0, 'A'); // tapi rata2 bobot 4.0 > 3.5
-        // Tidak ada submission yang dibuat -> tombol di dashboard disabled.
+        $this->giveGrade($budi, 'MAA62007', 85.0, 'A'); // A40 kode lama saja → set baru tidak match
+        $this->giveGrade($budi, 'MAA61022', 85.0, 'A'); // rule c → decision=none, tombol disabled
 
         // 4) Belum lengkap matkul komponennya (cuma ambil 1 dari 2).
-        $dewi = $this->createStudent('195020100004', 'Dewi Lestari', 'S1 Matematika');
-        $this->giveGrade($dewi, 'MAA62048', 90.0, 'A'); // Mat. Aktuaria I saja, II belum diambil
+        $dewi = $this->createStudent('195020100004', 'Dewi Lestari', 'S1 Ilmu Aktuaria');
+        $this->giveGrade($dewi, 'MAA62043', 90.0, 'A'); // A10 kode baru: MAA62043 saja, MAA61041 belum
 
         // 5) Tepat di batas 3.5 -> gagal Adendum PKS Lama (strictly greater than).
         $rudi = $this->createStudent('195020100005', 'Rudi Hartono', 'S1 Ilmu Aktuaria');
@@ -69,10 +68,11 @@ class DemoSeeder extends Seeder
         $this->giveGrade($rudi, 'MAA61007', 70.0, 'B+');
 
         // 6) Eligible PKS Baru tapi DITOLAK admin -> demo alur "ajukan ulang".
-        $maya = $this->createStudent('195020100006', 'Maya Putri', 'S1 Matematika');
-        $this->giveGrade($maya, 'MAA62045', 95.0, 'A');
-        $this->giveGrade($maya, 'MAA61016', 96.0, 'A');
-        $this->giveGrade($maya, 'MAA62047', 97.0, 'A');
+        //    NH=C → avg≤3.5 → eligibleLama=false; NA=95,96,97 ≥ threshold=91 → eligibleBaru=true.
+        $maya = $this->createStudent('195020100006', 'Maya Putri', 'S1 Ilmu Aktuaria');
+        $this->giveGrade($maya, 'MAA62045', 95.0, 'C', 'Genap 2425');
+        $this->giveGrade($maya, 'MAA61016', 96.0, 'C', 'Genap 2425');
+        $this->giveGrade($maya, 'MAA62047', 97.0, 'C', 'Genap 2425');
         $this->submitAndReview($maya, 'A50', 'rejected', $admin, 'No Induk tidak cocok dengan data akademik. Mohon ajukan ulang setelah verifikasi.');
 
         $this->command?->info('Demo seeder selesai: 1 admin + 6 mahasiswa (lihat README untuk kredensial).');
@@ -107,13 +107,13 @@ class DemoSeeder extends Seeder
         ]);
     }
 
-    private function giveGrade(Student $student, string $courseCode, float $na, string $nh): void
+    private function giveGrade(Student $student, string $courseCode, float $na, string $nh, string $semester = 'Genap 2223'): void
     {
         $course = Course::where('code', $courseCode)->firstOrFail();
 
         CourseGrade::create([
             'course_id' => $course->id,
-            'semester' => 'Genap 2223',
+            'semester' => $semester,
             'no_induk' => $student->no_induk,
             'nama' => $student->nama,
             'na' => $na,

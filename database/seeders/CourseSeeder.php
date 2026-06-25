@@ -18,7 +18,7 @@ class CourseSeeder extends Seeder
                 foreach ($module[$curriculum] as $course) {
                     // Beberapa code dipakai di kedua kurikulum (lihat catatan
                     // bagian 2 spec) — updateOrCreate by code supaya tidak dobel.
-                    $semesterType = str_starts_with($course['code'], 'MAA61') ? 'Ganjil' : 'Genap';
+                    $semesterType = $course['semester_type'] ?? (str_starts_with($course['code'], 'MAA61') ? 'Ganjil' : 'Genap');
 
                     Course::updateOrCreate(
                         ['code' => $course['code']],

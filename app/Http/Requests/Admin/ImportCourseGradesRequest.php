@@ -18,6 +18,7 @@ class ImportCourseGradesRequest extends FormRequest
             'course_id' => ['required', 'exists:courses,id'],
             'year' => ['required', 'string', 'regex:/^\d{4}$/'], // mis. "2324"
             'file' => ['required', 'file', 'mimes:xlsx,xls,csv,txt', 'max:5120'],
+            'semester_override' => ['nullable', 'string', 'in:Genap,Ganjil'],
         ];
     }
 }

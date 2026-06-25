@@ -5,6 +5,16 @@
         </h2>
     </x-slot>
 
+    {{-- Hidden zero-NA forms per year (di luar tabel agar valid HTML) --}}
+    @foreach ($years as $year)
+        <form id="zero-na-form-{{ $year }}"
+              method="POST"
+              action="{{ route('admin.grades.zero-na-year', $year) }}"
+              style="display:none">
+            @csrf
+        </form>
+    @endforeach
+
     <div class="py-12" x-data="gradeMatrix()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
@@ -83,8 +93,22 @@
                                 </th>
                                 <th class="text-center px-4 py-3.5 font-medium text-slate-500 text-xs tracking-wide uppercase w-28">Semester</th>
                                 @foreach ($years as $year)
+                                    @php $yearLabel = substr($year, 0, 2).'/'.substr($year, 2, 2); @endphp
                                     <th class="text-center px-3 py-3.5 font-medium text-slate-500 text-xs tracking-wide uppercase w-28">
-                                        {{ substr($year, 0, 2) }}/{{ substr($year, 2, 2) }}
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <span>{{ $yearLabel }}</span>
+                                            <button
+                                                type="button"
+                                                title="Nol-kan semua NA untuk TA {{ $yearLabel }}"
+                                                @click="if(confirm('Nol-kan semua NA untuk seluruh matkul TA {{ $yearLabel }}?\n\nSemua nilai NA akan menjadi 0. Tindakan ini tidak bisa dibatalkan.')) document.getElementById('zero-na-form-{{ $year }}').submit()"
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:border-rose-300 text-[10px] font-semibold normal-case tracking-normal transition-colors"
+                                            >
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                                </svg>
+                                                Nol NA
+                                            </button>
+                                        </div>
                                     </th>
                                 @endforeach
                             </tr>
@@ -113,7 +137,7 @@
                                     @endif
                                     <tr
                                         class="border-b border-slate-100 transition-colors"
-                                        x-show="matchesFilter(@js($row['course']->name), @js($row['course']->code), @js($row['course']->semester_type))"
+                                        x-show="matchesFilter(@js($row['course']->name), @js($row['course']->code), @js($row['effective_semester_type']))"
                                     >
                                         {{-- Course name (sticky) --}}
                                         <td class="sticky left-0 z-10 bg-white px-5 py-3.5 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.06)]">
@@ -124,8 +148,8 @@
                                         {{-- Semester type --}}
                                         <td class="px-4 py-3.5 text-center">
                                             <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                {{ $row['course']->semester_type === 'Genap' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700' }}">
-                                                {{ $row['course']->semester_type }}
+                                                {{ $row['effective_semester_type'] === 'Genap' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700' }}">
+                                                {{ $row['effective_semester_type'] }}
                                             </span>
                                         </td>
 
@@ -133,9 +157,10 @@
                                         @foreach ($years as $year)
                                             @php
                                                 $cell = $row['cells'][$year];
-                                                $period = "{$row['course']->semester_type} {$year}";
+                                                $period = "{$row['effective_semester_type']} {$year}";
                                             @endphp
-                                            <td class="px-3 py-3.5 text-center">
+                                            <td class="px-3 py-2.5 text-center">
+                                                <div class="flex flex-col items-center gap-1">
                                                 <button
                                                     type="button"
                                                     @click="openModal(
@@ -146,7 +171,8 @@
                                                         '{{ $cell['status'] }}',
                                                         {{ $cell['count'] }},
                                                         @js($cell['skip']?->note ?? ''),
-                                                        {{ $cell['skip']?->id ?? 'null' }}
+                                                        {{ $cell['skip']?->id ?? 'null' }},
+                                                        @js($row['effective_semester_type'])
                                                     )"
                                                     title="{{ $period }}"
                                                     class="inline-flex items-center justify-center min-w-[5rem] h-9 px-3 rounded-xl border text-xs font-semibold transition-colors cursor-pointer
@@ -175,6 +201,13 @@
                                                         Upload
                                                     @endif
                                                 </button>
+                                                @if ($cell['status'] === 'uploaded')
+                                                    <a href="{{ route('admin.grades.distribution', [$row['course']->id, $year]) }}?sem={{ $row['effective_semester_type'] }}"
+                                                       class="text-[10px] text-indigo-500 hover:text-indigo-700 font-medium hover:underline leading-none">
+                                                        distribusi →
+                                                    </a>
+                                                @endif
+                                                </div>
                                             </td>
                                         @endforeach
                                     </tr>
@@ -242,6 +275,7 @@
                             @csrf
                             <input type="hidden" name="course_id" :value="courseId">
                             <input type="hidden" name="year" :value="year">
+                            <input type="hidden" name="semester_override" :value="semesterOverride">
                             <div>
                                 <label class="text-xs font-medium text-slate-700 block mb-1.5">File baru (xlsx / xls / csv, maks 5MB)</label>
                                 <input type="file" name="file" accept=".xlsx,.xls,.csv"
@@ -261,6 +295,7 @@
                             @csrf
                             <input type="hidden" name="course_id" :value="courseId">
                             <input type="hidden" name="year" :value="year">
+                            <input type="hidden" name="semester_override" :value="semesterOverride">
                             <div>
                                 <label class="text-xs font-medium text-slate-700 block mb-1.5">File nilai (xlsx / xls / csv, maks 5MB)</label>
                                 <input type="file" name="file" accept=".xlsx,.xls,.csv"
@@ -306,6 +341,7 @@
                             @csrf
                             <input type="hidden" name="course_id" :value="courseId">
                             <input type="hidden" name="year" :value="year">
+                            <input type="hidden" name="semester_override" :value="semesterOverride">
                             <p class="text-xs text-slate-500">Upload sekarang? Status "dilewati" otomatis dihapus.</p>
                             <input type="file" name="file" accept=".xlsx,.xls,.csv"
                                 class="block w-full text-sm border border-slate-300 rounded-xl px-3 py-2 text-slate-600 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
@@ -346,12 +382,13 @@
             count: 0,
             skipNote: '',
             skipDeleteUrl: '',
+            semesterOverride: '',
 
             // Filters
             search: '',
             semType: '',
 
-            openModal(courseId, courseName, year, period, status, count, skipNote, skipId) {
+            openModal(courseId, courseName, year, period, status, count, skipNote, skipId, semesterOverride) {
                 this.courseId = courseId;
                 this.courseName = courseName;
                 this.year = year;
@@ -360,6 +397,7 @@
                 this.count = count;
                 this.skipNote = skipNote || '';
                 this.skipDeleteUrl = '{{ route('admin.grades.import.unskip', '__ID__') }}'.replace('__ID__', skipId);
+                this.semesterOverride = semesterOverride || '';
                 this.isOpen = true;
             },
 

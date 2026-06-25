@@ -95,15 +95,15 @@ class ReportExportTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.reports.index'));
 
         $response->assertOk();
-        $response->assertSee('1', false); // approvedLamaCount
+        $response->assertSee('1', false); // approvedCount
     }
 
-    public function test_lama_export_contains_nh_values_and_correct_header(): void
+    public function test_lama_rows_use_nh_and_klausul_is_pks_lama(): void
     {
         $admin = $this->makeAdmin();
         $this->makeLamaSubmission('Stella Paulina Gadis Ginanda', '225091000111008');
 
-        $response = $this->actingAs($admin)->get(route('admin.reports.export', 'lama'));
+        $response = $this->actingAs($admin)->get(route('admin.reports.export'));
 
         $response->assertOk();
 
@@ -115,6 +115,8 @@ class ReportExportTest extends TestCase
         $this->assertSame('Mata Kuliah Disetarakan', $sheet->getCell('L1')->getValue());
         $this->assertSame('Kode', $sheet->getCell('L2')->getValue());
         $this->assertSame('Nilai', $sheet->getCell('M2')->getValue());
+        // Klausul PKS: Fixed(4) + Modules(7) + Groups(2*3=6) + 1 = col 18 = R
+        $this->assertSame('Klausul PKS', $sheet->getCell('R1')->getValue());
 
         // Baris data pertama.
         $this->assertSame(1, $sheet->getCell('A3')->getValue());
@@ -127,14 +129,15 @@ class ReportExportTest extends TestCase
         $this->assertSame('MAA61009', $sheet->getCell('O3')->getValue());
         $this->assertSame('A', $sheet->getCell('P3')->getValue());
         $this->assertSame('Ganjil/2023', $sheet->getCell('Q3')->getValue());
+        $this->assertSame('PKS Lama', $sheet->getCell('R3')->getValue());
     }
 
-    public function test_baru_export_contains_numeric_na_values(): void
+    public function test_baru_rows_use_na_and_klausul_is_pks_baru(): void
     {
         $admin = $this->makeAdmin();
         $this->makeBaruSubmission('Vivi Anggraeny', '215091001111010');
 
-        $response = $this->actingAs($admin)->get(route('admin.reports.export', 'baru'));
+        $response = $this->actingAs($admin)->get(route('admin.reports.export'));
 
         $response->assertOk();
 
@@ -143,20 +146,40 @@ class ReportExportTest extends TestCase
         $this->assertSame('215091001111010', $sheet->getCell('C3')->getValue());
         $this->assertEqualsWithDelta(90.5, (float) $sheet->getCell('M3')->getValue(), 0.001);
         $this->assertEqualsWithDelta(83.2, (float) $sheet->getCell('P3')->getValue(), 0.001);
+        // Klausul PKS: col 18 = R (maxComponents=2)
+        $this->assertSame('PKS Baru', $sheet->getCell('R3')->getValue());
     }
 
-    public function test_export_only_includes_approved_submissions_of_matching_scheme(): void
+    public function test_export_only_includes_approved_submissions(): void
     {
         $admin = $this->makeAdmin();
         $this->makeLamaSubmission('Stella', '225091000111008');
         $baru = $this->makeBaruSubmission('Vivi', '215091001111010');
-        $baru->update(['status' => 'pending']); // jangan ikut laporan
+        $baru->update(['status' => 'pending']); // tidak boleh muncul
 
-        $response = $this->actingAs($admin)->get(route('admin.reports.export', 'baru'));
+        $response = $this->actingAs($admin)->get(route('admin.reports.export'));
         $sheet = IOFactory::load($response->baseResponse->getFile()->getPathname())->getActiveSheet();
 
-        // Tidak ada baris data karena satu-satunya submission scheme=baru masih pending.
-        $this->assertNull($sheet->getCell('A3')->getValue());
+        // Hanya 1 baris data (Stella, lama). Vivi yang pending tidak ikut.
+        $this->assertSame(1, $sheet->getCell('A3')->getValue());
+        $this->assertNull($sheet->getCell('A4')->getValue());
+    }
+
+    public function test_export_includes_both_schemes_in_one_file(): void
+    {
+        $admin = $this->makeAdmin();
+        $this->makeLamaSubmission('Stella', '225091000111008');
+        $this->makeBaruSubmission('Vivi', '215091001111010');
+
+        $response = $this->actingAs($admin)->get(route('admin.reports.export'));
+        $sheet = IOFactory::load($response->baseResponse->getFile()->getPathname())->getActiveSheet();
+
+        // Urutan alfabet: Stella > Vivi, jadi Stella di baris 3, Vivi di baris 4.
+        $this->assertSame(1, $sheet->getCell('A3')->getValue()); // Stella
+        $this->assertSame(2, $sheet->getCell('A4')->getValue()); // Vivi
+        // Klausul PKS col 18 = R
+        $this->assertSame('PKS Lama', $sheet->getCell('R3')->getValue());
+        $this->assertSame('PKS Baru', $sheet->getCell('R4')->getValue());
     }
 
     public function test_export_groups_use_max_components_across_rows(): void
@@ -164,10 +187,10 @@ class ReportExportTest extends TestCase
         $admin = $this->makeAdmin();
         $this->makeLamaSubmission('Stella', '225091000111008');
 
-        // A50 punya 4 matkul komponen (kurikulum lama) -> bikin baris dengan 4 grup.
+        // A50 punya 3 matkul komponen (kurikulum lama = baru) -> bikin baris dengan 3 grup.
         $student = Student::factory()->create(['nama' => 'Vivi Anggraeny', 'no_induk' => '215091001111010']);
         $module = PaiModule::where('code', 'A50')->firstOrFail();
-        $courses = Course::whereIn('code', ['MAA62011', 'MAA61016', 'MAA62023', 'MAA62013'])->get()->keyBy('code');
+        $courses = Course::whereIn('code', ['MAA62045', 'MAA61016', 'MAA62047'])->get()->keyBy('code');
 
         $submission = Submission::create([
             'student_id' => $student->id,
@@ -177,17 +200,19 @@ class ReportExportTest extends TestCase
             'status' => 'approved',
         ]);
 
-        foreach (['MAA62011', 'MAA61016', 'MAA62023', 'MAA62013'] as $code) {
+        foreach (['MAA62045', 'MAA61016', 'MAA62047'] as $code) {
             CourseGrade::create(['course_id' => $courses[$code]->id, 'semester' => 'Genap/2022', 'no_induk' => '215091001111010', 'nama' => 'Vivi Anggraeny', 'na' => 80, 'nh' => 'B+', 'grade_point' => 3.5]);
             SubmissionCourse::create(['submission_id' => $submission->id, 'course_id' => $courses[$code]->id, 'na' => 80, 'nh' => 'B+', 'grade_point' => 3.5]);
         }
 
-        $response = $this->actingAs($admin)->get(route('admin.reports.export', 'lama'));
+        $response = $this->actingAs($admin)->get(route('admin.reports.export'));
         $sheet = IOFactory::load($response->baseResponse->getFile()->getPathname())->getActiveSheet();
 
-        // Header harus punya 4 grup (12 kolom) -> kolom terakhir = L + 12 - 1 = W.
-        $this->assertSame('Kode', $sheet->getCell('U2')->getValue()); // grup ke-4 dimulai di U
-        $this->assertSame('MAA62013', $sheet->getCell('U4')->getValue());
+        // Header harus punya 3 grup (9 kolom) -> grup ke-3 dimulai di R.
+        // Klausul PKS: Fixed(4) + Modules(7) + Groups(3*3=9) + 1 = col 21 = U
+        $this->assertSame('Kode', $sheet->getCell('R2')->getValue());
+        $this->assertSame('Klausul PKS', $sheet->getCell('U1')->getValue());
+        $this->assertSame('MAA62047', $sheet->getCell('R4')->getValue());
     }
 
     public function test_non_admin_cannot_access_reports(): void
@@ -195,13 +220,15 @@ class ReportExportTest extends TestCase
         $student = Student::factory()->create();
 
         $this->actingAs($student->user)->get(route('admin.reports.index'))->assertForbidden();
-        $this->actingAs($student->user)->get(route('admin.reports.export', 'lama'))->assertForbidden();
+        $this->actingAs($student->user)->get(route('admin.reports.export'))->assertForbidden();
     }
 
-    public function test_invalid_scheme_returns_404(): void
+    public function test_old_scheme_routes_return_404(): void
     {
         $admin = $this->makeAdmin();
 
+        $this->actingAs($admin)->get('/admin/reports/export/lama')->assertNotFound();
+        $this->actingAs($admin)->get('/admin/reports/export/baru')->assertNotFound();
         $this->actingAs($admin)->get('/admin/reports/export/invalid')->assertNotFound();
     }
 }

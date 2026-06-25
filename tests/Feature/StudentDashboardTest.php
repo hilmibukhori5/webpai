@@ -63,9 +63,9 @@ class StudentDashboardTest extends TestCase
         $this->giveGrade($student, 'MAA62043', 85.0, 'C');
         $this->giveGrade($student, 'MAA61041', 90.0, 'C');
 
-        // A30 -> eligible Adendum PKS Lama (lewat kode kurikulum lama MAA61009).
+        // A30 -> eligible Adendum PKS Lama (kode baru MAA61052, avg A+A=4.0 > 3.5).
         $this->giveGrade($student, 'MAA62004', 70.0, 'A');
-        $this->giveGrade($student, 'MAA61009', 70.0, 'B+');
+        $this->giveGrade($student, 'MAA61052', 70.0, 'A');
 
         // A40 -> dibiarkan tanpa nilai sama sekali -> belum eligible.
 

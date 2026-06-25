@@ -29,13 +29,17 @@ Adendum PKS Lama/Baru **tidak** identik dengan Kurikulum Lama/Baru. Mereka dieva
 | **A20 — Probabilita & Statistika** | CF2 | 90 | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) | Stat. Matematika I (MAA62003, 3) · Stat. Matematika II (MAA61007, 3) |
 | **A30 — Ekonomi** | CF3 | 80 | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61052, 3) | Peng. Ek. Mikro (MAA62004, 3) · Peng. Ek. Makro (MAA61009, 3) |
 | **A40 — Akuntansi** | CF4 | 80 | Akuntansi Aktuaria I (MAA62042, 3) · Akuntansi Aktuaria II (MAA61044, 3) | Akuntansi Aktuaria I (MAA62007, 2) · Akuntansi Aktuaria II (MAA61022, 2) |
-| **A50 — Metoda Statistika** | TA1 | 80 | Peng. Runtun Waktu (MAA62045, 3) · Analisis Data Survival (MAA61016, 3) · Model Linear (MAA62047, 3) | Peng. Runtun Waktu (MAA62011, 3) · Analisis Data Survival (MAA61016, 3) · Ekonometrika (MAA62023, 2) · Model Linear (MAA62013, 3) |
+| **A50 — Metoda Statistika** | TA1 | 80 | Peng. Runtun Waktu (MAA62045, 3) · Analisis Data Survival (MAA61016, 3) · Model Linear (MAA62047, 3) | Peng. Runtun Waktu (MAA62045, 3) · Analisis Data Survival (MAA61016, 3) · Model Linear (MAA62047, 3) |
 | **A60 — Matematika Aktuaria** | TA3 | 80 | Mat. Aktuaria I (MAA62048, 3) · Mat. Aktuaria II (MAA61033, 3) | Mat. Aktuaria I (MAA62028, 3) · Mat. Aktuaria II (MAA61033, 3) |
 | **A70 — Pemodelan & Teori Risiko** | TA2 | 90 | Pemodelan Risiko Aktuaria (MAA62044, 3) · Teori Risiko & Kredibilitas Aktuaria (MAA61051, 3) | Pemodelan Aktuaria (MAA62008, 4) · Teori Risiko Aktuaria (MAA61035, 2) |
 
 **Catatan kode bersama:** beberapa kode muncul di dua kurikulum (mis. MAA62003, MAA61007,
 MAA62004, MAA61016, MAA61033). Artinya satu `course` bisa terhubung ke modul untuk
 **dua** curriculum sekaligus (dua baris di tabel pivot).
+
+**Perubahan A50 (2026-06-25):** Kurikulum LAMA A50 diperbarui — Ekonometrika (MAA62023)
+dihapus, kode disamakan dengan kurikulum baru (MAA62045 · MAA61016 · MAA62047, 3 MK @ 3 sks).
+Kode lama A10/A30/A40/A60/A70 tidak berubah.
 
 **Catatan kode resmi & persentil (dikonfirmasi 2026-06-16):** `code` (A10–A70) tetap dipakai
 sebagai identifier internal di database & UI (chip warna di bagian 10 tidak berubah).
@@ -96,6 +100,17 @@ terbaik) sebagai nilai yang dipakai untuk evaluasi.
 
 ### 4c. Decision tree (prioritas) — DIPERBARUI 2026-06-22
 
+**Pre-check Kurikulum (Rule c) — DIKONFIRMASI 2026-06-22:**
+Sebelum evaluasi, sistem menentukan `matchedSets`: set kurikulum yang komponennya **lengkap**
+diambil mahasiswa (bisa set 'baru', set 'lama', atau keduanya). Jika **HANYA set lama** yang
+matched (tidak ada set baru sama sekali) → langsung **decision=none**. Matkul kurikulum lama
+saja tidak bisa disetarakan melalui program ini. Diperlukan nilai dari matkul kurikulum terbaru.
+
+Tiga skenario berdasarkan set yang matched:
+- **(a) Baru + Lama** → keduanya dievaluasi → Adendum PKS Lama diutamakan.
+- **(b) Baru saja** → Adendum PKS Lama atau PKS Baru (tergantung 4a/4b).
+- **(c) Lama saja** → **none** (tidak bisa disetarakan).
+
 **Step 0 (pre-check tahun) — DIKONFIRMASI 2026-06-21:**
 Sebelum evaluasi PKS, cek tahun akademik dari setiap `bestGrade` yang dipakai evaluasi
 (field `course_grades.semester`, format "Genap 2324" / "Ganjil 2223", dst.). Ekstrak
@@ -107,6 +122,11 @@ Efek `forceOldScheme`:
 - Adendum PKS Lama (4b / weighted average) tetap dievaluasi seperti biasa.
 
 ```
+// Pre-check kurikulum (rule c)
+matchedSets = resolve(student, module)       // set kurikulum yang komponennya lengkap
+if matchedSets.isEmpty():     -> none (belum lulus semua komponen)
+if 'baru' not in matchedSets: -> none (rule c: hanya lama — tidak bisa disetarakan)
+
 // Step 0
 forceOldScheme = any(yearCode(bestGrade.semester) <= 2324 for all matched courses)
 
@@ -128,6 +148,7 @@ evaluate(student, module):
 - Matkul 1 nilai TA 23/24, Matkul 2 nilai TA 24/25 → `forceOldScheme=true` → PKS Baru
   diblokir walau NA lolos percentile → decision=lama kalau 4b lolos.
 - Semua nilai TA 24/25+, kode baru, gagal 4b, gagal percentile → **decision=none**.
+- Hanya nilai kode lama (mis. MAA62009+MAA61015 untuk A10) → **decision=none** (rule c).
 
 Output yang dibutuhkan UI per modul: `eligible_baru` (bool), `eligible_lama` (bool),
 `decision` (`baru|lama|none`), `price`, `component_grades` (buat ditampilkan ke admin).

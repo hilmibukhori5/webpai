@@ -17,6 +17,8 @@ use Illuminate\Support\Collection;
  *    set forceOldScheme=true → PKS Baru dilewati sepenuhnya.
  * 1. Untuk tiap curriculum (baru, lama), cek apakah mahasiswa LENGKAP.
  * 2. Kalau tidak ada satupun curriculum yang lengkap → decision=none.
+ * 2b. Rule c: kalau HANYA kurikulum lama yang matched (tidak ada set baru) →
+ *     decision=none. Matkul kurikulum lama saja tidak bisa disetarakan.
  * 3. eligible_baru = true kalau ADA matched set yang lolos percentile (4a),
  *    HANYA jika forceOldScheme=false.
  *    eligible_lama = true kalau ADA matched set yang lolos rata-rata bobot
@@ -41,6 +43,13 @@ class EligibilityService
             );
         }
 
+        // Rule c: hanya kurikulum lama yang matched (tidak ada set baru maupun campuran) → tidak bisa disetarakan.
+        if (! $matchedSets->has('baru') && ! $matchedSets->has('mixed')) {
+            return EligibilityResult::notEligible(
+                reason: 'Matkul komponen hanya ditemukan di kurikulum lama — penyetaraan tidak dapat dilakukan. Diperlukan nilai matkul dari kurikulum terbaru.',
+            );
+        }
+
         // Step 0: cek apakah ada nilai dari TA 23/24 atau sebelumnya.
         $forceOldScheme = $this->matchedSetsHaveOldYearGrade($matchedSets);
 
@@ -49,8 +58,8 @@ class EligibilityService
         $passingLamaCurricula = [];
 
         foreach ($matchedSets as $curriculum => $matched) {
-            // PKS Baru hanya dievaluasi kalau semua nilai dari TA 24/25 ke atas.
-            if (! $forceOldScheme && $this->passesPercentile($matched)) {
+            // PKS Baru hanya untuk set baru murni. Campuran lama+baru tidak memenuhi syarat PKS Baru.
+            if ($curriculum !== 'mixed' && ! $forceOldScheme && $this->passesPercentile($matched)) {
                 $eligibleBaru = true;
                 $percentilePassingCurricula[] = $curriculum;
             }
@@ -139,13 +148,23 @@ class EligibilityService
     }
 
     /**
-     * Cari curriculum (baru/lama) yang komponennya LENGKAP dipenuhi mahasiswa.
+     * Cari set matkul yang dipenuhi mahasiswa. Urutan prioritas:
+     *
+     * 1. Mixed slot-match: tiap "slot" (didefinisikan dari set baru) boleh diisi
+     *    kode baru ATAU kode lama padanannya (dicocokkan via nama matkul).
+     *    Kalau semua slot terisi dan ada campuran baru+lama → return {'mixed'}.
+     * 2. Complete-set match: semua kode baru ATAU semua kode lama.
      *
      * @return Collection<string, array<int, array{course: Course, grade: CourseGrade, sks: int}>>
      */
     private function resolveMatchedSets(Student $student, PaiModule $module): Collection
     {
         $sets = collect();
+
+        $mixed = $this->tryMixedSlotMatch($student, $module);
+        if ($mixed !== null) {
+            return $sets->put('mixed', $mixed);
+        }
 
         foreach (['baru', 'lama'] as $curriculum) {
             $moduleCourses = $module->moduleCourses()
@@ -166,6 +185,70 @@ class EligibilityService
         }
 
         return $sets;
+    }
+
+    /**
+     * Coba isi semua slot modul (diambil dari set baru) dengan kode baru ATAU
+     * kode lama padanannya. Padanan dicari via nama matkul yang sama.
+     *
+     * Return null kalau:
+     * - Modul tidak punya kedua kurikulum untuk prodi ini, atau
+     * - Ada slot yang tidak terpenuhi, atau
+     * - Semua slot terisi satu kurikulum saja (ditangani complete-set matching).
+     */
+    private function tryMixedSlotMatch(Student $student, PaiModule $module): ?array
+    {
+        $baruMcs = $module->moduleCourses()
+            ->where('curriculum', 'baru')
+            ->where('prodi', $student->prodi)
+            ->with(['course.threshold'])
+            ->get();
+
+        $lamaMcs = $module->moduleCourses()
+            ->where('curriculum', 'lama')
+            ->where('prodi', $student->prodi)
+            ->with(['course.threshold'])
+            ->get();
+
+        if ($baruMcs->isEmpty() || $lamaMcs->isEmpty()) {
+            return null;
+        }
+
+        $matched = [];
+        $curricula = [];
+
+        foreach ($baruMcs as $baruMc) {
+            $grade = $this->bestGradeFor($student, $baruMc->course);
+
+            if ($grade && strtoupper($grade->nh) !== 'E') {
+                $matched[] = ['course' => $baruMc->course, 'grade' => $grade, 'sks' => $baruMc->course->sks];
+                $curricula[] = 'baru';
+                continue;
+            }
+
+            // Cari padanan lama via nama matkul yang sama (atau kode yang sama untuk shared course).
+            $lamaMc = $lamaMcs->first(fn ($lmc) =>
+                $lmc->course->name === $baruMc->course->name
+                || $lmc->course->code === $baruMc->course->code
+            );
+
+            if ($lamaMc) {
+                $lamaGrade = $this->bestGradeFor($student, $lamaMc->course);
+                if ($lamaGrade && strtoupper($lamaGrade->nh) !== 'E') {
+                    $matched[] = ['course' => $lamaMc->course, 'grade' => $lamaGrade, 'sks' => $lamaMc->course->sks];
+                    $curricula[] = 'lama';
+                    continue;
+                }
+            }
+
+            return null; // Slot tidak terpenuhi
+        }
+
+        if (count(array_unique($curricula)) < 2) {
+            return null; // Bukan campuran — pure baru/lama ditangani complete-set matching
+        }
+
+        return $matched;
     }
 
     /**

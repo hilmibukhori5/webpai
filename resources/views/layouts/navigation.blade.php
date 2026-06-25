@@ -24,8 +24,11 @@
                         <x-nav-link :href="route('admin.grades.import.create')" :active="request()->routeIs('admin.grades.import.*')">
                             Import Nilai
                         </x-nav-link>
-                        <x-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*')">
+                        <x-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*') && !request()->routeIs('admin.eligibility-test.*')">
                             Cek Eligibility
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.eligibility-test.create')" :active="request()->routeIs('admin.eligibility-test.*')">
+                            Uji Eligibility
                         </x-nav-link>
                         <x-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
                             Laporan
@@ -94,8 +97,11 @@
                 <x-responsive-nav-link :href="route('admin.grades.import.create')" :active="request()->routeIs('admin.grades.import.*')">
                     Import Nilai
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*')">
+                <x-responsive-nav-link :href="route('admin.eligibility.index')" :active="request()->routeIs('admin.eligibility.*') && !request()->routeIs('admin.eligibility-test.*')">
                     Cek Eligibility
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.eligibility-test.create')" :active="request()->routeIs('admin.eligibility-test.*')">
+                    Uji Eligibility
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
                     Laporan

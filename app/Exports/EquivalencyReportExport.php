@@ -14,13 +14,12 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 /**
- * Laporan penyetaraan modul PAI yang SUDAH DISETUJUI admin, per skema
- * (Adendum PKS Lama -> nilai NH, PKS Baru -> nilai NA). Format kolom: No, Nomor
- * Kandidat (kosong, tidak ada di sistem kita), Nomor Mahasiswa, Nama
- * Kandidat, Modul PAI (one-hot A10-A70), lalu grup berulang Kode/Nilai/
- * Semester per matkul komponen yang dipakai saat disetujui (jumlah grup
- * dinamis, ikut modul dengan komponen terbanyak di data yang diexport --
- * lihat docs/spec.md bagian 2, A50 bisa sampai 4 matkul).
+ * Laporan penyetaraan modul PAI yang SUDAH DISETUJUI admin, gabungan semua
+ * skema. Format kolom: No, Nomor Kandidat (kosong), Nomor Mahasiswa, Nama
+ * Kandidat, Modul PAI (one-hot A10-A70), grup berulang Kode/Nilai/Semester
+ * per matkul komponen, lalu kolom terakhir Klausul PKS ("PKS Lama" atau
+ * "PKS Baru"). Nilai per baris mengikuti skema submission itu sendiri:
+ * Adendum PKS Lama -> NH, PKS Baru -> NA.
  *
  * 1 baris = 1 submission (1 mahasiswa x 1 modul), BUKAN 1 baris per
  * mahasiswa -- mahasiswa dengan >1 modul approved dapat >1 baris, dengan
@@ -32,11 +31,9 @@ class EquivalencyReportExport implements WithEvents, WithTitle
 
     private const FIXED_COLS = 4; // No, Nomor Kandidat, Nomor Mahasiswa, Nama Kandidat
 
-    public function __construct(private string $scheme) {}
-
     public function title(): string
     {
-        return $this->scheme === 'lama' ? 'Adendum PKS Lama' : 'PKS Baru';
+        return 'Laporan Penyetaraan';
     }
 
     public function registerEvents(): array
@@ -61,7 +58,6 @@ class EquivalencyReportExport implements WithEvents, WithTitle
     {
         return Submission::query()
             ->where('status', 'approved')
-            ->where('scheme', $this->scheme)
             ->with(['student', 'paiModule', 'submissionCourses.course'])
             ->get()
             ->sortBy(fn (Submission $s) => $s->student->nama)
@@ -109,6 +105,10 @@ class EquivalencyReportExport implements WithEvents, WithTitle
             $sheet->setCellValue($this->cell($base + 1, 2), 'Nilai');
             $sheet->setCellValue($this->cell($base + 2, 2), 'Semester/Tahun');
         }
+
+        $klausulCol = $groupEndCol + 1;
+        $sheet->setCellValue($this->cell($klausulCol, 1), 'Klausul PKS');
+        $sheet->mergeCells("{$this->col($klausulCol)}1:{$this->col($klausulCol)}2");
     }
 
     /**
@@ -120,6 +120,8 @@ class EquivalencyReportExport implements WithEvents, WithTitle
         $no = 0;
         $lastStudentId = null;
         $groupStartCol = self::FIXED_COLS + count(self::MODULE_CODES) + 1;
+        $maxComponents = $this->maxComponents($submissions);
+        $klausulCol = $groupStartCol + ($maxComponents * 3);
 
         foreach ($submissions as $submission) {
             if ($submission->student_id !== $lastStudentId) {
@@ -146,10 +148,13 @@ class EquivalencyReportExport implements WithEvents, WithTitle
                 $sheet->setCellValue($this->cell($base, $row), $sc->course->code);
                 $sheet->setCellValue(
                     $this->cell($base + 1, $row),
-                    $this->scheme === 'lama' ? $sc->nh : (float) $sc->na,
+                    $submission->scheme === 'lama' ? $sc->nh : (float) $sc->na,
                 );
                 $sheet->setCellValue($this->cell($base + 2, $row), $semester);
             }
+
+            $sheet->setCellValue($this->cell($klausulCol, $row),
+                $submission->scheme === 'lama' ? 'PKS Lama' : 'PKS Baru');
 
             $row++;
         }
@@ -157,7 +162,7 @@ class EquivalencyReportExport implements WithEvents, WithTitle
 
     private function styleSheet(Worksheet $sheet, int $maxComponents): void
     {
-        $lastColIndex = self::FIXED_COLS + count(self::MODULE_CODES) + ($maxComponents * 3);
+        $lastColIndex = self::FIXED_COLS + count(self::MODULE_CODES) + ($maxComponents * 3) + 1; // +1 for Klausul PKS
         $lastCol = $this->col($lastColIndex);
 
         $sheet->getStyle("A1:{$lastCol}2")->getFont()->setBold(true);

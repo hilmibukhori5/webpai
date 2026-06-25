@@ -107,58 +107,64 @@ class EligibilityServiceTest extends TestCase
 
     // -------------------------------------------------------------------------
     // Kasus 1b: Adendum PKS Lama DIUTAMAKAN — kalau lolos keduanya, pilih lama (lebih murah)
+    // Rule a: ada matched set baru DAN lama → Adendum PKS Lama diutamakan
     // -------------------------------------------------------------------------
 
     /**
-     * Mahasiswa lengkap di kurikulum LAMA (MAA62009+MAA61015, TA 24/25) dengan nilai A.
-     * Juga ada threshold → lolos percentile (eligibleBaru=true).
-     * Priority baru: lama diutamakan → decision='lama' (Rp500.000, bukan Rp550.000).
+     * Mahasiswa punya nilai untuk kode kurikulum BARU (MAA62043+MAA61041) DAN LAMA
+     * (MAA62009+MAA61015) sekaligus → kedua set matched.
+     * NA ≥ threshold (eligibleBaru=true) DAN avg=4.0 > 3.5 (eligibleLama=true).
+     * Adendum PKS Lama diutamakan → decision='lama' (Rp500.000, bukan Rp550.000).
      */
-    public function test_lama_prioritized_when_both_schemes_eligible(): void
+    public function test_lama_prioritized_when_both_curriculum_sets_are_matched(): void
     {
         $student = $this->makeStudent();
         $module = PaiModule::where('code', 'A10')->firstOrFail();
 
-        // Set threshold untuk kursus lama supaya lolos PKS Baru juga
-        $this->setThreshold('MAA62009', 80.0);
-        $this->setThreshold('MAA61015', 80.0);
+        // Set threshold untuk kursus baru supaya lolos PKS Baru juga
+        $this->setThreshold('MAA62043', 80.0);
+        $this->setThreshold('MAA61041', 80.0);
 
-        // Nilai dari TA 24/25 (baru) → forceOldScheme=false, PKS Baru bisa dievaluasi
-        $this->giveGrade($student, 'MAA62009', 90.0, 'A', 'Genap 2425');
-        $this->giveGrade($student, 'MAA61015', 88.0, 'A', 'Ganjil 2425');
+        // Nilai TA 24/25 → forceOldScheme=false
+        $this->giveGrade($student, 'MAA62043', 90.0, 'A', 'Genap 2425'); // kode baru
+        $this->giveGrade($student, 'MAA61041', 88.0, 'A', 'Ganjil 2425');
+        $this->giveGrade($student, 'MAA62009', 85.0, 'A', 'Genap 2425'); // kode lama
+        $this->giveGrade($student, 'MAA61015', 82.0, 'A', 'Ganjil 2425');
 
         $result = $this->service->evaluate($student, $module);
 
-        // Lolos PKS Baru (NA ≥ threshold) DAN Adendum PKS Lama (bobot A = 4.0 > 3.5, kode kurikulum lama)
-        $this->assertTrue($result->eligibleBaru);
-        $this->assertTrue($result->eligibleLama);
-        // Pilih lama karena lebih murah
+        // Kedua set matched (baru+lama) → rule (a) → Adendum PKS Lama diutamakan
+        $this->assertTrue($result->eligibleBaru);  // NA 90,88 ≥ threshold 80 ✓
+        $this->assertTrue($result->eligibleLama);  // avg=4.0 > 3.5 ✓
         $this->assertSame('lama', $result->decision);
         $this->assertSame(500000, $result->price);
     }
 
     // -------------------------------------------------------------------------
-    // Kasus 2: Adendum PKS Lama — matkul berkode kurikulum lama, old-year grade
+    // Kasus 2: Rule c — hanya kode kurikulum lama yang matched → tidak bisa disetarakan
     // -------------------------------------------------------------------------
 
     /**
-     * A10 kurikulum lama = MAA62009 + MAA61015. A + B+ = 3.75 > 3.5.
-     * Default semester 'Genap 2223' → forceOldScheme=true → decision='lama'.
+     * Mahasiswa hanya punya nilai untuk kode kurikulum LAMA A10 (MAA62009+MAA61015).
+     * Set baru (MAA62043+MAA61041) tidak ada nilainya → hanya lama yang matched.
+     * Rule c: tidak ada 'baru' set → decision='none', walau weighted avg lolos sekalipun.
      */
-    public function test_eligible_lama_when_matched_courses_are_old_curriculum(): void
+    public function test_none_when_only_lama_curriculum_codes_matched(): void
     {
         $student = $this->makeStudent();
         $module = PaiModule::where('code', 'A10')->firstOrFail();
 
-        $this->giveGrade($student, 'MAA62009', 70.0, 'A');
-        $this->giveGrade($student, 'MAA61015', 70.0, 'B+');
+        // Kode lama saja — set baru (MAA62043+MAA61041) tidak punya nilai
+        $this->giveGrade($student, 'MAA62009', 90.0, 'A'); // default 'Genap 2223'
+        $this->giveGrade($student, 'MAA61015', 88.0, 'A');
 
         $result = $this->service->evaluate($student, $module);
 
+        // Rule c: hanya lama set matched → tidak bisa disetarakan
+        $this->assertFalse($result->eligibleLama);
         $this->assertFalse($result->eligibleBaru);
-        $this->assertTrue($result->eligibleLama);
-        $this->assertSame('lama', $result->decision);
-        $this->assertSame(500000, $result->price);
+        $this->assertSame('none', $result->decision);
+        $this->assertStringContainsString('kurikulum lama', $result->reason);
     }
 
     // -------------------------------------------------------------------------
@@ -228,8 +234,10 @@ class EligibilityServiceTest extends TestCase
         $student = $this->makeStudent();
         $module = PaiModule::where('code', 'A10')->firstOrFail();
 
-        $this->giveGrade($student, 'MAA62009', 70.0, 'B+');
-        $this->giveGrade($student, 'MAA61015', 70.0, 'B+');
+        // Kode BARU agar rule c tidak berlaku (baru set matched)
+        // B++B+ → weighted avg = 3.5 (harus LEBIH DARI, bukan sama dengan)
+        $this->giveGrade($student, 'MAA62043', 70.0, 'B+', 'Genap 2425');
+        $this->giveGrade($student, 'MAA61041', 70.0, 'B+', 'Ganjil 2425');
 
         $result = $this->service->evaluate($student, $module);
 
@@ -442,5 +450,52 @@ class EligibilityServiceTest extends TestCase
         $this->assertArrayHasKey('baru', $result->componentGrades);
         $this->assertCount(2, $result->componentGrades['baru']['courses']);
         $this->assertSame('MAA62043', $result->componentGrades['baru']['courses'][0]['course_code']);
+    }
+
+    // -------------------------------------------------------------------------
+    // Kasus rule b: kombinasi CAMPURAN lama+baru (1 slot lama, 1 slot baru)
+    // -------------------------------------------------------------------------
+
+    /**
+     * A10: MAA62009 (kode lama, slot "Matematika Finansial I") +
+     *      MAA61041 (kode baru, slot "Matematika Finansial II").
+     * Tidak ada satu set pun yang lengkap, tapi semua slot terisi via campuran.
+     * Rule b → Adendum PKS Lama (PKS Baru tidak berlaku untuk campuran).
+     */
+    public function test_mixed_lama_baru_slots_eligible_for_adendum_pks_lama(): void
+    {
+        $student = $this->makeStudent();
+        $module = PaiModule::where('code', 'A10')->firstOrFail();
+
+        // Lama slot 1 (Matematika Finansial I versi lama)
+        $this->giveGrade($student, 'MAA62009', 80.0, 'A'); // default 'Genap 2223'
+        // Baru slot 2 (Matematika Finansial II versi baru)
+        $this->giveGrade($student, 'MAA61041', 80.0, 'A');
+
+        $result = $this->service->evaluate($student, $module);
+
+        // Mixed → hanya bisa Adendum PKS Lama
+        $this->assertSame('lama', $result->decision);
+        $this->assertTrue($result->eligibleLama);   // avg 4.0 > 3.5
+        $this->assertFalse($result->eligibleBaru);  // mixed tidak dievaluasi PKS Baru
+        $this->assertSame(500000, $result->price);
+    }
+
+    /**
+     * Mixed tapi weighted average tidak cukup (avg=2.0 ≤ 3.5) → none.
+     */
+    public function test_mixed_slots_none_when_weighted_avg_too_low(): void
+    {
+        $student = $this->makeStudent();
+        $module = PaiModule::where('code', 'A10')->firstOrFail();
+
+        $this->giveGrade($student, 'MAA62009', 80.0, 'C'); // grade_point=2.0
+        $this->giveGrade($student, 'MAA61041', 80.0, 'C');
+
+        $result = $this->service->evaluate($student, $module);
+
+        $this->assertSame('none', $result->decision);
+        $this->assertFalse($result->eligibleLama);
+        $this->assertFalse($result->eligibleBaru);
     }
 }

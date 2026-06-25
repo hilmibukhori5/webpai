@@ -23,8 +23,8 @@ class ModuleCourseMap
                 'official_code' => 'CF1',
                 'percentile' => 80,
                 'baru' => [
-                    ['code' => 'MAA62043', 'name' => 'Matematika Finansial I', 'sks' => 3],
-                    ['code' => 'MAA61041', 'name' => 'Matematika Finansial II', 'sks' => 3],
+                    ['code' => 'MAA62043', 'name' => 'Matematika Finansial I', 'sks' => 3, 'semester_type' => 'Keduanya'],
+                    ['code' => 'MAA61041', 'name' => 'Matematika Finansial II', 'sks' => 3, 'semester_type' => 'Keduanya'],
                 ],
                 'lama' => [
                     ['code' => 'MAA62009', 'name' => 'Matematika Finansial I', 'sks' => 3],
@@ -85,10 +85,9 @@ class ModuleCourseMap
                     ['code' => 'MAA62047', 'name' => 'Model Linear', 'sks' => 3],
                 ],
                 'lama' => [
-                    ['code' => 'MAA62011', 'name' => 'Pengantar Runtun Waktu', 'sks' => 3],
+                    ['code' => 'MAA62045', 'name' => 'Pengantar Runtun Waktu', 'sks' => 3],
                     ['code' => 'MAA61016', 'name' => 'Analisis Data Survival', 'sks' => 3],
-                    ['code' => 'MAA62023', 'name' => 'Ekonometrika', 'sks' => 2],
-                    ['code' => 'MAA62013', 'name' => 'Model Linear', 'sks' => 3],
+                    ['code' => 'MAA62047', 'name' => 'Model Linear', 'sks' => 3],
                 ],
             ],
             'A60' => [

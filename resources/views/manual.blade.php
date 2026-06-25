@@ -578,9 +578,16 @@
 
     <h3 id="prio">5.4 Prioritas keputusan (decision tree)</h3>
     <p>Sistem mengevaluasi eligibilitas dalam <strong>urutan tetap</strong>, langkah demi langkah
-    dari atas ke bawah. <mark class="lama">Adendum PKS Lama diutamakan</mark> karena lebih murah —
-    jika Anda lolos keduanya, sistem memilih Adendum PKS Lama. Begitu satu langkah menghasilkan keputusan,
-    proses <strong>berhenti</strong> — tidak lanjut ke langkah berikutnya.</p>
+    dari atas ke bawah. Begitu satu langkah menghasilkan keputusan, proses <strong>berhenti</strong>
+    — tidak lanjut ke langkah berikutnya.</p>
+
+    <div class="callout warn" style="margin-bottom:12px">
+      <strong>&#9888; Syarat awal: Harus ada nilai matkul kurikulum terbaru</strong><br>
+      Jika nilai Anda <strong>hanya ada di matkul kurikulum lama</strong> (kode lama, mis.
+      MAA62009 bukan MAA62043), sistem langsung menyatakan <mark class="none">Belum Eligible</mark>
+      — tidak dievaluasi lebih lanjut. Diperlukan nilai dari matkul kurikulum terbaru untuk
+      dapat mengikuti program penyetaraan ini.
+    </div>
 
     <div class="callout warn" style="margin-bottom:20px">
       <strong>&#9888; Aturan khusus: Ada nilai dari TA 23/24 atau lebih lama</strong><br>
@@ -900,8 +907,11 @@
       <li>Pastikan <strong>No Induk (NIM)</strong> yang diisi saat register sama persis dengan
       yang dipakai admin saat mengimport nilai — ini kunci semua perhitungan eligibility.</li>
       <li><mark class="lama">Adendum PKS Lama</mark> = <strong>rata-rata bobot NH tertimbang SKS &gt; 3,5</strong>,
-      berlaku untuk <strong>semua kode kurikulum</strong> (lama maupun baru). Biaya <strong>Rp500.000</strong>/modul —
-      <strong>diutamakan</strong> karena lebih murah. Jika ada nilai dari TA&nbsp;23/24 ke bawah, PKS Baru otomatis diblokir.</li>
+      berlaku untuk <strong>semua kode kurikulum</strong> (lama maupun baru — syaratnya hanya weighted avg &gt; 3,5).
+      Biaya <strong>Rp500.000</strong>/modul — <strong>diutamakan</strong> karena lebih murah. Jika ada nilai dari TA&nbsp;23/24
+      ke bawah, PKS Baru otomatis diblokir. <strong>Catatan:</strong> jika nilai Anda <em>hanya</em> ada di
+      matkul kurikulum lama (tidak ada satu pun nilai dari matkul kurikulum terbaru), sistem langsung menyatakan
+      Belum Eligible tanpa evaluasi lebih lanjut.</li>
       <li><mark class="baru">PKS Baru</mark> = lolos <strong>persentil NA</strong> per matkul
       (beda ambang tiap modul) — dipilih hanya kalau tidak lolos Adendum PKS Lama. Biaya
       <strong>Rp550.000</strong>/modul.</li>

@@ -28,24 +28,34 @@
                     </div>
 
                     @if ($result->decidingComponents())
+                        @php $isBaru = $result->decision === 'baru'; @endphp
                         <div>
                             <p class="text-sm font-medium text-slate-700 mb-2">Rincian matkul komponen:</p>
                             <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
                                 <thead class="bg-slate-50">
                                     <tr>
-                                        <th class="text-left p-2">Matkul</th>
-                                        <th class="text-left p-2">SKS</th>
-                                        <th class="text-left p-2">NA</th>
-                                        <th class="text-left p-2">NH</th>
+                                        <th class="text-left p-2 text-slate-600">Matkul</th>
+                                        <th class="text-left p-2 text-slate-600">SKS</th>
+                                        @if ($isBaru)
+                                            <th class="text-left p-2 text-slate-600">NA <span class="text-slate-400 font-normal text-xs">(nilai angka)</span></th>
+                                        @else
+                                            <th class="text-left p-2 text-slate-600">NH <span class="text-slate-400 font-normal text-xs">(nilai huruf)</span></th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($result->decidingComponents() as $component)
                                         <tr class="border-t border-slate-100">
-                                            <td class="p-2">{{ $component['course_code'] }} - {{ $component['course_name'] }}</td>
+                                            <td class="p-2">{{ $component['course_code'] }} — {{ $component['course_name'] }}</td>
                                             <td class="p-2">{{ $component['sks'] }}</td>
-                                            <td class="p-2">{{ $component['na'] }}</td>
-                                            <td class="p-2">{{ $component['nh'] }}</td>
+                                            @if ($isBaru)
+                                                <td class="p-2 font-medium">{{ $component['na'] }}</td>
+                                            @else
+                                                <td class="p-2 font-medium">
+                                                    {{ $component['nh'] }}
+                                                    <span class="text-slate-400 font-normal">({{ $component['grade_point'] }})</span>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

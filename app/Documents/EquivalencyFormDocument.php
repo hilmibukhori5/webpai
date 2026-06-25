@@ -10,8 +10,10 @@ use PhpOffice\PhpWord\SimpleType\Jc;
 
 /**
  * Formulir Permohonan Penyetaraan Ujian — dilampirkan di BulkDecisionMail.
- * Satu formulir per mahasiswa, mencakup semua modul yang disetujui.
- * Isi MASIH DUMMY: layout & field dasar saja, belum format resmi ASAI/UB.
+ * Satu formulir per mahasiswa, mencakup semua modul yang disetujui dari
+ * semua skema. Kolom "Kode Ujian" menyesuaikan skema: PKS Baru -> official_code
+ * (CF1, TA2...), Adendum PKS Lama -> kode modul (A10, A20...).
+ * Rekening tujuan pembayaran dikonfigurasi di config/letter.php (kunci "form").
  */
 class EquivalencyFormDocument
 {
@@ -28,11 +30,11 @@ class EquivalencyFormDocument
             'marginRight' => 1200,
         ]);
 
+        $this->addLetterhead($section);
         $this->addTitle($section);
-        $this->addDummyNotice($section);
         $this->addStudentFields($section, $student);
         $this->addModuleTable($section, $approvedSubmissions);
-        $this->addSignatureBlock($section);
+        $this->addClosing($section);
 
         return $phpWord;
     }
@@ -50,83 +52,181 @@ class EquivalencyFormDocument
         return $binary;
     }
 
-    private function addTitle($section): void
+    private function addLetterhead($section): void
     {
-        $section->addText('FORMULIR PERMOHONAN PENYETARAAN UJIAN', ['bold' => true, 'size' => 14, 'underline' => 'single'], ['alignment' => Jc::CENTER]);
+        $logoPath = public_path('images/ub-logo.jpeg');
+
+        $table = $section->addTable(['cellMarginTop' => 0, 'cellMarginBottom' => 0, 'cellMarginLeft' => 0, 'cellMarginRight' => 80]);
+        $table->addRow(900);
+
+        // Logo UB (kiri)
+        $logoCell = $table->addCell(1600, ['vAlign' => 'center']);
+        if (file_exists($logoPath)) {
+            $logoCell->addImage($logoPath, ['width' => 72, 'height' => 72], false, ['alignment' => Jc::CENTER]);
+        }
+
+        // Teks kementerian + universitas (tengah)
+        $midCell = $table->addCell(5000, ['vAlign' => 'center']);
+        $midCell->addText(
+            'KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI',
+            ['size' => 9, 'name' => 'Arial Narrow'],
+        );
+        $midCell->addText(
+            'UNIVERSITAS BRAWIJAYA',
+            ['bold' => true, 'size' => 16, 'name' => 'Arial Narrow', 'color' => '1F4E7A'],
+        );
+
+        // Fakultas + alamat (kanan)
+        $rf = ['size' => 8, 'name' => 'Arial Narrow'];
+        $rp = ['alignment' => Jc::END];
+        $rightCell = $table->addCell(3000, ['vAlign' => 'center']);
+        $rightCell->addText('Fakultas Sains, Teknologi, dan Matematika', array_merge($rf, ['bold' => true]), $rp);
+        $rightCell->addText('Jl. Veteran, Malang 65145, Indonesia', $rf, $rp);
+        $rightCell->addText('Telp-fax: +62341 554403, 551611', $rf, $rp);
+        $rightCell->addText('email: mipa@ub.ac.id', $rf, $rp);
+
+        $section->addTextBreak(1);
+        $section->addLine(['weight' => 2, 'width' => 540, 'height' => 0, 'flip' => false]);
         $section->addTextBreak(1);
     }
 
-    private function addDummyNotice($section): void
+    private function addTitle($section): void
     {
         $section->addText(
-            '*Dokumen ini masih versi dummy (placeholder), belum format resmi ASAI/UB. '.
-            'Lengkapi data di bawah, tanda tangani, lalu upload kembali lewat link di email ini.',
-            ['italic' => true, 'size' => 9, 'color' => '64748B'],
+            'PERMOHONAN PENYETARAAN UJIAN',
+            ['bold' => true, 'size' => 14, 'underline' => 'single'],
+            ['alignment' => Jc::CENTER],
         );
         $section->addTextBreak(1);
     }
 
     private function addStudentFields($section, Student $student): void
     {
-        $fields = [
-            'Nama' => $student->nama,
-            'No Induk (NIM)' => $student->no_induk,
-            'Program Studi' => $student->prodi,
-        ];
+        $section->addText('Saya yang bertanda tangan di bawah ini:');
+        $section->addTextBreak(1);
 
-        foreach ($fields as $label => $value) {
-            $this->addLabelValueRow($section, $label, (string) $value);
-        }
+        $this->addLabelValue($section, 'Nama', $student->nama);
+        $this->addLabelValue($section, 'NIM', $student->no_induk);
+        $this->addLabelValue($section, 'Program Studi', $student->prodi ?? '............................................');
+        $this->addLabelValue($section, 'Universitas/PTS', 'Universitas Brawijaya');
+        $this->addLabelValue($section, 'No. WA/HP', '............................................');
+        $this->addLabelValue($section, 'Email', $student->user?->email ?? '............................................');
+        $this->addLabelValue($section, 'Alamat', '............................................');
 
         $section->addTextBreak(1);
     }
 
     private function addModuleTable($section, Collection $approvedSubmissions): void
     {
-        $section->addText('Modul yang diajukan:', ['bold' => true]);
+        $section->addText(
+            'Mengajukan permohonan penyetaraan ujian modul Persyaratan Aktuaris Indonesia (PAI) '.
+            'untuk modul-modul sebagai berikut:',
+        );
         $section->addTextBreak(1);
 
-        $table = $section->addTable(['borderSize' => 6, 'borderColor' => 'CCCCCC', 'cellMarginTop' => 80, 'cellMarginBottom' => 80, 'cellMarginLeft' => 80, 'cellMarginRight' => 80]);
-        $table->addRow();
-        $table->addCell(1000)->addText('Kode', ['bold' => true]);
-        $table->addCell(3500)->addText('Nama Modul', ['bold' => true]);
-        $table->addCell(1500)->addText('Skema', ['bold' => true]);
-        $table->addCell(1500)->addText('Biaya (Rp)', ['bold' => true]);
+        // Urutkan: Adendum PKS Lama dulu (by code), lalu PKS Baru (by code)
+        $sorted = $approvedSubmissions
+            ->sortBy(fn ($s) => ($s->scheme === 'baru' ? '1' : '0').$s->paiModule->code)
+            ->values();
 
-        foreach ($approvedSubmissions as $submission) {
+        $bank = config('letter.form');
+        $bankName = $bank['bank_name'] ?? 'Bank Mandiri Cabang Tebet Raya';
+        $bankNo = $bank['bank_no'] ?? '124-0000-555-772';
+        $bankHolder = $bank['bank_holder'] ?? 'Persatuan Aktuaris Indonesia';
+
+        // Lebar kolom (total ~9500 twips, A4 dengan margin 1200 di kiri-kanan)
+        $colNo = 400;
+        $colKode = 900;
+        $colMatkul = 2800;
+        $colKlausul = 1500;
+        $colBiaya = 1300;
+        $colRekening = 2600;
+
+        $table = $section->addTable([
+            'borderSize' => 6,
+            'borderColor' => '000000',
+            'cellMarginTop' => 60,
+            'cellMarginBottom' => 60,
+            'cellMarginLeft' => 80,
+            'cellMarginRight' => 80,
+        ]);
+
+        // Header
+        $bold = ['bold' => true];
+        $center = ['alignment' => Jc::CENTER];
+        $table->addRow();
+        $table->addCell($colNo)->addText('No.', $bold, $center);
+        $table->addCell($colKode)->addText('Kode Ujian', $bold, $center);
+        $table->addCell($colMatkul)->addText('Mata Ujian', $bold, $center);
+        $table->addCell($colKlausul)->addText('Klausul', $bold, $center);
+        $table->addCell($colBiaya)->addText('Biaya (Rp)', $bold, $center);
+        $table->addCell($colRekening)->addText('Ditujukan ke Rekening', $bold, $center);
+
+        // Baris data
+        foreach ($sorted as $i => $submission) {
+            $kode = $submission->scheme === 'baru'
+                ? ($submission->paiModule->official_code ?? $submission->paiModule->code)
+                : $submission->paiModule->code;
+
+            $klausul = $submission->scheme === 'lama' ? 'Adendum PKS Lama' : 'PKS Baru';
+            $small = ['size' => 9];
+
             $table->addRow();
-            $table->addCell(1000)->addText($submission->paiModule->code);
-            $table->addCell(3500)->addText($submission->paiModule->name);
-            $table->addCell(1500)->addText($submission->scheme === 'baru' ? 'PKS Baru' : 'Adendum PKS Lama');
-            $table->addCell(1500)->addText(number_format($submission->price, 0, ',', '.'));
+            $table->addCell($colNo)->addText((string) ($i + 1), [], $center);
+            $table->addCell($colKode)->addText($kode, [], $center);
+            $table->addCell($colMatkul)->addText($submission->paiModule->name);
+            $table->addCell($colKlausul)->addText($klausul, [], $center);
+            $table->addCell($colBiaya)->addText(
+                number_format($submission->price, 0, ',', '.'),
+                [],
+                ['alignment' => Jc::END],
+            );
+            $rekenCell = $table->addCell($colRekening);
+            $rekenCell->addText($bankName, $small);
+            $rekenCell->addText('No. Rek.: '.$bankNo, $small);
+            $rekenCell->addText('An. '.$bankHolder, $small);
         }
 
+        // Baris total
+        $total = $sorted->sum('price');
+        $spanWidth = $colNo + $colKode + $colMatkul + $colKlausul;
         $table->addRow();
-        $table->addCell(6000, ['gridSpan' => 3])->addText('Total', ['bold' => true]);
-        $table->addCell(1500)->addText(number_format($approvedSubmissions->sum('price'), 0, ',', '.'), ['bold' => true]);
+        $table->addCell($spanWidth, ['gridSpan' => 4])->addText('Total', $bold, ['alignment' => Jc::END]);
+        $table->addCell($colBiaya)->addText(
+            'Rp '.number_format($total, 0, ',', '.'),
+            $bold,
+            ['alignment' => Jc::END],
+        );
+        $table->addCell($colRekening)->addText('');
 
-        $section->addTextBreak(1);
-        $this->addLabelValueRow($section, 'Tanggal Pengisian', '.................................');
-        $section->addTextBreak(1);
-
-        $section->addText('Dengan ini saya mengajukan permohonan penyetaraan ujian untuk modul-modul tersebut di atas sesuai skema yang berlaku.');
         $section->addTextBreak(2);
+        $section->addText(
+            'Bersamaan dengan surat ini, saya lampirkan transkrip nilai dan dokumen pendukung lainnya '.
+            'sebagai bukti kelulusan mata kuliah yang dipersyaratkan.',
+        );
+        $section->addTextBreak(1);
+        $section->addText(
+            'Demikian saya sampaikan permohonan ini, atas perhatian dan kerjasamanya saya ucapkan terima kasih.',
+        );
     }
 
-    private function addSignatureBlock($section): void
+    private function addClosing($section): void
     {
-        $section->addText('Mahasiswa yang mengajukan,', [], ['alignment' => Jc::END]);
+        $section->addTextBreak(2);
+        $section->addText('Malang, .................................', [], ['alignment' => Jc::END]);
+        $section->addTextBreak(1);
+        $section->addText('Pemohon,', [], ['alignment' => Jc::END]);
         $section->addTextBreak(4);
-        $section->addText('(.................................................)', [], ['alignment' => Jc::END]);
-        $section->addText('Tanda tangan & nama jelas', ['size' => 9, 'color' => '64748B'], ['alignment' => Jc::END]);
+        $section->addText('(............................................)', [], ['alignment' => Jc::END]);
+        $section->addText('Nama Jelas dan Tanda Tangan', ['size' => 9, 'color' => '64748B'], ['alignment' => Jc::END]);
     }
 
-    private function addLabelValueRow($section, string $label, string $value): void
+    private function addLabelValue($section, string $label, string $value): void
     {
         $table = $section->addTable(['cellMarginTop' => 0, 'cellMarginBottom' => 0]);
         $table->addRow();
-        $table->addCell(2200)->addText($label);
+        $table->addCell(2000)->addText($label);
         $table->addCell(300)->addText(':');
-        $table->addCell(6500)->addText($value);
+        $table->addCell(7000)->addText($value);
     }
 }

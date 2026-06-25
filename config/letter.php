@@ -25,6 +25,22 @@ return [
 
     'hal' => 'Penyetaraan Kurikulum Persyaratan Aktuaris Indonesia',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rekening Pembayaran — Formulir Permohonan Penyetaraan
+    |--------------------------------------------------------------------------
+    |
+    | Dipakai App\Documents\EquivalencyFormDocument untuk kolom "Ditujukan ke
+    | Rekening". Berlaku untuk semua skema (PKS Lama maupun PKS Baru).
+    | Update di sini kalau ada perubahan rekening PAI.
+    |
+    */
+    'form' => [
+        'bank_name' => 'Bank Mandiri Cabang Tebet Raya',
+        'bank_no' => '124-0000-555-772',
+        'bank_holder' => 'Persatuan Aktuaris Indonesia',
+    ],
+
     'signer' => [
         'name' => "Dr. Sa'adatul Fitri, S.Si., M.Sc.",
         'nip' => '198006142005012004',

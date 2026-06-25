@@ -12,29 +12,26 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class ReportController extends Controller
 {
     /**
-     * Halaman pilih skema laporan (Adendum PKS Lama/Baru) sebelum download.
+     * Halaman laporan penyetaraan (gabungan semua skema).
      */
     public function index(): View
     {
         $this->authorize('viewAny', Submission::class);
 
         return view('admin.reports.index', [
-            'approvedLamaCount' => Submission::where('status', 'approved')->where('scheme', 'lama')->count(),
-            'approvedBaruCount' => Submission::where('status', 'approved')->where('scheme', 'baru')->count(),
+            'approvedCount' => Submission::where('status', 'approved')->count(),
         ]);
     }
 
     /**
-     * Download laporan penyetaraan (xlsx) untuk satu skema.
+     * Download laporan penyetaraan gabungan (xlsx), semua skema, kolom Klausul PKS di akhir.
      */
-    public function export(string $scheme): BinaryFileResponse
+    public function export(): BinaryFileResponse
     {
         $this->authorize('viewAny', Submission::class);
 
-        abort_unless(in_array($scheme, ['lama', 'baru'], true), 404);
+        $filename = 'laporan-penyetaraan-'.now()->format('Ymd-His').'.xlsx';
 
-        $filename = 'laporan-penyetaraan-pks-'.$scheme.'-'.now()->format('Ymd-His').'.xlsx';
-
-        return Excel::download(new EquivalencyReportExport($scheme), $filename);
+        return Excel::download(new EquivalencyReportExport, $filename);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\EligibilityCheckController;
+use App\Http\Controllers\Admin\EligibilityTestController;
 use App\Http\Controllers\Admin\GradeImportController;
 use App\Http\Controllers\Admin\ManualSubmissionController;
 use App\Http\Controllers\Admin\ReportController;
@@ -46,6 +47,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::post('/grades/import', [GradeImportController::class, 'store'])->name('grades.import.store');
     Route::post('/grades/skip', [GradeImportController::class, 'skip'])->name('grades.import.skip');
     Route::delete('/grades/skip/{gradeUploadStatus}', [GradeImportController::class, 'unskip'])->name('grades.import.unskip');
+    Route::post('/grades/year/{year}/zero-na', [GradeImportController::class, 'zeroNaForYear'])->name('grades.zero-na-year');
+    Route::get('/grades/courses/{course}/distribution/{year}', [GradeImportController::class, 'distribution'])->name('grades.distribution');
 
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
     Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');
@@ -54,6 +57,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 
     Route::post('/submissions/{submission}/approve', [SubmissionReviewController::class, 'approve'])->name('submissions.approve');
     Route::post('/submissions/{submission}/reject', [SubmissionReviewController::class, 'reject'])->name('submissions.reject');
+
+    Route::get('/eligibility-test', [EligibilityTestController::class, 'create'])->name('eligibility-test.create');
+    Route::post('/eligibility-test', [EligibilityTestController::class, 'test'])->name('eligibility-test.run');
 
     Route::get('/eligibility', [EligibilityCheckController::class, 'index'])->name('eligibility.index');
     Route::get('/eligibility/export-all', [EligibilityCheckController::class, 'exportAll'])->name('eligibility.export-all');
@@ -65,7 +71,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::delete('/manual-submissions', [ManualSubmissionController::class, 'destroy'])->name('manual-submissions.destroy');
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/export/{scheme}', [ReportController::class, 'export'])->name('reports.export')->whereIn('scheme', ['lama', 'baru']);
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 });
 
 // Preview email tanpa kirim sungguhan (gantinya MailHog/Mailpit, karena

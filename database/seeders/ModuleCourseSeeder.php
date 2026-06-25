@@ -15,6 +15,9 @@ class ModuleCourseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Truncate dulu supaya entry yang dihapus dari map ikut terhapus dari DB.
+        ModuleCourse::truncate();
+
         foreach (ModuleCourseMap::all() as $moduleCode => $module) {
             $paiModule = PaiModule::where('code', $moduleCode)->firstOrFail();
 
@@ -22,7 +25,7 @@ class ModuleCourseSeeder extends Seeder
                 foreach ($module[$curriculum] as $courseData) {
                     $course = Course::where('code', $courseData['code'])->firstOrFail();
 
-                    ModuleCourse::updateOrCreate([
+                    ModuleCourse::create([
                         'pai_module_id' => $paiModule->id,
                         'course_id' => $course->id,
                         'curriculum' => $curriculum,
@@ -35,7 +38,7 @@ class ModuleCourseSeeder extends Seeder
             foreach ($module['matematika'] ?? [] as $courseData) {
                 $course = Course::where('code', $courseData['code'])->firstOrFail();
 
-                ModuleCourse::updateOrCreate([
+                ModuleCourse::create([
                     'pai_module_id' => $paiModule->id,
                     'course_id' => $course->id,
                     'curriculum' => 'baru',
